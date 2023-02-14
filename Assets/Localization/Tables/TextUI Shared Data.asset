@@ -1,0 +1,156 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: TextUI Shared Data
+  m_EditorClassIdentifier: 
+  m_TableCollectionName: TextUI
+  m_TableCollectionNameGuidString: 33160be225a498f44b6192503e85e94e
+  m_Entries:
+  - m_Id: 677740859392
+    m_Key: LanguageHeader
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8251831799808
+    m_Key: Language
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8639175774208
+    m_Key: SoundFXHeader
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9751287091200
+    m_Key: SettingsHeader
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9856916443136
+    m_Key: MusicHeader
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9925770137600
+    m_Key: GraphicHeader
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9997643730944
+    m_Key: Graphic_Low
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10304398348288
+    m_Key: Graphic_Medium
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10439689818112
+    m_Key: Graphic_High
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10717159804928
+    m_Key: Button_Rate
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10869056524288
+    m_Key: Button_Credits
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11138171457536
+    m_Key: Button_Shop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11215438925824
+    m_Key: Button_Ranking
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11448067608576
+    m_Key: Button_Beasts
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11519047815168
+    m_Key: Button_Missions
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12041196720128
+    m_Key: Button_Play
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12185430446080
+    m_Key: WaitingForPlayers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21000028737536
+    m_Key: Round
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21706555052032
+    m_Key: Remain
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2426901486424064
+    m_Key: Load_Text
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2603940964196352
+    m_Key: Notice_Header
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2604589739139072
+    m_Key: Notice_Close
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3551509756239872
+    m_Key: Drop_Everyone
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4334514981339136
+    m_Key: Notice_WaitingForNetwork
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4334909677928448
+    m_Key: Notice_Shop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4335025574936576
+    m_Key: Notice_Wardrobe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4335162644791296
+    m_Key: Notice_Rating
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4390376240349184
+    m_Key: Notice_StartTutorial
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4425372040724480
+    m_Key: NoticeButton_Yes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4435401036824576
+    m_Key: Notice_EndTutorial
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4435690838065152
+    m_Key: NoticeButton_Menu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4955584503795712
+    m_Key: 
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 2945292123548418103
+  references:
+    version: 2
+    RefIds:
+    - rid: 2945292123548418103
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1674889528046

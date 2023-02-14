@@ -1,0 +1,153 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: TextUI_en
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: 33160be225a498f44b6192503e85e94e, type: 2}
+  m_Metadata:
+    m_Items:
+    - rid: 2945292123548418154
+  m_TableData:
+  - m_Id: 677740859392
+    m_Localized: LANGUAGE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8251831799808
+    m_Localized: ENGLISH
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8639175774208
+    m_Localized: Sound FX
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9751287091200
+    m_Localized: SETTINGS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9856916443136
+    m_Localized: Music
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9925770137600
+    m_Localized: Graphic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9997643730944
+    m_Localized: LOW
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10304398348288
+    m_Localized: MEDIUM
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10439689818112
+    m_Localized: HIGH
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10717159804928
+    m_Localized: RATE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10869056524288
+    m_Localized: CREDITS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11138171457536
+    m_Localized: SHOP
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11215438925824
+    m_Localized: RANKING
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11448067608576
+    m_Localized: WARDROBE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11519047815168
+    m_Localized: GUIDE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12041196720128
+    m_Localized: PLAY
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12185430446080
+    m_Localized: 'Waiting for players:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21000028737536
+    m_Localized: 'Round: {server.CurrentRound}/4'
+    m_Metadata:
+      m_Items:
+      - rid: 2945292123548418154
+  - m_Id: 21706555052032
+    m_Localized: 'Remain:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2426901486424064
+    m_Localized: Loading...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2603940964196352
+    m_Localized: Notice
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2604589739139072
+    m_Localized: Close
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3551509756239872
+    m_Localized: DROP THEM ALL
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4334514981339136
+    m_Localized: Waiting for network. Check your connection :)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4334909677928448
+    m_Localized: It will be Shop, but little bit later :)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4335025574936576
+    m_Localized: Here you will can change clothes for your character :)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4335162644791296
+    m_Localized: It's global rating. You are number one, anyway :)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4390376240349184
+    m_Localized: Do you want to get trained?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4425372040724480
+    m_Localized: Yes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4435401036824576
+    m_Localized: Congratulations! Now you are ready to defeat others! ;)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4435690838065152
+    m_Localized: Menu
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds:
+    - rid: 2945292123548418154
+      type: {class: SmartFormatTag, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_Entries: 00d0407319130000

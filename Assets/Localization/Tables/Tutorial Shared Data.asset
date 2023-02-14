@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: Tutorial Shared Data
+  m_EditorClassIdentifier: 
+  m_TableCollectionName: Tutorial
+  m_TableCollectionNameGuidString: b175cbf3a158a7e4eb5f7bf3cd1ee11a
+  m_Entries:
+  - m_Id: 35479388160
+    m_Key: TakeGrenade
+    m_Metadata:
+      m_Items: []
+  - m_Id: 307102515200
+    m_Key: ThrowGrenade
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1202481561600
+    m_Key: ThrowEnemy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1722725857021952
+    m_Key: PressContinue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1724331377872896
+    m_Key: Info_TakeGrenade
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726238116859904
+    m_Key: Info_ThrowGrenade
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1727446764277760
+    m_Key: Info_ThrowEnemy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1738037717422080
+    m_Key: Info_ThrowEnemyWithHand
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 7116486949479383040
+  references:
+    version: 2
+    RefIds:
+    - rid: 7116486949479383040
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1675860507123

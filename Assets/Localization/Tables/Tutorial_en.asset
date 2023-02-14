@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: Tutorial_en
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: b175cbf3a158a7e4eb5f7bf3cd1ee11a, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 35479388160
+    m_Localized: Take a grenade
+    m_Metadata:
+      m_Items: []
+  - m_Id: 307102515200
+    m_Localized: Throw a grenade
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1202481561600
+    m_Localized: Throw Ivan off the platform
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1722725857021952
+    m_Localized: click to continue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1724331377872896
+    m_Localized: Hi, now I will teach you how to play. First, approach the grenade
+      to pick it up. To move, use the left joystick or the arrows on the keyboard
+      (depending on your device)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1726238116859904
+    m_Localized: Fine! You have a grenade in your hands. Now drop her. For this,
+      use the right joystick. Just pull and release when you're ready. Remember,
+      the further you pull, the harder you throw =)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1727446764277760
+    m_Localized: Well done! Now let's try to throw the enemy off the platform (this
+      is the main goal of the game). Take a grenade and throw it next to Ivan.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1738037717422080
+    m_Localized: If the enemy is not outside the platform, and there is no weapon
+      at hand, then you can push him with your hands. Get closer to Ivan and use
+      the right joystick. The same as with a grenade, you already know how =)
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

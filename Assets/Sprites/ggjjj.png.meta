@@ -1,0 +1,614 @@
+fileFormatVersion: 2
+guid: e5a18565596b92a4d8955ca9cbd1ed8d
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 12
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 0
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Server
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: ggjjj_6
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 900
+        width: 155
+        height: 168
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c90d51a5ba0d1bb478e14dcbe7f16f42
+      internalID: -1962500718
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ggjjj_7
+      rect:
+        serializedVersion: 2
+        x: 623
+        y: 988
+        width: 398
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 88d3d0696d8d03e4aa767c066aec0f7f
+      internalID: -42801222
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ggjjj_8
+      rect:
+        serializedVersion: 2
+        x: 1776
+        y: 975
+        width: 118
+        height: 93
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c34803a990595344da5e63d54496449a
+      internalID: 803734584
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ggjjj_10
+      rect:
+        serializedVersion: 2
+        x: 198
+        y: 978
+        width: 413
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0c25b6f6836ec784395af30a6dc6a5ad
+      internalID: 1205991897
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ggjjj_11
+      rect:
+        serializedVersion: 2
+        x: 1445
+        y: 978
+        width: 244
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b9f2f285ff1edf74c87a72a77637256c
+      internalID: 2017728731
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ggjjj_12
+      rect:
+        serializedVersion: 2
+        x: 1773
+        y: 350
+        width: 98
+        height: 440
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7862a320ba971de4f9ef16429ee1b062
+      internalID: 2066040202
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ggjjj_14
+      rect:
+        serializedVersion: 2
+        x: 204
+        y: 876
+        width: 80
+        height: 83
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ff53b8f51f3438b47be2c3708e38e50e
+      internalID: 952347681
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ggjjj_19
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 667
+        width: 336
+        height: 181
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: edfb990899bf02e4590384b2f43b5798
+      internalID: 1888772801
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ggjjj_49
+      rect:
+        serializedVersion: 2
+        x: 837
+        y: 391
+        width: 249
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 103bd9e088d90414da006756d78a36f5
+      internalID: -1104779519
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ggjjj_56
+      rect:
+        serializedVersion: 2
+        x: 716
+        y: 316
+        width: 61
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9aef207538ca72c4e982507aed83f7d6
+      internalID: 1615411422
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ggjjj_57
+      rect:
+        serializedVersion: 2
+        x: 813
+        y: 328
+        width: 228
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9882e0fade9e5d94da1fa0223ffe6cf7
+      internalID: -1095285150
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ggjjj_58
+      rect:
+        serializedVersion: 2
+        x: 1056
+        y: 330
+        width: 48
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9316178878ff96b44b1beb4b53bb19b4
+      internalID: 2398019
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ggjjj_67
+      rect:
+        serializedVersion: 2
+        x: 814
+        y: 273
+        width: 226
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 42350d33f1add78409d6b57bab473af4
+      internalID: -1728028951
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ggjjj_69
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 28
+        width: 192
+        height: 179
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a29be3e6f8cc5b346b327b1642e90256
+      internalID: -1201935785
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ggjjj_70
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 28
+        width: 198
+        height: 188
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6f076844d318d134f95dd2b78cf78b02
+      internalID: 1664370640
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ggjjj_71
+      rect:
+        serializedVersion: 2
+        x: 744
+        y: 28
+        width: 430
+        height: 181
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a1d10785ba4c67240a264911e662c861
+      internalID: -963953361
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ggjjj_72
+      rect:
+        serializedVersion: 2
+        x: 1483
+        y: 28
+        width: 193
+        height: 201
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4aaf2c0e3d2359d46aede176b66a12a5
+      internalID: 156540722
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ggjjj_73
+      rect:
+        serializedVersion: 2
+        x: 1702
+        y: 28
+        width: 192
+        height: 179
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3672b12ef6312634cb4bae4b5859ca96
+      internalID: -962943903
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: e8d98f739dd30bf479e440139b84bf39
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      ggjjj_26: -1900128808
+      ggjjj_80: -226072177
+      ggjjj_36: -440644959
+      ggjjj_24: 920000877
+      ggjjj_76: 798990709
+      ggjjj_41: 1294482641
+      ggjjj_28: -1831900799
+      ggjjj_64: -2001598917
+      ggjjj_25: -192521400
+      ggjjj_69: -1201935785
+      ggjjj_81: 683801635
+      ggjjj_55: 101232620
+      ggjjj_34: 1019367640
+      ggjjj_46: -1202030513
+      ggjjj_22: 625750788
+      ggjjj_5: 1777902177
+      ggjjj_40: 1676622874
+      ggjjj_68: -982037192
+      ggjjj_43: -98849006
+      ggjjj_72: 156540722
+      ggjjj_70: 1664370640
+      ggjjj_15: 1610550050
+      ggjjj_61: -105186976
+      ggjjj_65: -1097806656
+      ggjjj_19: 1888772801
+      ggjjj_37: -1499170228
+      ggjjj_47: -997168333
+      ggjjj_53: 1019899474
+      ggjjj_44: -2068172096
+      ggjjj_77: 1070012223
+      ggjjj_48: -511379725
+      ggjjj_51: -2105614651
+      ggjjj_4: 1569392883
+      ggjjj_66: -534431929
+      ggjjj_71: -963953361
+      ggjjj_1: 1652178256
+      ggjjj_2: 1486203276
+      ggjjj_21: -2143510786
+      ggjjj_86: 851757189
+      ggjjj_56: 1615411422
+      ggjjj_35: 1561354469
+      ggjjj_31: 1641013592
+      ggjjj_9: 1550574308
+      ggjjj_54: 1489724133
+      ggjjj_50: -1902045052
+      ggjjj_13: 401753455
+      ggjjj_33: -1934220101
+      ggjjj_12: 2066040202
+      ggjjj_18: -1409204337
+      ggjjj_45: -1679038925
+      ggjjj_10: 1205991897
+      ggjjj_74: -2031701412
+      ggjjj_29: 1687767877
+      ggjjj_63: -443214167
+      ggjjj_58: 2398019
+      ggjjj_27: -1946805261
+      ggjjj_30: 1966852465
+      ggjjj_83: -781210607
+      ggjjj_6: -1962500718
+      ggjjj_7: -42801222
+      ggjjj_49: -1104779519
+      ggjjj_23: 1087382485
+      ggjjj_57: -1095285150
+      ggjjj_62: -686870504
+      ggjjj_84: -838816550
+      ggjjj_38: 1465856565
+      ggjjj_14: 952347681
+      ggjjj_39: -1115561248
+      ggjjj_11: 2017728731
+      ggjjj_82: 268967632
+      ggjjj_75: 599193978
+      ggjjj_78: -2024111876
+      ggjjj_67: -1728028951
+      ggjjj_85: 1276941320
+      ggjjj_73: -962943903
+      ggjjj_52: -915675058
+      ggjjj_79: 727746119
+      ggjjj_8: 803734584
+      ggjjj_0: 1521164778
+      ggjjj_60: 1177320915
+      ggjjj_20: 87166436
+      ggjjj_32: -2137327222
+      ggjjj_87: 256154986
+      ggjjj_3: 551112367
+      ggjjj_42: 466323979
+      ggjjj_59: 1519076507
+      ggjjj_17: -1142633386
+      ggjjj_16: 604302708
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
