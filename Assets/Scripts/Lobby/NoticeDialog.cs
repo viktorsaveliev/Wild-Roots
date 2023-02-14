@@ -38,7 +38,8 @@ public class NoticeDialog : MonoBehaviour
         Wardrobe,
         Rating,
         StartTutorial,
-        EndTutorial
+        EndTutorial,
+        ServerFull
     }
 
     public Message CurrentMessage { get; private set; }
@@ -57,7 +58,8 @@ public class NoticeDialog : MonoBehaviour
         "Notice_Wardrobe",
         "Notice_Rating",
         "Notice_StartTutorial",
-        "Notice_EndTutorial"
+        "Notice_EndTutorial",
+        "Notice_ServerFull"
     };
 
     public void ShowDialog(Message message, INoticeAction action = null, string leftButtonTextKey = "Notice_Close", string rightButtonTextKey = null)

@@ -7,6 +7,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1471120064, guid: 3c10ae2f9b8b6c548ac2aad8c064f5ee, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 457985954974365071, guid: 3c10ae2f9b8b6c548ac2aad8c064f5ee, type: 3}
       propertyPath: sceneViewId
       value: 0

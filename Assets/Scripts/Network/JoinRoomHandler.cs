@@ -6,7 +6,7 @@ using System.Collections;
 using DG.Tweening;
 
 [RequireComponent(typeof(ConnectHandler), typeof(PhotonView))]
-public class JoinRoomHandler : MonoBehaviourPunCallbacks
+public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
 {
     [SerializeField] private GameObject _mainLobby;
     [SerializeField] private GameObject _searchScreen;
@@ -45,18 +45,15 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks
         EventBus.OnPlayerClickUI?.Invoke(0);
         if(!_connectHandler.IsConnected)
         {
-            Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
+            Notice.ShowDialog(NoticeDialog.Message.ConnectionError, this, "Notice_Retry", "Notice_Close");
             return;
         }
         if (_isJoiningRoom)
         {
             if (PhotonNetwork.IsMasterClient)
             {
+                DOTween.Clear();
                 StartGame();
-            }
-            else
-            {
-
             }
             return;
         }
@@ -65,6 +62,15 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks
 
         PhotonNetwork.JoinRandomRoom();
         _isJoiningRoom = true;
+    }
+
+    public void ActionOnClickNotice(int button)
+    {
+        if(button == 0)
+        {
+            JoinRoom();
+        }
+        Notice.HideDialog();
     }
 
     [PunRPC]
@@ -82,7 +88,7 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks
                 full = true;
                 break;
             }
-            if (!full) 
+            if (!full)
             {
                 _connectHandler.Log("Cant found free slot for you :(");
             }
@@ -91,10 +97,13 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks
 
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
-        if (returnCode == 32760)
+        if (returnCode == 32760) // No available rooms found!
         {
-            //_connectHandler.Log($"No available rooms found! #{returnCode}");
             CreateRoom();
+        }
+        else if(returnCode == 32757) // MaxCCU
+        {
+            Notice.ShowDialog(NoticeDialog.Message.ServerFull);
         }
         else
         {

@@ -140,7 +140,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 4955584503795712
-    m_Key: 
+    m_Key: Notice_Retry
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6335574495514624
+    m_Key: Notice_ServerFull
     m_Metadata:
       m_Items: []
   m_Metadata:

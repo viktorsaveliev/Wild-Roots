@@ -15,7 +15,9 @@ public abstract class Weapon : MonoBehaviour
         Explode
     }
 
-    public Sprite SpriteIcon { get; private set; }
+    [SerializeField] private Sprite SpriteIcon;
+    public Sprite GetSpriteIcon => SpriteIcon;
+
 
     protected string Label;
     

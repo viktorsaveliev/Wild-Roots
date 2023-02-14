@@ -78,7 +78,7 @@ public class Tutorial : MonoBehaviour, INoticeAction
     {
         if(player.PhotonView.ViewID == 2)
         {
-            _player.transform.position = new Vector3(0, 0.5f, -4.82f);
+            _player.transform.position = new Vector3(0, 1f, -4.82f);
             _player.gameObject.SetActive(true);
 
             if (_player.Weapon.GetCurrentWeapon is Punch)
@@ -86,6 +86,8 @@ public class Tutorial : MonoBehaviour, INoticeAction
                 WeaponSpawner(_weapon.gameObject);
                 Invoke(nameof(ResetPlayerWeapon), 0.5f);
             }
+
+            _player.Move.SetMoveActive(true);
         }
         else
         {

@@ -66,14 +66,15 @@ public class UIHandler : MonoBehaviour
 
     private void MatchEnded()
     {
-        _photonView.RPC(nameof(LeaveRoom), RpcTarget.All);
+        DOTween.Clear();
         PhotonNetwork.LoadLevel(0);
+        _photonView.RPC(nameof(LeaveRoom), RpcTarget.All);
     }
 
     [PunRPC]
     public void LeaveRoom()
     {
-        PhotonNetwork.LeaveRoom();
+        if(PhotonNetwork.IsConnectedAndReady) PhotonNetwork.LeaveRoom();
     }
 
     [PunRPC]
@@ -106,7 +107,7 @@ public class UIHandler : MonoBehaviour
             {
                 _killer.text = $"Player {killed.Health.FromWhomDamage.Player.GetPhotonView.ViewID}";
                 _killed.text = $"Player {ViewID}";
-                _weaponIcon.sprite = killed.Health.FromWhomDamage.SpriteIcon;
+                _weaponIcon.sprite = killed.Health.FromWhomDamage.GetSpriteIcon;
             }
             else
             {

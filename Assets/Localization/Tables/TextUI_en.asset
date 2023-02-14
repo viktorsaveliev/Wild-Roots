@@ -109,11 +109,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 3551509756239872
-    m_Localized: DROP THEM ALL
+    m_Localized: Drop them all
     m_Metadata:
       m_Items: []
   - m_Id: 4334514981339136
-    m_Localized: Waiting for network. Check your connection :)
+    m_Localized: Waiting for network. Please, try again..
     m_Metadata:
       m_Items: []
   - m_Id: 4334909677928448
@@ -142,6 +142,14 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 4435690838065152
     m_Localized: Menu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4955584503795712
+    m_Localized: Retry
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6335574495514624
+    m_Localized: Server is full. Please, try again later..
     m_Metadata:
       m_Items: []
   references:

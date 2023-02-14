@@ -186,6 +186,7 @@ MonoBehaviour:
   AudioFX:
   - {fileID: 8300000, guid: 5cd4754c77d16c549906bbce0eeaa75a, type: 3}
   - {fileID: 8300000, guid: a69491b9468dbb84b931a1ce96514fdf, type: 3}
+  SpriteIcon: {fileID: 0}
   CurrentRoundLayerWhereImStay: -1
   CurrentHoneycombWhereImStay: {fileID: 0}
   WeaponType: 1

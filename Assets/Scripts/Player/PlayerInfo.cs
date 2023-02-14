@@ -38,28 +38,40 @@ public class PlayerInfo : MonoBehaviour
 
     private void CheckWinner(int winnerID)
     {
-        if(PhotonView.Find(winnerID).IsMine)
-        {
-            StringBus stringBus = new();
+        if (!PhotonView.IsMine) return;
 
+        PhotonView winner = PhotonView.Find(winnerID);
+        if (winner == null) return;
+
+        StringBus stringBus = new();
+        int level = PlayerPrefs.GetInt(stringBus.PlayerLevel);
+        int levelExp = PlayerPrefs.GetInt(stringBus.PlayerExp);
+
+        if (winner.IsMine)
+        {
             int winsCount = PlayerPrefs.GetInt(stringBus.PlayerWinsCount);
             PlayerPrefs.SetInt(stringBus.PlayerWinsCount, winsCount + 1);
 
-            int level = PlayerPrefs.GetInt(stringBus.PlayerLevel);
-            int levelExp = PlayerPrefs.GetInt(stringBus.PlayerExp);
-
+            levelExp += 100;
+            if (levelExp >= (level * 3 * 100))
+            {
+                level++;
+                levelExp = 0;
+            }
+            EventBus.OnPlayerWin?.Invoke();
+        }
+        else
+        {
             levelExp += 50;
             if (levelExp >= (level * 3 * 100))
             {
-                level += 1;
+                level++;
                 levelExp = 0;
-                PlayerPrefs.SetInt(stringBus.PlayerLevel, level);
             }
-
-            PlayerPrefs.SetInt(stringBus.PlayerExp, levelExp);
-            PlayerPrefs.Save();
-
-            EventBus.OnPlayerWin?.Invoke();
         }
+
+        PlayerPrefs.SetInt(stringBus.PlayerLevel, level);
+        PlayerPrefs.SetInt(stringBus.PlayerExp, levelExp);
+        PlayerPrefs.Save();
     }
 }

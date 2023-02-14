@@ -80,7 +80,7 @@ public class WeaponsHandler : MonoBehaviour
     public void UpdateWeaponInfoForAll(int weaponViewID, int currentRound, int weaponType, int randomPos)
     {
         //GetHoneycombsInCircle(currentRound);
-
+        if (randomPos < 0 || randomPos > _honeycombs.Count) return; 
         Weapon weapon = PhotonView.Find(weaponViewID).GetComponent<Weapon>();
 
         weapon.transform.parent = _weaponsParent;

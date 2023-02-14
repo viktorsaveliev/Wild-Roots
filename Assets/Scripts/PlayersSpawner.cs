@@ -24,7 +24,7 @@ public class PlayersSpawner : MonoBehaviour
         {
             player.Health.FromWhomDamage = null;
             player.transform.position = new Vector3(0, 5, 0);
-            player.transform.rotation = Quaternion.Euler(80, 0, 95);
+            player.transform.rotation = Quaternion.Euler(0, 0, 150);
             player.gameObject.SetActive(true);
             player.Move.SetMoveActive(false);
         }
