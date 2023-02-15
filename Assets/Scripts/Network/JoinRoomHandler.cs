@@ -20,7 +20,7 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
     private PhotonView _photonView;
 
     private Coroutine _secTimer;
-    private readonly int _secToFindPlayers = 90;
+    private readonly int _secToFindPlayers = 60;
     private int _currentSecToFindPlayers;
 
     private void Start()
@@ -32,10 +32,10 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
     private void CreateRoom()
     {
         PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 5, CleanupCacheOnLeave = false, IsOpen = true, IsVisible = true });
-        _currentSecToFindPlayers = _secToFindPlayers;
+        //_currentSecToFindPlayers = _secToFindPlayers;
 
-        if (_secTimer != null) StopCoroutine(_secTimer);
-        _secTimer = StartCoroutine(SecTimer());
+        //if (_secTimer != null) StopCoroutine(_secTimer);
+        //_secTimer = StartCoroutine(SecTimer());
 
         //_connectHandler.Log("Created new room..");
     }
@@ -127,6 +127,10 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
         {
             _startButton.SetActive(true);
         }
+
+        _currentSecToFindPlayers = _secToFindPlayers;
+        if (_secTimer != null) StopCoroutine(_secTimer);
+        _secTimer = StartCoroutine(SecTimer());
     }
 
     private void ActivateSearchScreen() => _searchScreen.SetActive(true);
@@ -135,9 +139,10 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
         while (_currentSecToFindPlayers > 0)
         {
             yield return new WaitForSeconds(1f);
+            _currentSecToFindPlayers--;
             if (PhotonNetwork.IsMasterClient)
             {
-                if (--_currentSecToFindPlayers <= 0)
+                if (_currentSecToFindPlayers <= 0)
                 {
                     StartGame();
                     break;
@@ -147,7 +152,7 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
         }
     }
 
-    private void StartGame()
+    public void StartGame()
     {
         _photonView.RPC(nameof(LoadLevelProgressForAll), RpcTarget.All);
 

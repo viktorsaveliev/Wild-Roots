@@ -128,6 +128,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 2
     m_TransformParent: {fileID: 1656570372}
     m_Modifications:
     - target: {fileID: 2971807316486152982, guid: e97297c647baa7543baf3e5cd8f7fcbd, type: 3}
@@ -187,6 +188,7 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: e97297c647baa7543baf3e5cd8f7fcbd, type: 3}
 --- !u!4 &111548771 stripped
 Transform:
@@ -370,6 +372,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 2
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 75af6e6367762c44a878061e0860e4ad, type: 3}
@@ -473,6 +476,7 @@ PrefabInstance:
       value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: 75af6e6367762c44a878061e0860e4ad, type: 3}
 --- !u!1 &198420104 stripped
 GameObject:
@@ -1267,7 +1271,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!199 &577436149
 ParticleSystemRenderer:
   serializedVersion: 6
@@ -1909,6 +1913,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     randomizeRotationDirection: 0
+    gravitySource: 0
     maxNumParticles: 1000
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 0
@@ -5302,6 +5307,7 @@ ParticleSystem:
         m_RotationOrder: 4
     minVertexDistance: 0
     textureMode: 0
+    textureScale: {x: 1, y: 1}
     ribbonCount: 1
     shadowBias: 0.5
     worldSpace: 0
@@ -6187,6 +6193,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 1
   m_TargetDisplay: 0
@@ -6271,6 +6278,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 2
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 79394347, guid: 3c10ae2f9b8b6c548ac2aad8c064f5ee, type: 3}
@@ -6403,6 +6411,7 @@ PrefabInstance:
     - {fileID: 2349437205513215653, guid: 3c10ae2f9b8b6c548ac2aad8c064f5ee, type: 3}
     - {fileID: 2349437205513215655, guid: 3c10ae2f9b8b6c548ac2aad8c064f5ee, type: 3}
     - {fileID: 1471120066, guid: 3c10ae2f9b8b6c548ac2aad8c064f5ee, type: 3}
+    m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: 3c10ae2f9b8b6c548ac2aad8c064f5ee, type: 3}
 --- !u!1 &757977048
 GameObject:
@@ -6434,7 +6443,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SendPointerHoverToParent: 1
   m_HorizontalAxis: Horizontal
   m_VerticalAxis: Vertical
   m_SubmitButton: Submit
@@ -6515,6 +6523,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 2
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 4208843959898764098, guid: 85e90c543feeadf4eb984abcc9df7cd3, type: 3}
@@ -6566,6 +6575,7 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: 85e90c543feeadf4eb984abcc9df7cd3, type: 3}
 --- !u!198 &775480618 stripped
 ParticleSystem:
@@ -6678,6 +6688,7 @@ MonoBehaviour:
   _tutorialHand: {fileID: 1486997847}
 --- !u!120 &827547770
 LineRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -6769,10 +6780,13 @@ LineRenderer:
     numCapVertices: 0
     alignment: 0
     textureMode: 4
+    textureScale: {x: 1, y: 1}
     shadowBias: 0
     generateLightingData: 0
+  m_MaskInteraction: 0
   m_UseWorldSpace: 1
   m_Loop: 0
+  m_ApplyActiveColorSpace: 0
 --- !u!114 &827547771
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6903,6 +6917,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 2
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 457985954974365071, guid: 3c10ae2f9b8b6c548ac2aad8c064f5ee, type: 3}
@@ -6966,6 +6981,7 @@ PrefabInstance:
       value: char
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: 3c10ae2f9b8b6c548ac2aad8c064f5ee, type: 3}
 --- !u!1 &934373911
 GameObject:
@@ -7422,6 +7438,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 2
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 4208843959898764098, guid: 92a0726629998b043b8622716baccdf7, type: 3}
@@ -7473,6 +7490,7 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: 92a0726629998b043b8622716baccdf7, type: 3}
 --- !u!198 &1266740671 stripped
 ParticleSystem:
@@ -7909,7 +7927,7 @@ CanvasRenderer:
   m_CullTransparentMesh: 1
 --- !u!95 &1486997851
 Animator:
-  serializedVersion: 5
+  serializedVersion: 4
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -7926,7 +7944,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &1656570371
 GameObject:
   m_ObjectHideFlags: 0
@@ -8379,6 +8397,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
