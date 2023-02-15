@@ -96,14 +96,14 @@
             "userAdded": false,
             "type": "UnityEngine.Rendering.PostProcessing.PostProcessProfile",
             "ignore": false,
-            "defaultInstantiationMode": 0,
+            "defaultInstantiationMode": 1,
             "supportsModification": true
         },
         {
             "userAdded": false,
             "type": "UnityEngine.Rendering.PostProcessing.PostProcessResources",
             "ignore": false,
-            "defaultInstantiationMode": 0,
+            "defaultInstantiationMode": 1,
             "supportsModification": true
         },
         {
