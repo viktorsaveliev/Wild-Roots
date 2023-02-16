@@ -50,6 +50,8 @@ public class ServerHandler : MonoBehaviourPunCallbacks
         ServerPhotonView = PhotonView.Get(this);
         ServerPhotonView.RPC(nameof(AddPlayerInList), RpcTarget.All, playerControl.PhotonView.ViewID);
         PhotonNetwork.LocalPlayer.TagObject = gameObject;
+
+        _weaponSpawner.StartTimerForWeaponSpawn();
     }
 
     #region Network
@@ -63,11 +65,11 @@ public class ServerHandler : MonoBehaviourPunCallbacks
 
     public override void OnMasterClientSwitched(Player newMasterClient)
     {
-        GameObject obj = (GameObject)newMasterClient.TagObject;
-        _honeycombHandler = obj.GetComponent<HoneycombHandler>();
+        //GameObject master = (GameObject)newMasterClient.TagObject;
+        //_honeycombHandler = master.GetComponent<HoneycombHandler>();
         _honeycombHandler.ReInit(_timeToNextRound);
 
-        obj.GetComponent<WeaponsHandler>().StartTimerForWeaponSpawn();
+        //master.GetComponent<WeaponsHandler>().StartTimerForWeaponSpawn();
     }
 
     public override void OnLeftRoom()

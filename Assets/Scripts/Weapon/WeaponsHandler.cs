@@ -32,8 +32,8 @@ public class WeaponsHandler : MonoBehaviour
     private List<Honeycomb> _honeycombs = new List<Honeycomb>();
     private List<GameObject> _pool = new List<GameObject>();
 
-    private Coroutine _timer;
-    private readonly float _timeForSpawnNewWeapon = 2f;
+    private Coroutine _timer = null;
+    private readonly float _timeForRespawnWeapon = 2f;
 
     #region MonoBehaviour
 
@@ -46,7 +46,7 @@ public class WeaponsHandler : MonoBehaviour
 
     private IEnumerator SpawnTimer()
     {
-        yield return new WaitForSeconds(_timeForSpawnNewWeapon);
+        yield return new WaitForSeconds(_timeForRespawnWeapon);
         SpawnRandomWeapon(GetComponent<ServerHandler>().CurrentRound);
     }
 
@@ -67,12 +67,16 @@ public class WeaponsHandler : MonoBehaviour
                     weaponObj.GetComponent<Weapon>().PhotonViewObject.ViewID, round + s + 1, s, randomPos);
             }
         }
-        StartTimerForWeaponSpawn();
+        //StartTimerForWeaponSpawn();
     }
 
     public void StartTimerForWeaponSpawn()
     {
-        if (_timer != null) StopCoroutine(_timer);
+        if (_timer != null)
+        {
+            StopCoroutine(_timer);
+            _timer = null;
+        }
         _timer = StartCoroutine(SpawnTimer());
     }
 
@@ -96,23 +100,24 @@ public class WeaponsHandler : MonoBehaviour
 
     public void SpawnRandomWeapon(int round)
     {
-        int randomRoundLayer = Random.Range(round, 4);
-        Honeycomb[] honeycombs = _honeycombHandler.GetHoneycombCircles[randomRoundLayer].GetComponentsInChildren<Honeycomb>();
-
-        if (TryGetObject(out GameObject weapon))
+        if (PhotonNetwork.IsMasterClient)
         {
-            Honeycomb randomHoneycomb = GetRandomFreeHoneycomb(honeycombs);
-            if (randomHoneycomb != null)
+            int randomRoundLayer = Random.Range(round, 4);
+            Honeycomb[] honeycombs = _honeycombHandler.GetHoneycombCircles[randomRoundLayer].GetComponentsInChildren<Honeycomb>();
+
+            if (TryGetObject(out GameObject weapon))
             {
-                randomHoneycomb.IsTiedWeapon = true;
-                weapon.GetPhotonView().Owner.TagObject = randomHoneycomb;
-                _photonView.RPC(nameof(SpawnWeaponForAll), RpcTarget.All, 
-                    weapon.GetPhotonView().ViewID, randomHoneycomb.transform.position, randomRoundLayer);
+                Honeycomb randomHoneycomb = GetRandomFreeHoneycomb(honeycombs);
+                if (randomHoneycomb != null)
+                {
+                    randomHoneycomb.IsTiedWeapon = true;
+                    weapon.GetPhotonView().Owner.TagObject = randomHoneycomb;
+                    _photonView.RPC(nameof(SpawnWeaponForAll), RpcTarget.All,
+                        weapon.GetPhotonView().ViewID, randomHoneycomb.transform.position, randomRoundLayer);
+                }
             }
         }
-
-        if (_timer != null) StopCoroutine(_timer);
-        _timer = StartCoroutine(SpawnTimer());
+        StartTimerForWeaponSpawn();
     }
 
     private Honeycomb GetRandomFreeHoneycomb(Honeycomb[] honeycombs)
