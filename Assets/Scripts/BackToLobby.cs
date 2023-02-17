@@ -1,6 +1,5 @@
 using DG.Tweening;
 using Photon.Pun;
-using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class BackToLobby : MonoBehaviourPunCallbacks
@@ -14,8 +13,8 @@ public class BackToLobby : MonoBehaviourPunCallbacks
 
     public override void OnLeftRoom()
     {
+        base.OnLeftRoom();
         LoadingUI.UpdateProgress(0.5f);
         SceneManager.LoadScene(0);
-        base.OnLeftRoom();
     }
 }

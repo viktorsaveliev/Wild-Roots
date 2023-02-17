@@ -44,13 +44,15 @@ public class Punch : Weapon
         }
         foreach (TakeImpulse player in players)
         {
+            PlayerWeapon characterWeapon = player.GetComponent<PlayerWeapon>();
+            if (characterWeapon != null && characterWeapon == Player) continue;
+
             var direction = (player.transform.position - Player.transform.position).normalized;
             if (Vector3.Angle(Player.transform.forward, direction) < 60f / 2f) // ViewAngle
             {
                 player.SetImpulse(force, position, this, false);
             }
         }
-
         _antiflood = Time.time + 1f;
     }
 }

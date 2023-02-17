@@ -35,6 +35,8 @@ public class WeaponsHandler : MonoBehaviour
     private Coroutine _timer = null;
     private readonly float _timeForRespawnWeapon = 2f;
 
+    public bool IsNeedUpdateHoneycomb;
+    
     #region MonoBehaviour
 
     private void Awake()
@@ -67,7 +69,7 @@ public class WeaponsHandler : MonoBehaviour
                     weaponObj.GetComponent<Weapon>().PhotonViewObject.ViewID, round + s + 1, s, randomPos);
             }
         }
-        //StartTimerForWeaponSpawn();
+        StartTimerForWeaponSpawn();
     }
 
     public void StartTimerForWeaponSpawn()
@@ -83,8 +85,13 @@ public class WeaponsHandler : MonoBehaviour
     [PunRPC]
     public void UpdateWeaponInfoForAll(int weaponViewID, int currentRound, int weaponType, int randomPos)
     {
-        //GetHoneycombsInCircle(currentRound);
-        if (randomPos < 0 || randomPos > _honeycombs.Count) return; 
+        if (IsNeedUpdateHoneycomb)
+        {
+            GetHoneycombsInCircle(currentRound);
+            IsNeedUpdateHoneycomb = false;
+        }
+
+        if (randomPos < 0 || randomPos >= _honeycombs.Count) return; 
         Weapon weapon = PhotonView.Find(weaponViewID).GetComponent<Weapon>();
 
         weapon.transform.parent = _weaponsParent;
@@ -116,8 +123,8 @@ public class WeaponsHandler : MonoBehaviour
                         weapon.GetPhotonView().ViewID, randomHoneycomb.transform.position, randomRoundLayer);
                 }
             }
+            StartTimerForWeaponSpawn();
         }
-        StartTimerForWeaponSpawn();
     }
 
     private Honeycomb GetRandomFreeHoneycomb(Honeycomb[] honeycombs)

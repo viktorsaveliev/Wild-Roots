@@ -147,6 +147,10 @@ MonoBehaviour:
     m_Key: Notice_ServerFull
     m_Metadata:
       m_Items: []
+  - m_Id: 7351930737184768
+    m_Key: Notice_EmptyQueue
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

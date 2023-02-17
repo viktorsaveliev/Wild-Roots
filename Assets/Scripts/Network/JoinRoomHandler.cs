@@ -4,6 +4,7 @@ using Photon.Realtime;
 using UnityEngine.UI;
 using System.Collections;
 using DG.Tweening;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(ConnectHandler), typeof(PhotonView))]
 public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
@@ -144,12 +145,30 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
             {
                 if (_currentSecToFindPlayers <= 0)
                 {
-                    StartGame();
-                    break;
+                    if (PhotonNetwork.CurrentRoom.PlayerCount < 2)
+                    {
+                        /*_character.transform.DOScale(5f, 1f);
+                        _character.transform.DOMoveY(0.84f, 1f);
+                        _mainLobby.SetActive(true);
+                        _searchScreen.SetActive(false);*/
+                        PhotonNetwork.LeaveRoom();
+                        Notice.ShowDialog(NoticeDialog.Message.EmptyQueue);
+                    }
+                    else
+                    {
+                        StartGame();
+                        break;
+                    }
                 }
-                _photonView.RPC(nameof(UpdateWaitingUI), RpcTarget.All);
+                else _photonView.RPC(nameof(UpdateWaitingUI), RpcTarget.All);
             }
         }
+    }
+
+    public override void OnLeftRoom()
+    {
+        base.OnLeftRoom();
+        SceneManager.LoadScene(0);
     }
 
     public void StartGame()

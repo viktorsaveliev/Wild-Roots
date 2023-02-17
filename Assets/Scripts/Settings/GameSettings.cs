@@ -9,6 +9,7 @@ public class GameSettings : MonoBehaviour
 
     void Awake()
     {
+        Application.runInBackground = true;
         Application.targetFrameRate = _frameRateInScene;
 
         StringBus stringBus = new();

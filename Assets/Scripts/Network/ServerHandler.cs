@@ -12,7 +12,7 @@ using System;
 [RequireComponent(typeof(WeaponsHandler), typeof(HoneycombHandler))]
 public class ServerHandler : MonoBehaviourPunCallbacks
 {
-    public List<PlayerInfo> Players = new List<PlayerInfo>();
+    public List<PlayerInfo> Players = new();
 
     [SerializeField] private GameObject _playerPrefab;
     [SerializeField] private JoystickMovement _joystickMove;
@@ -29,6 +29,18 @@ public class ServerHandler : MonoBehaviourPunCallbacks
     private WeaponsHandler _weaponSpawner;
     public PhotonView ServerPhotonView;
 
+    private void Awake()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            if(PhotonNetwork.GetPing() > 100)
+            {
+                PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer.GetNext());
+                print("[WRS]: Changed Master Client. Reason: high ping");
+            }
+        }
+    }
+
     private void Start()
     {
         GameObject PlayerCharacter = PhotonNetwork.Instantiate(_playerPrefab.name, new Vector3(0, 5, 0), Quaternion.identity);
@@ -42,16 +54,16 @@ public class ServerHandler : MonoBehaviourPunCallbacks
         _honeycombHandler.Init();
 
         _weaponSpawner = GetComponent<WeaponsHandler>();
+        _weaponSpawner.IsNeedUpdateHoneycomb = true;
 
         if (PhotonNetwork.IsMasterClient)
         {
             _weaponSpawner.CreateWeapons(CurrentRound); // _honeycombHandler.GetHoneycombCircles[1]
         }
+
         ServerPhotonView = PhotonView.Get(this);
         ServerPhotonView.RPC(nameof(AddPlayerInList), RpcTarget.All, playerControl.PhotonView.ViewID);
         PhotonNetwork.LocalPlayer.TagObject = gameObject;
-
-        _weaponSpawner.StartTimerForWeaponSpawn();
     }
 
     #region Network
@@ -65,17 +77,18 @@ public class ServerHandler : MonoBehaviourPunCallbacks
 
     public override void OnMasterClientSwitched(Player newMasterClient)
     {
-        //GameObject master = (GameObject)newMasterClient.TagObject;
+        GameObject master = (GameObject)newMasterClient.TagObject;
         //_honeycombHandler = master.GetComponent<HoneycombHandler>();
         _honeycombHandler.ReInit(_timeToNextRound);
 
-        //master.GetComponent<WeaponsHandler>().StartTimerForWeaponSpawn();
+        WeaponsHandler weaponSpawner = master.GetComponent<WeaponsHandler>();
+        weaponSpawner.IsNeedUpdateHoneycomb = true;
+        weaponSpawner.StartTimerForWeaponSpawn();
     }
 
     public override void OnLeftRoom()
     {
         ResetPlayerData();
-        
         SceneManager.LoadScene(0); // lobby
     }
 
@@ -84,6 +97,8 @@ public class ServerHandler : MonoBehaviourPunCallbacks
         PlayerInfo player = Players.First(p => p.PhotonView.CreatorActorNr == otherPlayer.ActorNumber);
         if(player != null)
         {
+            player.IsDisconnect = true;
+
             player.Weapon.DeleteWeapon(true);
             Players.Remove(player);
             Destroy(player.gameObject, 1f);

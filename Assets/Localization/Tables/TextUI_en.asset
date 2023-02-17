@@ -152,6 +152,15 @@ MonoBehaviour:
     m_Localized: Server is full. Please, try again later..
     m_Metadata:
       m_Items: []
+  - m_Id: 7351930737184768
+    m_Localized: 'There are no free players in the queue =(
+
+      Please try again..
+
+      PS:
+      We will add DeathMatch mode soon. Stay with us! ;)'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

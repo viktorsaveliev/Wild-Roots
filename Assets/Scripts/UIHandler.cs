@@ -86,7 +86,7 @@ public class UIHandler : MonoBehaviour
 
     private void UpdateHealthUI(PlayerInfo player, int health)
     {
-        if (player.PhotonView.IsMine)
+        if (player.PhotonView.IsMine && !player.IsDisconnect)
         {
             _heartsUI[health].transform.DOShakeRotation(1f, 50, 10, 90).OnComplete(() =>
             {

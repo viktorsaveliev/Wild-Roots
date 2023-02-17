@@ -3,11 +3,11 @@ using UnityEngine;
 public class CameraMoveToPlayer : MonoBehaviour
 {
     public PlayerInfo Player;
-    private float _damping = 0.02f; //12
+    [SerializeField] private float _damping; // 0.02f && 12
     //private float[] _limitPosX = { -1.8f, 1.8f };
     //private float[] _limitPosZ = { -3.1f, 3.1f };
     //private float[] _limitCameraPosX = { -0.68f, 0.68f };
-    private float[] _limitCameraPosZ = { -10f, -8.16f };
+    [SerializeField] private float[] _limitCameraPosZ; // -10f, -8.16f
 
     //private float _currentCameraPosZ = 0;
 

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657773, g: 0.49641532, b: 0.5748176, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657844, g: 0.4964159, b: 0.57481873, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -945,12 +945,12 @@ GameObject:
   - component: {fileID: 199954857}
   - component: {fileID: 199954859}
   m_Layer: 5
-  m_Name: Text (Legacy)
+  m_Name: RoundTimer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &199954856
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2532,7 +2532,7 @@ GameObject:
   - component: {fileID: 381562197}
   - component: {fileID: 381562200}
   m_Layer: 5
-  m_Name: Button (Legacy)
+  m_Name: MenuButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2744,6 +2744,7 @@ MonoBehaviour:
   - {fileID: 5261519451102335235, guid: e97297c647baa7543baf3e5cd8f7fcbd, type: 3}
   - {fileID: 7938129171149183810, guid: 6cec09bb0b1d0994d8620ee0d6954127, type: 3}
   _weaponsCount: 0a00000002000000
+  IsNeedUpdateHoneycomb: 0
 --- !u!114 &397339740
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10814,7 +10815,7 @@ GameObject:
   - component: {fileID: 1008412384}
   - component: {fileID: 1008412383}
   m_Layer: 5
-  m_Name: RawImage
+  m_Name: BG2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14027,6 +14028,7 @@ GameObject:
   - component: {fileID: 1715177796}
   - component: {fileID: 1715177795}
   - component: {fileID: 1715177793}
+  - component: {fileID: 1715177800}
   m_Layer: 0
   m_Name: Main Camera (1)
   m_TagString: MainCamera
@@ -14047,6 +14049,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Player: {fileID: 0}
+  _damping: 0.02
+  _limitCameraPosZ:
+  - -10
+  - -8.16
 --- !u!81 &1715177795
 AudioListener:
   m_ObjectHideFlags: 0
@@ -14221,6 +14227,39 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 60, y: 0, z: 0}
+--- !u!114 &1715177800
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1715177792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_Version: 2
 --- !u!1 &1732212414
 GameObject:
   m_ObjectHideFlags: 0
@@ -16536,7 +16575,7 @@ GameObject:
   - component: {fileID: 2117987973}
   - component: {fileID: 2117987975}
   m_Layer: 5
-  m_Name: Image
+  m_Name: UIFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -5968,6 +5968,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HUD: {fileID: 0}
+  IsDisconnect: 0
 --- !u!114 &2349437205513215653
 MonoBehaviour:
   m_ObjectHideFlags: 0
