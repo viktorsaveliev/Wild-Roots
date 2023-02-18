@@ -65,7 +65,7 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
-    public float GetDamageDamageMultiplie() => (DamageStrength * DamageMultiplier);
+    public float GetDamageMultiplie() => (DamageStrength * DamageMultiplier);
 
     /*[PunRPC]
     public void SetImpulseFromBullet(float force, Vector3 impulsePosition, int fromWhom, int viewID)

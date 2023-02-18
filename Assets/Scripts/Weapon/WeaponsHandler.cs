@@ -29,8 +29,8 @@ public class WeaponsHandler : MonoBehaviour
 
     private HoneycombHandler _honeycombHandler;
     private PhotonView _photonView;
-    private List<Honeycomb> _honeycombs = new List<Honeycomb>();
-    private List<GameObject> _pool = new List<GameObject>();
+    private List<Honeycomb> _honeycombs = new();
+    public List<GameObject> Pool = new();
 
     private Coroutine _timer = null;
     private readonly float _timeForRespawnWeapon = 1.5f;
@@ -44,6 +44,15 @@ public class WeaponsHandler : MonoBehaviour
         _honeycombHandler = GetComponent<HoneycombHandler>();
         _photonView = PhotonView.Get(this);
     }
+
+    private void OnApplicationFocus(bool focus)
+    {
+        if(focus)
+        {
+            _photonView.RPC(nameof(GlobalUpdateWeapons), RpcTarget.MasterClient);
+        }
+    }
+
     #endregion
 
     private IEnumerator SpawnTimer()
@@ -102,32 +111,38 @@ public class WeaponsHandler : MonoBehaviour
         _honeycombs[randomPos].IsTiedWeapon = true;
         _honeycombs.Remove(_honeycombs[randomPos]);
 
-        _pool.Add(weapon.gameObject);
-    }
-
-    public void UpdateWeapons()
-    {
-        Vector3[] weaponPosition = new Vector3[_pool.Count];
-        bool[] weaponActiveStatus = new bool[_pool.Count];
-        for (int i = 0; i < _pool.Count; i++)
-        {
-            weaponPosition[i] = _pool[i].transform.position;
-            weaponActiveStatus[i] = _pool[i].activeSelf;
-        }
-        _photonView.RPC(nameof(UpdateWeaponsForAll), RpcTarget.Others, weaponPosition, weaponActiveStatus);
+        Pool.Add(weapon.gameObject);
     }
 
     [PunRPC]
-    public void UpdateWeaponsForAll(Vector3[] weaponPos, bool[] weaponActive)
+    public void GlobalUpdateWeapons()
     {
-        for (int i = 0; i < _pool.Count; i++)
+        Vector3[] weaponPosition = new Vector3[Pool.Count];
+        Vector3[] weaponScale = new Vector3[Pool.Count];
+        bool[] weaponActiveStatus = new bool[Pool.Count];
+        
+        for (int i = 0; i < Pool.Count; i++)
         {
-            Weapon weapon = _pool[i].GetComponent<Weapon>();
+            weaponPosition[i] = Pool[i].transform.position;
+            weaponScale[i] = Pool[i].transform.lossyScale;
+            weaponActiveStatus[i] = Pool[i].activeSelf;
+        }
+        _photonView.RPC(nameof(UpdateWeaponsForAll), RpcTarget.Others, weaponPosition, weaponScale, weaponActiveStatus);
+    }
+
+    [PunRPC]
+    public void UpdateWeaponsForAll(Vector3[] weaponPos, Vector3[] weaponScale, bool[] weaponActive)
+    {
+        for (int i = 0; i < Pool.Count; i++)
+        {
+            /*Weapon weapon = _pool[i].GetComponent<Weapon>();
             if (weapon != null && weapon.Owner != -1)
             {
-                _pool[i].transform.position = weaponPos[i];
-            }
-            _pool[i].SetActive(weaponActive[i]);
+                
+            }*/
+            Pool[i].transform.position = weaponPos[i];
+            Pool[i].transform.DOScale(weaponScale[i], 0.5f);
+            Pool[i].SetActive(weaponActive[i]);
         }
     }
 
@@ -219,15 +234,15 @@ public class WeaponsHandler : MonoBehaviour
 
     protected bool TryGetObject(out GameObject result)
     {
-        result = _pool.FirstOrDefault(p => p.activeSelf == false);
+        result = Pool.FirstOrDefault(p => p.activeSelf == false);
         return result != null;
     }
 
     public void DeleteWeaponInRoundLayer(int round)
     {
-        for (int i = 0; i < _pool.Count; i++)
+        for (int i = 0; i < Pool.Count; i++)
         {
-            Weapon weapon = _pool[i].GetComponent<Weapon>();
+            Weapon weapon = Pool[i].GetComponent<Weapon>();
             if (weapon.CurrentRoundLayerWhereImStay != round) continue;
             _photonView.RPC(nameof(DeleteWeaponForAll), RpcTarget.All, weapon.PhotonViewObject.ViewID);
         }

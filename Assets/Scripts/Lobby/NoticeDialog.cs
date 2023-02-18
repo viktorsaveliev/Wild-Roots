@@ -40,7 +40,8 @@ public class NoticeDialog : MonoBehaviour
         StartTutorial,
         EndTutorial,
         ServerFull,
-        EmptyQueue
+        EmptyQueue,
+        BackToLobby
     }
 
     public Message CurrentMessage { get; private set; }
@@ -61,7 +62,8 @@ public class NoticeDialog : MonoBehaviour
         "Notice_StartTutorial",
         "Notice_EndTutorial",
         "Notice_ServerFull",
-        "Notice_EmptyQueue"
+        "Notice_EmptyQueue",
+        "Notice_BackToLobby"
     };
 
     public void ShowDialog(Message message, INoticeAction action = null, string leftButtonTextKey = "Notice_Close", string rightButtonTextKey = null)

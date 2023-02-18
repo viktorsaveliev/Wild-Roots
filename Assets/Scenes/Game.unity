@@ -2604,8 +2604,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2144966868}
         m_TargetAssemblyTypeName: BackToLobby, Assembly-CSharp
-        m_MethodName: LoadLobby
-        m_Mode: 1
+        m_MethodName: ExitButton
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -2691,7 +2691,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e61491424b01ae941893cfa368403318, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Players: []
   _playerPrefab: {fileID: 2349437205677997808, guid: 3c10ae2f9b8b6c548ac2aad8c064f5ee, type: 3}
   _joystickMove: {fileID: 559788928}
   _joystickAttack: {fileID: 827547769}
@@ -2731,6 +2730,7 @@ MonoBehaviour:
   - {fileID: 5261519451102335235, guid: e97297c647baa7543baf3e5cd8f7fcbd, type: 3}
   - {fileID: 7938129171149183810, guid: 6cec09bb0b1d0994d8620ee0d6954127, type: 3}
   _weaponsCount: 0a00000002000000
+  Pool: []
   IsNeedUpdateHoneycomb: 0
 --- !u!114 &397339740
 MonoBehaviour:
@@ -10968,6 +10968,7 @@ GameObject:
   - component: {fileID: 1045085102}
   - component: {fileID: 1045085101}
   - component: {fileID: 1045085100}
+  - component: {fileID: 1045085103}
   m_Layer: 0
   m_Name: FallPoint
   m_TagString: Untagged
@@ -10996,7 +10997,7 @@ BoxCollider:
   m_GameObject: {fileID: 1045085099}
   m_Material: {fileID: 0}
   m_IsTrigger: 1
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 30, y: 2, z: 30}
   m_Center: {x: 0, y: 0, z: 0}
@@ -11008,13 +11009,26 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1045085099}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -8.76, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &1045085103
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1045085099}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 12
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &1088197439
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12713,12 +12727,12 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2144966868}
         m_TargetAssemblyTypeName: BackToLobby, Assembly-CSharp
-        m_MethodName: LoadLobby
-        m_Mode: 1
+        m_MethodName: ExitButton
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 1
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0

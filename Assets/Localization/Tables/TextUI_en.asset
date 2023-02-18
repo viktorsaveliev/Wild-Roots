@@ -161,6 +161,14 @@ MonoBehaviour:
       You can try new DeathMatch mode ;)'
     m_Metadata:
       m_Items: []
+  - m_Id: 7767459947925504
+    m_Localized: Do you want to turn to the lobby?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7789583227998208
+    m_Localized: 'The search will end after:'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

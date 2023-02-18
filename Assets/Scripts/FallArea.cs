@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class FallArea : MonoBehaviour
 {
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerExit(Collider other)
     {
         PlayerInfo player = other.GetComponent<PlayerInfo>();
         if(player)

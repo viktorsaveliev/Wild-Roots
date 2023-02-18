@@ -38,7 +38,7 @@ public class RootsMine : Weapon, IExplodable
     public void Explode(int[] viewID, Vector3 position, float force)
     {
         PlayAttackFX();
-        AudioSource.PlayClipAtPoint(AudioFX[(int)AudioType.Explode], Vector3.zero);
+        AudioSource.PlayClipAtPoint(AudioFX[(int)AudioType.Explode], transform.position, 1f);
 
         PlayerMove[] targets = new PlayerMove[viewID.Length];
 

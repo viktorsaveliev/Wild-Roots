@@ -14,8 +14,6 @@ public class PlayerInfo : MonoBehaviour
     public AudioSource AudioSource { get; private set; }
     public Animator Animator { get; private set; }
 
-    public bool IsDisconnect;
-
     void Awake()
     {
         Move = GetComponent<PlayerMove>();

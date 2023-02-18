@@ -13,7 +13,7 @@ public class TakeImpulse : MonoBehaviour
     public void SetImpulse(float force, Vector3 impulsePosition, Weapon fromWhom, bool knockout = true)
     {
         _player.Health.FromWhomDamage = fromWhom;
-        _player.Rigidbody.AddExplosionForce(force + _player.Health.GetDamageDamageMultiplie(), impulsePosition, 10f);
+        _player.Rigidbody.AddExplosionForce(force + _player.Health.GetDamageMultiplie(), impulsePosition, 10f);
 
         if(knockout)
         {

@@ -27,4 +27,9 @@ public class GameSettings : MonoBehaviour
         yield return LocalizationSettings.InitializationOperation;
         LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[langID];
     }
+
+    private void Start()
+    {
+        Notice.HideDialog();
+    }
 }

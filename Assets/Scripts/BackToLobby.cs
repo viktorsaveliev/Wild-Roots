@@ -1,13 +1,30 @@
-using DG.Tweening;
 using Photon.Pun;
 using UnityEngine.SceneManagement;
 
-public class BackToLobby : MonoBehaviourPunCallbacks
+public class BackToLobby : MonoBehaviourPunCallbacks, INoticeAction
 {
-    public void LoadLobby()
+    public void ActionOnClickNotice(int button)
     {
+        if (button == 0) LoadLobby();
+    }
+
+    public void ExitButton(int buttonID)
+    {
+        if (buttonID == 0)
+        {
+            LoadLobby();
+        }
+        else
+        {
+            Notice.ShowDialog(NoticeDialog.Message.BackToLobby, this, "NoticeButton_Yes", "Notice_Close");
+        }
+    }
+
+    private void LoadLobby()
+    {
+        PhotonNetwork.DestroyPlayerObjects(PhotonNetwork.LocalPlayer);
+
         LoadingUI.Show(LoadingShower.Type.Progress);
-        DOTween.Clear();
         PhotonNetwork.LeaveRoom();
     }
 

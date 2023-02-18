@@ -66,18 +66,18 @@ public class PlayerHUD : MonoBehaviour
         {
             if (!_photonView.IsMine)
             {
-                _damageIndicator.color = _damageGradient.Evaluate(_player.Health.DamageStrength);
+                if(_damageIndicator != null) _damageIndicator.color = _damageGradient.Evaluate(_player.Health.DamageStrength);
             }
             else
             {
-                _iconForMinePlayer.color = _damageGradient.Evaluate(_player.Health.DamageStrength);
+                if(_iconForMinePlayer != null) _iconForMinePlayer.color = _damageGradient.Evaluate(_player.Health.DamageStrength);
             }
         }
     }
 
     private void ShowAimIndicator(PlayerInfo player)
     {
-        if (player != _player) return;
+        if (player != _player || _aimIndicator == null) return;
         _aimIndicator.enabled = true;
 
         if (_aimIndicatorAnimation != null) DOTween.Kill(_aimIndicatorAnimation);
@@ -86,6 +86,7 @@ public class PlayerHUD : MonoBehaviour
 
     public void HideAimIndicator()
     {
+        if(_aimIndicator == null) return;
         _aimIndicator.enabled = false;
         if (_aimIndicatorAnimation != null)
         {

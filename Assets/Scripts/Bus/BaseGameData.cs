@@ -1,4 +1,4 @@
 public static class BaseGameData
 {
-    public static string GameVersion = "v0.02.13";
+    public static string GameVersion = "v0.02.18";
 }

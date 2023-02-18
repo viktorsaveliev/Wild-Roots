@@ -12,7 +12,7 @@ using System;
 [RequireComponent(typeof(WeaponsHandler), typeof(HoneycombHandler))]
 public class ServerHandler : MonoBehaviourPunCallbacks
 {
-    public List<PlayerInfo> Players = new();
+    public List<PlayerInfo> Players { get; private set; } = new();
 
     [SerializeField] private GameObject _playerPrefab;
     [SerializeField] private JoystickMovement _joystickMove;
@@ -33,7 +33,7 @@ public class ServerHandler : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            if(PhotonNetwork.GetPing() > 100)
+            if(PhotonNetwork.GetPing() > 100 && PhotonNetwork.CurrentRoom.PlayerCount > 1)
             {
                 PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer.GetNext());
                 print("[WRS]: Changed Master Client. Reason: high ping");
@@ -84,6 +84,16 @@ public class ServerHandler : MonoBehaviourPunCallbacks
         WeaponsHandler weaponSpawner = master.GetComponent<WeaponsHandler>();
         weaponSpawner.IsNeedUpdateHoneycomb = true;
         weaponSpawner.StartTimerForWeaponSpawn();
+
+        if(GameSettings.GameMode == SelectGameMode.GameMode.Deathmatch)
+        {
+            weaponSpawner.Pool.Clear();
+            Weapon[] weapons = FindObjectsOfType<Weapon>();
+            foreach(Weapon weapon in weapons)
+            {
+                weaponSpawner.Pool.Add(weapon.gameObject);
+            }
+        }
     }
 
     public override void OnLeftRoom()
@@ -97,13 +107,11 @@ public class ServerHandler : MonoBehaviourPunCallbacks
         PlayerInfo player = Players.First(p => p.PhotonView.CreatorActorNr == otherPlayer.ActorNumber);
         if(player != null)
         {
-            player.IsDisconnect = true;
-
             player.Weapon.DeleteWeapon(true);
             Players.Remove(player);
             Destroy(player.gameObject, 1f);
 
-            if (PhotonNetwork.IsMasterClient)
+            if (PhotonNetwork.IsMasterClient && GameSettings.GameMode == SelectGameMode.GameMode.PvP)
             {
                 EventBus.OnPlayerLose?.Invoke();
             }

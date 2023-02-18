@@ -71,7 +71,7 @@ public class Grenade : Weapon, IExplodable
 
         PlayAttackFX();
 
-        AudioSource.PlayClipAtPoint(AudioFX[(int)AudioType.Explode], Vector3.zero);
+        AudioSource.PlayClipAtPoint(AudioFX[(int)AudioType.Explode], transform.position, 1f);
 
         transform.DOScale(0.1f, 0.2f).OnComplete(() => 
             Invoke(nameof(DisableWeapon), 1f));

@@ -12,7 +12,10 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
     [SerializeField] private GameObject _mainLobby;
     [SerializeField] private GameObject _searchScreen;
     [SerializeField] private GameObject _startButton;
+
     [SerializeField] private Text _textWaiting;
+    [SerializeField] private Text _timerCount;
+
     [SerializeField] private LobbySlot[] _lobbySlots;
     [SerializeField] private GameObject _character;
 
@@ -23,6 +26,8 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
     private Coroutine _secTimer;
     private readonly int _secToFindPlayers = 60;
     private int _currentSecToFindPlayers;
+
+    private SelectGameMode.GameMode _selectedGameMode;
 
     private void Start()
     {
@@ -73,12 +78,15 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
     public void SelectMode(int modeID)
     {
         EventBus.OnPlayerClickUI?.Invoke(0);
-        if(!_connectHandler.IsConnected)
+
+        _selectedGameMode = (SelectGameMode.GameMode)modeID;
+        if (!_connectHandler.IsConnected)
         {
             Notice.ShowDialog(NoticeDialog.Message.ConnectionError, this, "Notice_Retry", "Notice_Close");
             return;
         }
-        GameSettings.GameMode = (SelectGameMode.GameMode)modeID;
+
+        GameSettings.GameMode = _selectedGameMode;
         Play(GameSettings.GameMode);
     }
 
@@ -86,7 +94,7 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
     {
         if(button == 0)
         {
-            Play(GameSettings.GameMode);
+            Play(_selectedGameMode);
         }
         Notice.HideDialog();
     }
@@ -108,7 +116,7 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
             }
             if (!full)
             {
-                _connectHandler.Log("Cant found free slot for you :(");
+                print("Cant found free slot for you :(");
             }
         }
     }
@@ -201,7 +209,7 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
                         break;
                     }
                 }
-                else _photonView.RPC(nameof(UpdateWaitingUI), RpcTarget.All);
+                else _photonView.RPC(nameof(UpdateWaitingUI), RpcTarget.All, _currentSecToFindPlayers);
             }
         }
     }
@@ -246,8 +254,13 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
     }
     
     [PunRPC]
-    public void UpdateWaitingUI()
+    public void UpdateWaitingUI(int time)
     {
+        _currentSecToFindPlayers = time;
+        if (_currentSecToFindPlayers > 59) _timerCount.text = $"1:{_currentSecToFindPlayers - 60}";
+        else if (_currentSecToFindPlayers > 9) _timerCount.text = $"0:{_currentSecToFindPlayers}";
+        else _timerCount.text = $"0:0{_currentSecToFindPlayers}";
+
         _textWaiting.text = $"{PhotonNetwork.CurrentRoom.PlayerCount}/{PhotonNetwork.CurrentRoom.MaxPlayers}";
         if (PhotonNetwork.CurrentRoom.PlayerCount == PhotonNetwork.CurrentRoom.MaxPlayers && _currentSecToFindPlayers > 3) // 
         {
