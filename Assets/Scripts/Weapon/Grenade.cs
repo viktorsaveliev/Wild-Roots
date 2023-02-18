@@ -13,7 +13,7 @@ public class Grenade : Weapon, IExplodable
         Radius = 3f;
 
         Label = "Grenade";
-        LifetimeSeconds = 2f;       
+        LifetimeSeconds = 1.3f;       
         SetLocalPosAndRotate(new Vector3(-0.051f, 0.055f, 0.08f), Quaternion.Euler(-80.3f, 90, -40f));
     }
 

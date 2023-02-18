@@ -13,8 +13,11 @@ public class UIHandler : MonoBehaviour
     [SerializeField] private Text _killer;
     [SerializeField] private Text _killed;
     [SerializeField] private Text _playersCount;
+    [SerializeField] private Text _playersText;
 
     [SerializeField] private Sprite _fallIcon;
+
+    [SerializeField] private Button _buttonBackToLobby;
 
     private bool _killLogIsActive;
     private Coroutine _lifetimeKillLog;
@@ -26,7 +29,23 @@ public class UIHandler : MonoBehaviour
     {
         _serverHandler = GetComponent<ServerHandler>();
         _photonView = PhotonView.Get(this);
-        _playersCount.text = $"{PhotonNetwork.CurrentRoom.PlayerCount}";
+
+        if(GameSettings.GameMode == SelectGameMode.GameMode.PvP)
+        {
+            _playersCount.text = $"{PhotonNetwork.CurrentRoom.PlayerCount}";
+            _buttonBackToLobby.gameObject.SetActive(false);
+        }
+        else
+        {
+            _playersCount.gameObject.SetActive(false);
+            _playersText.gameObject.SetActive(false);
+            _buttonBackToLobby.gameObject.SetActive(true);
+
+            for(int i = 0; i < _heartsUI.Length; i++)
+            {
+                _heartsUI[i].gameObject.SetActive(false);
+            }
+        }
     }
 
     private void OnEnable()
@@ -55,7 +74,7 @@ public class UIHandler : MonoBehaviour
                     winner = player;
                 }
             }
-            if(playersCount < 2)
+            if(playersCount < 2 && GameSettings.GameMode == SelectGameMode.GameMode.PvP)
             {
                 Invoke(nameof(MatchEnded), 7f);
             }
@@ -81,18 +100,24 @@ public class UIHandler : MonoBehaviour
     public void UpdatePlayersCount(int count, int winnerID = -1)
     {
         _playersCount.text = $"{count}";
-        if (count < 2 && winnerID != -1) EventBus.OnMatchEnded?.Invoke(winnerID);
+        if (count < 2 && winnerID != -1 && GameSettings.GameMode == SelectGameMode.GameMode.PvP)
+        {
+            EventBus.OnMatchEnded?.Invoke(winnerID);
+        }
     }
 
     private void UpdateHealthUI(PlayerInfo player, int health)
     {
         if (player.PhotonView.IsMine && !player.IsDisconnect)
         {
-            _heartsUI[health].transform.DOShakeRotation(1f, 50, 10, 90).OnComplete(() =>
+            if (GameSettings.GameMode == SelectGameMode.GameMode.PvP)
             {
-                _heartsUI[health].DOColor(new Color(1, 1, 1, 0.5f), 1f);
-                _heartsUI[health].transform.DOScale(new Vector3(0.8f, 0.8f, 0.8f), 0.5f);
-            });
+                _heartsUI[health].transform.DOShakeRotation(1f, 50, 10, 90).OnComplete(() =>
+                {
+                    _heartsUI[health].DOColor(new Color(1, 1, 1, 0.5f), 1f);
+                    _heartsUI[health].transform.DOScale(new Vector3(0.8f, 0.8f, 0.8f), 0.5f);
+                });
+            }
             _photonView.RPC("EnableKillLogUI", RpcTarget.All, player.PhotonView.ViewID, health);
         }
     }
@@ -101,7 +126,7 @@ public class UIHandler : MonoBehaviour
     public void EnableKillLogUI(int ViewID, int health)
     {
         PlayerInfo killed = PhotonView.Find(ViewID).GetComponent<PlayerInfo>();
-        if(!_killLogIsActive)
+        if(!_killLogIsActive && !killed.IsDisconnect)
         {
             if(killed.Health.FromWhomDamage != null)
             {

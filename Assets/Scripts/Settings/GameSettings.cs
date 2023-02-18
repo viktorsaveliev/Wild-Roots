@@ -4,6 +4,8 @@ using UnityEngine.Localization.Settings;
 
 public class GameSettings : MonoBehaviour
 {
+    public static SelectGameMode.GameMode GameMode;
+
     [SerializeField] private int _frameRateInScene;
     [SerializeField] private AudioSource _musicSource;
 

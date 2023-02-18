@@ -31,10 +31,14 @@ public class PlayerHealth : MonoBehaviour
 
     public void PlayerFell()
     {
-        if(--Health <= 0)
+        if(GameSettings.GameMode == SelectGameMode.GameMode.PvP)
         {
-            EventBus.OnPlayerLose?.Invoke();
+            if (--Health <= 0)
+            {
+                EventBus.OnPlayerLose?.Invoke();
+            }
         }
+        
         if(_playerInfo.Weapon) _playerInfo.Weapon.DeleteWeapon(true);
         gameObject.SetActive(false);
         EventBus.OnPlayerFall?.Invoke(_playerInfo, Health);
@@ -42,6 +46,7 @@ public class PlayerHealth : MonoBehaviour
 
     public void SetDamageStrength(float plus)
     {
+        if (GameSettings.GameMode != SelectGameMode.GameMode.PvP) return;
         DamageStrength += plus;
         if (DamageStrength > 1f) DamageStrength = 1f;
     }

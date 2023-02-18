@@ -25,6 +25,7 @@ public class ConnectHandler : MonoBehaviourPunCallbacks
     {
         IsConnected = true;
         Log($"Connected to region: {PhotonNetwork.CloudRegion}");
+        print($"Players online: {PhotonNetwork.CountOfPlayers}");
     }
 
     public override void OnDisconnected(DisconnectCause cause)

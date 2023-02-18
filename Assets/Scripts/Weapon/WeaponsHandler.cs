@@ -33,7 +33,7 @@ public class WeaponsHandler : MonoBehaviour
     private List<GameObject> _pool = new List<GameObject>();
 
     private Coroutine _timer = null;
-    private readonly float _timeForRespawnWeapon = 2f;
+    private readonly float _timeForRespawnWeapon = 1.5f;
 
     public bool IsNeedUpdateHoneycomb;
     
