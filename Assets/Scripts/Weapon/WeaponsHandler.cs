@@ -105,6 +105,32 @@ public class WeaponsHandler : MonoBehaviour
         _pool.Add(weapon.gameObject);
     }
 
+    public void UpdateWeapons()
+    {
+        Vector3[] weaponPosition = new Vector3[_pool.Count];
+        bool[] weaponActiveStatus = new bool[_pool.Count];
+        for (int i = 0; i < _pool.Count; i++)
+        {
+            weaponPosition[i] = _pool[i].transform.position;
+            weaponActiveStatus[i] = _pool[i].activeSelf;
+        }
+        _photonView.RPC(nameof(UpdateWeaponsForAll), RpcTarget.Others, weaponPosition, weaponActiveStatus);
+    }
+
+    [PunRPC]
+    public void UpdateWeaponsForAll(Vector3[] weaponPos, bool[] weaponActive)
+    {
+        for (int i = 0; i < _pool.Count; i++)
+        {
+            Weapon weapon = _pool[i].GetComponent<Weapon>();
+            if (weapon != null && weapon.Owner != -1)
+            {
+                _pool[i].transform.position = weaponPos[i];
+            }
+            _pool[i].SetActive(weaponActive[i]);
+        }
+    }
+
     public void SpawnRandomWeapon(int round)
     {
         if (PhotonNetwork.IsMasterClient)
@@ -177,6 +203,7 @@ public class WeaponsHandler : MonoBehaviour
 
         weaponObject.transform.position = new Vector3(honeycombPos.x, 0.85f, honeycombPos.z);
         weaponObject.transform.rotation = Quaternion.Euler(_weaponsRotation[(int)weapon.WeaponType]);
+        weaponObject.transform.parent = _weaponsParent;
 
         weaponObject.GetComponent<Collider>().isTrigger = true;
 
