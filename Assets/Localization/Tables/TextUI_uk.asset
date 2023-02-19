@@ -186,6 +186,21 @@ MonoBehaviour:
       \u0447\u0435\u0440\u0435\u0437:"
     m_Metadata:
       m_Items: []
+  - m_Id: 7981085581148160
+    m_Localized: "\u041F\u0435\u0440\u0435\u043C\u043E\u0436\u0435 \u043E\u0441\u0442\u0430\u043D\u043D\u0456\u0439
+      \u0432\u0438\u0436\u0438\u0432\u0448\u0438\u0439 (5 \u0433\u0440\u0430\u0432\u0446\u0456\u0432)"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7981742379794432
+    m_Localized: "\u041D\u0435\u0441\u043A\u0456\u043D\u0447\u0435\u043D\u043D\u0438\u0439
+      \u0440\u0435\u0436\u0438\u043C\n\u041F\u0435\u0440\u0435\u043C\u043E\u0436\u0446\u0456\u0432
+      \u043D\u0435 \u0431\u0443\u0434\u0435"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7983587038887936
+    m_Localized: "\u0406\u0433\u0440\u043E\u0432\u0438\u0439 \u0440\u0435\u0436\u0438\u043C"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

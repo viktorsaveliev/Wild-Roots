@@ -169,6 +169,20 @@ MonoBehaviour:
     m_Localized: 'The search will end after:'
     m_Metadata:
       m_Items: []
+  - m_Id: 7981085581148160
+    m_Localized: The last survivor will win (5 players max)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7981742379794432
+    m_Localized: 'Infinite mode
+
+      There will be no winners'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7983587038887936
+    m_Localized: Game Mode
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:
