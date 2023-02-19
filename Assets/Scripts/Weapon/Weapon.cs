@@ -30,8 +30,8 @@ public abstract class Weapon : MonoBehaviour
     protected LayerMask LayerEnemy;
     protected LayerMask LayerCells;
 
-    public PlayerWeapon Player { get; protected set; }
-    public int CurrentRoundLayerWhereImStay = -1;
+    public CharacterWeapon CharacterOwner { get; protected set; }
+    public int CurrentLayerWhereImStay = -1;
     public Honeycomb CurrentHoneycombWhereImStay;
     public WeaponsHandler.WeaponType WeaponType;
 
@@ -51,20 +51,20 @@ public abstract class Weapon : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        PlayerInfo player = other.GetComponent<PlayerInfo>();
-        if (PhotonNetwork.IsMasterClient)
+        IWeaponable character = other.GetComponent<IWeaponable>();
+        if (character != null && character.GetCurrentWeapon() is Punch && Owner == -1)
         {
-            if (player && player.Weapon.GetCurrentWeapon is Punch && Owner == -1)
+            //if (character.GetPhotonView.IsMine) AudioSource.PlayClipAtPoint(AudioFX[(int)AudioType.Pickup], transform.position);
+            if (PhotonNetwork.IsMasterClient)
             {
-                if(SpawnAnimation != null && !SpawnAnimation.IsComplete()) SpawnAnimation.Complete();
-                if (player.Weapon.GetCurrentWeapon is Punch && player.Move.GetMoveActive)
+                IMoveable characterMove = other.GetComponent<IMoveable>();
+                if (SpawnAnimation != null && !SpawnAnimation.IsComplete()) SpawnAnimation.Complete();
+                if (character.GetCurrentWeapon() is Punch && characterMove.GetMoveActive())
                 {
                     StringBus stringBus = new();
 
-                    if (PhotonNetwork.OfflineMode) player.Weapon.GiveWeapon(PhotonViewObject.ViewID);
-                    else player.PhotonView.RPC(stringBus.GiveWeapon, RpcTarget.All, PhotonViewObject.ViewID);
-                    
-                    if(player.PhotonView.IsMine) AudioSource.PlayClipAtPoint(AudioFX[(int)AudioType.Pickup], transform.position);
+                    if (PhotonNetwork.OfflineMode) character.GiveWeapon(PhotonViewObject.ViewID);
+                    else character.GetPhotonView().RPC(stringBus.GiveWeapon, RpcTarget.All, PhotonViewObject.ViewID);
                 }
             }
         }
@@ -85,7 +85,7 @@ public abstract class Weapon : MonoBehaviour
         UpdatePositionForWeapon(currentPos, currentRotate);
 
         if (LifetimeSeconds != -1) StartCoroutine(LifeTimer(LifetimeSeconds));
-        Player.EnableAttackAnimation(WeaponType);
+        CharacterOwner.EnableAttackAnimation(WeaponType);
     }
 
     protected void Throw(Vector2 target)
@@ -106,19 +106,18 @@ public abstract class Weapon : MonoBehaviour
 
         for(int i = 0; i < collidersCount; i++)
         {
-            PhotonView view = _charactersClosed[i].GetComponent<PhotonView>();
-            if(view != null) playersPhotonViewID[i] = view.ViewID;
+            if(_charactersClosed[i].TryGetComponent<PhotonView>(out var view)) playersPhotonViewID[i] = view.ViewID;
         }
 
         return playersPhotonViewID;
     }
 
-    public virtual void Init(PlayerWeapon player)
+    public virtual void Init(CharacterWeapon character)
     {
-        Player = player;
+        CharacterOwner = character;
         LayerEnemy = LayerMask.GetMask("Player");
         LayerCells = LayerMask.GetMask("Honeycomb");
-        SetOwnerLocal(Player.GetPhotonView.ViewID);
+        SetOwnerLocal(CharacterOwner.GetPhotonView().ViewID);
         GetComponent<AnimateObject>().StopTweenAnimate();
     }
 
@@ -141,15 +140,14 @@ public abstract class Weapon : MonoBehaviour
     public void DisableWeapon()
     {
         gameObject.SetActive(false);
-        CurrentRoundLayerWhereImStay = -1;
+        CurrentLayerWhereImStay = -1;
         CurrentHoneycombWhereImStay = null;
         SetOwnerLocal(-1);
     }
 
     private void UpdatePositionForWeapon(Vector3 currentPos, Quaternion currentRotate)
     {
-        Player.transform.position = currentPos;
-        Player.transform.rotation = currentRotate;
+        CharacterOwner.transform.SetPositionAndRotation(currentPos, currentRotate);
     }
 
     /*public Honeycomb[] GetCellsInRadius(Vector3 position, float radius)

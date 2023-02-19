@@ -4,9 +4,9 @@ using Photon.Pun;
 
 public class Grenade : Weapon, IExplodable
 {
-    public override void Init(PlayerWeapon player)
+    public override void Init(CharacterWeapon character)
     {
-        base.Init(player);
+        base.Init(character);
 
         Force = 1500f;
         Strength = 1;
@@ -26,7 +26,7 @@ public class Grenade : Weapon, IExplodable
         Throw(target);
 
         //SetOwnerLocal(-1);
-        Player.DeleteWeapon(false);
+        CharacterOwner.DeleteWeapon(false);
         EventBus.OnPlayerShoot?.Invoke(transform, LifetimeSeconds);
     }
 

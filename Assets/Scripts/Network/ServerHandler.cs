@@ -77,23 +77,18 @@ public class ServerHandler : MonoBehaviourPunCallbacks
 
     public override void OnMasterClientSwitched(Player newMasterClient)
     {
-        GameObject master = (GameObject)newMasterClient.TagObject;
-        //_honeycombHandler = master.GetComponent<HoneycombHandler>();
-        _honeycombHandler.ReInit(_timeToNextRound);
-
-        WeaponsHandler weaponSpawner = master.GetComponent<WeaponsHandler>();
-        weaponSpawner.IsNeedUpdateHoneycomb = true;
-        weaponSpawner.StartTimerForWeaponSpawn();
-
-        if(GameSettings.GameMode == SelectGameMode.GameMode.Deathmatch)
+        if (GameSettings.GameMode == GameModeSelector.GameMode.Deathmatch)
         {
-            weaponSpawner.Pool.Clear();
-            Weapon[] weapons = FindObjectsOfType<Weapon>();
-            foreach(Weapon weapon in weapons)
-            {
-                weaponSpawner.Pool.Add(weapon.gameObject);
-            }
+            _weaponSpawner.UpdateWeaponsPool();
         }
+
+        _weaponSpawner.IsNeedUpdateHoneycomb = true;
+        if (PhotonNetwork.IsMasterClient)
+        {
+            _weaponSpawner.StartTimerForWeaponSpawn();
+        }
+        //_honeycombHandler = master.GetComponent<HoneycombHandler>();
+        //_honeycombHandler.ReInit(_timeToNextRound);
     }
 
     public override void OnLeftRoom()
@@ -104,14 +99,14 @@ public class ServerHandler : MonoBehaviourPunCallbacks
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
-        PlayerInfo player = Players.First(p => p.PhotonView.CreatorActorNr == otherPlayer.ActorNumber);
+        PlayerInfo player = Players.FirstOrDefault(p => p.PhotonView.CreatorActorNr == otherPlayer.ActorNumber);
         if(player != null)
         {
             player.Weapon.DeleteWeapon(true);
             Players.Remove(player);
             Destroy(player.gameObject, 1f);
 
-            if (PhotonNetwork.IsMasterClient && GameSettings.GameMode == SelectGameMode.GameMode.PvP)
+            if (PhotonNetwork.IsMasterClient && GameSettings.GameMode == GameModeSelector.GameMode.PvP)
             {
                 EventBus.OnPlayerLose?.Invoke();
             }

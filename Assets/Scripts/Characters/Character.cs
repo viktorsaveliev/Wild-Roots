@@ -1,7 +1,7 @@
 using Photon.Pun;
 using UnityEngine;
 
-public class PlayerInfo : MonoBehaviour
+public class Character : MonoBehaviour
 {
     public PlayerMove Move { get; private set; }
     public CharacterWeapon Weapon { get; private set; }

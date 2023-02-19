@@ -1,18 +1,16 @@
-using UnityEngine;
+using DG.Tweening;
 using Photon.Pun;
-//using DG.Tweening;
+using UnityEngine;
 
-[RequireComponent(typeof(PhotonView))]
-public class PlayerWeapon : MonoBehaviour
+public class CharacterWeapon : MonoBehaviour, IWeaponable
 {
-    /*[SerializeField] private Punch _punch;
+
+    [SerializeField] private Punch _punch;
     public Transform WeaponPosition;
-    //public float CurrentCooldown = 0;
 
     private Weapon _currentWeapon;
 
     private PhotonView _photonView;
-    
     public Animator Animator { get; private set; }
 
     private void Start()
@@ -22,9 +20,8 @@ public class PlayerWeapon : MonoBehaviour
         EquipPunches();
     }
 
-    public PhotonView GetPhotonView() => _photonView;
+    public Weapon GetCurrentWeapon() => _currentWeapon;
 
-    [PunRPC]
     public void GiveWeapon(int id)
     {
         if (_currentWeapon != null && _currentWeapon != _punch) DeleteWeapon(true);
@@ -41,34 +38,15 @@ public class PlayerWeapon : MonoBehaviour
         EventBus.OnPlayerTakeWeapon?.Invoke();
     }
 
-    public Weapon GetCurrentWeapon() => _currentWeapon;
-
-    [PunRPC]
-    public void TakeAim()
+    public void EquipPunches()
     {
-        EventBus.OnPlayerTakeAim?.Invoke(GetComponent<PlayerInfo>());
-    }
-
-    [PunRPC]
-    public void HideAim(int id)
-    {
-        if (!PhotonView.Find(id).TryGetComponent<PlayerInfo>(out var player)) return;
-        player.HUD.HideAimIndicator();
-    }
-
-    private void ResetWeaponHoneycombData(Weapon weapon)
-    {
-        if (weapon.CurrentHoneycombWhereImStay != null)
-        {
-            weapon.CurrentHoneycombWhereImStay.IsTiedWeapon = false;
-            weapon.CurrentHoneycombWhereImStay = null;
-        }
-        weapon.CurrentLayerWhereImStay = -1;
+        _currentWeapon = _punch;
+        _currentWeapon.Init(this);
     }
 
     public void DeleteWeapon(bool destroyObject)
     {
-        if(_currentWeapon != null && _currentWeapon != _punch)
+        if (_currentWeapon != null && _currentWeapon != _punch)
         {
             if (destroyObject)
             {
@@ -90,11 +68,18 @@ public class PlayerWeapon : MonoBehaviour
         });
     }
 
-    public void EquipPunches()
+    public void HideAim(int id)
     {
-        _currentWeapon = _punch;
-        _currentWeapon.Init(this);
+        //if (!PhotonView.Find(id).TryGetComponent<PlayerInfo>(out var player)) return;
+        //player.HUD.HideAimIndicator();
     }
+
+    public void TakeAim()
+    {
+        //EventBus.OnPlayerTakeAim?.Invoke(GetComponent<PlayerInfo>());
+    }
+
+    public PhotonView GetPhotonView() => _photonView;
 
     public void EnableAttackAnimation(WeaponsHandler.WeaponType weapon)
     {
@@ -111,5 +96,15 @@ public class PlayerWeapon : MonoBehaviour
                 Animator.SetTrigger(stringBus.AnimationPunch);
                 break;
         }
-    }*/
+    }
+
+    private void ResetWeaponHoneycombData(Weapon weapon)
+    {
+        if (weapon.CurrentHoneycombWhereImStay != null)
+        {
+            weapon.CurrentHoneycombWhereImStay.IsTiedWeapon = false;
+            weapon.CurrentHoneycombWhereImStay = null;
+        }
+        weapon.CurrentLayerWhereImStay = -1;
+    }
 }

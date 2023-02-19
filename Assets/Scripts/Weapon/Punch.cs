@@ -5,9 +5,9 @@ public class Punch : Weapon
 {
     private float _antiflood;
 
-    public override void Init(PlayerWeapon player)
+    public override void Init(CharacterWeapon character)
     {
-        base.Init(player);
+        base.Init(character);
         Force = 1000;
         Label = "Punch";
         LifetimeSeconds = -1;
@@ -23,11 +23,11 @@ public class Punch : Weapon
 
         if (PhotonNetwork.IsMasterClient && !PhotonNetwork.OfflineMode)
         {
-            PhotonViewObject.RPC(nameof(Punches), RpcTarget.All, GetPlayersInRadius(Player.transform.position, Radius), transform.position, Force);
+            PhotonViewObject.RPC(nameof(Punches), RpcTarget.All, GetPlayersInRadius(CharacterOwner.transform.position, Radius), transform.position, Force);
         }
         else
         {
-            Punches(GetPlayersInRadius(Player.transform.position, Radius), transform.position, Force);
+            Punches(GetPlayersInRadius(CharacterOwner.transform.position, Radius), transform.position, Force);
         }
 
         PlayAttackFX();
@@ -45,10 +45,10 @@ public class Punch : Weapon
         foreach (TakeImpulse player in players)
         {
             PlayerWeapon characterWeapon = player.GetComponent<PlayerWeapon>();
-            if (characterWeapon != null && characterWeapon == Player) continue;
+            if (characterWeapon != null && characterWeapon == CharacterOwner) continue;
 
-            var direction = (player.transform.position - Player.transform.position).normalized;
-            if (Vector3.Angle(Player.transform.forward, direction) < 60f / 2f) // ViewAngle
+            var direction = (player.transform.position - CharacterOwner.transform.position).normalized;
+            if (Vector3.Angle(CharacterOwner.transform.forward, direction) < 60f / 2f) // ViewAngle
             {
                 player.SetImpulse(force, position, this, false);
             }

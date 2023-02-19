@@ -30,7 +30,7 @@ public class UIHandler : MonoBehaviour
         _serverHandler = GetComponent<ServerHandler>();
         _photonView = PhotonView.Get(this);
 
-        if(GameSettings.GameMode == SelectGameMode.GameMode.PvP)
+        if(GameSettings.GameMode == GameModeSelector.GameMode.PvP)
         {
             _playersCount.text = $"{PhotonNetwork.CurrentRoom.PlayerCount}";
             _buttonBackToLobby.gameObject.SetActive(false);
@@ -74,7 +74,7 @@ public class UIHandler : MonoBehaviour
                     winner = player;
                 }
             }
-            if(GameSettings.GameMode == SelectGameMode.GameMode.PvP)
+            if(GameSettings.GameMode == GameModeSelector.GameMode.PvP)
             {
                 if (playersCount < 2)
                 {
@@ -111,7 +111,7 @@ public class UIHandler : MonoBehaviour
 
     private void UpdateHealthUI(PlayerInfo player, int health)
     {
-        if (GameSettings.GameMode == SelectGameMode.GameMode.PvP)
+        if (GameSettings.GameMode == GameModeSelector.GameMode.PvP)
         {
             if (player.PhotonView.IsMine && _heartsUI[health] != null)
             {
@@ -135,7 +135,7 @@ public class UIHandler : MonoBehaviour
         {
             if(killed.Health.FromWhomDamage != null)
             {
-                _killer.text = $"Player {killed.Health.FromWhomDamage.Player.GetPhotonView.ViewID}";
+                _killer.text = $"Player {killed.Health.FromWhomDamage.CharacterOwner.GetPhotonView().ViewID}";
                 _killed.text = $"Player {ViewID}";
                 _weaponIcon.sprite = killed.Health.FromWhomDamage.GetSpriteIcon;
             }

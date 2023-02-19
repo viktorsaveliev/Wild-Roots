@@ -81,7 +81,7 @@ public class Tutorial : MonoBehaviour, INoticeAction
             _player.transform.position = new Vector3(0, 1f, -4.82f);
             _player.gameObject.SetActive(true);
 
-            if (_player.Weapon.GetCurrentWeapon is Punch)
+            if (_player.Weapon.GetCurrentWeapon() is Punch)
             {
                 WeaponSpawner(_weapon.gameObject);
                 Invoke(nameof(ResetPlayerWeapon), 0.5f);

@@ -8,7 +8,7 @@ public class PlayerHUD : MonoBehaviour
     [SerializeField] private GameObject _anotherPlayer;
     [SerializeField] private GameObject _minePlayer;
 
-    [SerializeField] private PlayerInfo _player;
+    [SerializeField] private Character _character;
 
     [SerializeField] private Canvas _canvas;
     [SerializeField] private Text _nickname;
@@ -40,7 +40,7 @@ public class PlayerHUD : MonoBehaviour
         _canvas.worldCamera = camera;
         _target = camera.transform;
 
-        _photonView = PhotonView.Get(_player);
+        _photonView = PhotonView.Get(_character);
         if (_photonView.IsMine)
         {
             _minePlayer.SetActive(true);
@@ -51,7 +51,7 @@ public class PlayerHUD : MonoBehaviour
             _anotherPlayer.SetActive(true);
         }
 
-        _player.HUD = this;
+        _character.HUD = this;
     }
 
     private void Update()
@@ -62,22 +62,22 @@ public class PlayerHUD : MonoBehaviour
 
     private void UpdateHUD(PlayerInfo player)
     {
-        if(player == _player)
+        if(player == _character)
         {
             if (!_photonView.IsMine)
             {
-                if(_damageIndicator != null) _damageIndicator.color = _damageGradient.Evaluate(_player.Health.DamageStrength);
+                if(_damageIndicator != null) _damageIndicator.color = _damageGradient.Evaluate(_character.Health.DamageStrength);
             }
             else
             {
-                if(_iconForMinePlayer != null) _iconForMinePlayer.color = _damageGradient.Evaluate(_player.Health.DamageStrength);
+                if(_iconForMinePlayer != null) _iconForMinePlayer.color = _damageGradient.Evaluate(_character.Health.DamageStrength);
             }
         }
     }
 
     private void ShowAimIndicator(PlayerInfo player)
     {
-        if (player != _player || _aimIndicator == null) return;
+        if (player != _character || _aimIndicator == null) return;
         _aimIndicator.enabled = true;
 
         if (_aimIndicatorAnimation != null) DOTween.Kill(_aimIndicatorAnimation);

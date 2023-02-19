@@ -5487,7 +5487,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _anotherPlayer: {fileID: 883278793}
   _minePlayer: {fileID: 1849291029}
-  _player: {fileID: 2349437205513215654}
+  _character: {fileID: 7507986514768326809}
   _canvas: {fileID: 1471120069}
   _nickname: {fileID: 79394347}
   _damageIndicator: {fileID: 115127990}
@@ -5887,11 +5887,12 @@ GameObject:
   - component: {fileID: 2349437205677997806}
   - component: {fileID: 2349437205513215649}
   - component: {fileID: 2349437205513215648}
+  - component: {fileID: 7507986514768326809}
   - component: {fileID: 2349437205513215654}
   - component: {fileID: 2349437205513215653}
   - component: {fileID: 2349437205513215655}
   - component: {fileID: 2349437205513215652}
-  - component: {fileID: 2349437205513215651}
+  - component: {fileID: 7784570520463602519}
   - component: {fileID: 2349437205513215658}
   - component: {fileID: 2349437205513215657}
   - component: {fileID: 2349437205677997809}
@@ -5939,7 +5940,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 80
+  m_Constraints: 0
   m_CollisionDetection: 0
 --- !u!136 &2349437205513215648
 CapsuleCollider:
@@ -5955,7 +5956,7 @@ CapsuleCollider:
   m_Height: 0.78
   m_Direction: 1
   m_Center: {x: 0, y: 0.35, z: 0}
---- !u!114 &2349437205513215654
+--- !u!114 &7507986514768326809
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5964,10 +5965,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 2349437205677997808}
   m_Enabled: 1
   m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65477169a7a2c75469113b69bc22aaf4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HUD: {fileID: 1471120066}
+--- !u!114 &2349437205513215654
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2349437205677997808}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fb21c48f5ec079641bef14f1e168582f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HUD: {fileID: 0}
+  HUD: {fileID: 1471120066}
 --- !u!114 &2349437205513215653
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6042,7 +6056,7 @@ MonoBehaviour:
   _rotateSpeed: 1
   IsTakesAim: 0
   IsGrounded: 0
---- !u!114 &2349437205513215651
+--- !u!114 &7784570520463602519
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6051,7 +6065,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2349437205677997808}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2f2a6867dbd2dd479853c6a4df06978, type: 3}
+  m_Script: {fileID: 11500000, guid: 669bfc753efa396459c4a2f3aa89e0fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _punch: {fileID: 5504132233967724652}
@@ -6406,16 +6420,28 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4803161254258792000, guid: 2815f7e416fe39e4ab2432a3c67fcded, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.100000024
+      objectReference: {fileID: 0}
+    - target: {fileID: 4803161254258792000, guid: 2815f7e416fe39e4ab2432a3c67fcded, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.100000024
+      objectReference: {fileID: 0}
+    - target: {fileID: 4803161254258792000, guid: 2815f7e416fe39e4ab2432a3c67fcded, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.100000024
+      objectReference: {fileID: 0}
+    - target: {fileID: 4803161254258792000, guid: 2815f7e416fe39e4ab2432a3c67fcded, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 0.024003746
       objectReference: {fileID: 0}
     - target: {fileID: 4803161254258792000, guid: 2815f7e416fe39e4ab2432a3c67fcded, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.06479721
       objectReference: {fileID: 0}
     - target: {fileID: 4803161254258792000, guid: 2815f7e416fe39e4ab2432a3c67fcded, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -0.056295313
       objectReference: {fileID: 0}
     - target: {fileID: 4803161254258792000, guid: 2815f7e416fe39e4ab2432a3c67fcded, type: 3}
       propertyPath: m_LocalRotation.w
@@ -6448,6 +6474,10 @@ PrefabInstance:
     - target: {fileID: 5261519451102335235, guid: 2815f7e416fe39e4ab2432a3c67fcded, type: 3}
       propertyPath: m_Name
       value: Punch
+      objectReference: {fileID: 0}
+    - target: {fileID: 5261519451102335235, guid: 2815f7e416fe39e4ab2432a3c67fcded, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5261519451102335235, guid: 2815f7e416fe39e4ab2432a3c67fcded, type: 3}
       propertyPath: m_StaticEditorFlags

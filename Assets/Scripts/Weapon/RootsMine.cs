@@ -6,9 +6,9 @@ public class RootsMine : Weapon, IExplodable
 {
     public bool IsMineActive { get; private set; }
 
-    public override void Init(PlayerWeapon player)
+    public override void Init(CharacterWeapon character)
     {
-        base.Init(player);
+        base.Init(character);
 
         Strength = 5;
         Radius = 1f;
@@ -26,7 +26,7 @@ public class RootsMine : Weapon, IExplodable
         GetComponent<BoxCollider>().isTrigger = false;
 
         Throw(target);
-        Player.DeleteWeapon(false);
+        CharacterOwner.DeleteWeapon(false);
 
         Invoke(nameof(SetMineActive), 1f);
         EventBus.OnPlayerShoot?.Invoke(transform, -1);

@@ -3,7 +3,7 @@ using Photon.Pun;
 using System.Collections;
 
 [RequireComponent(typeof(Rigidbody), typeof(PhotonView))]
-public class PlayerMove : MonoBehaviour, IPunObservable
+public class PlayerMove : MonoBehaviour, IPunObservable, IMoveable
 {
     [SerializeField] private GameObject _rootsTroop;
     [SerializeField] private float _moveSpeed;
@@ -12,7 +12,6 @@ public class PlayerMove : MonoBehaviour, IPunObservable
     public bool IsTakesAim;
     private bool _isMoveActive;
     private bool _isRootsActive;
-    public bool GetMoveActive => _isMoveActive;
     private float _moveInactiveTime;
 
     public bool IsCanRotate { get; private set; }
@@ -71,28 +70,28 @@ public class PlayerMove : MonoBehaviour, IPunObservable
                 }
                 else
                 {
-                    MoveCharacter(new Vector3(moveHorizontal, 0, moveVertical));
-                    if (!IsTakesAim && IsCanRotate) RotateCharacter(new Vector3(moveHorizontal, 0, moveVertical));
+                    Move(new Vector3(moveHorizontal, 0, moveVertical));
+                    if (!IsTakesAim && IsCanRotate) Rotate(new Vector3(moveHorizontal, 0, moveVertical));
                 }
             }
         }
     }
 
     private void SetCanMovePlayer() => SetMoveActive(true);
-    public void MoveCharacter(Vector3 moveDirection)
+    public void Move(Vector3 direction)
     {
-        Vector3 offset = _moveSpeed * Time.deltaTime * moveDirection;
+        Vector3 offset = _moveSpeed * Time.deltaTime * direction;
         _player.Rigidbody.MovePosition(_player.Rigidbody.position + offset);
 
         StringBus stringBus = new();
         _player.Animator.SetFloat(stringBus.AnimationSpeed, _moveSpeed * Time.deltaTime);
     }
 
-    public void RotateCharacter(Vector3 moveDirection)
+    public void Rotate(Vector3 direction)
     {
-        if(Vector3.Angle(transform.forward, moveDirection) > 0)
+        if(Vector3.Angle(transform.forward, direction) > 0)
         {
-            Vector3 newDiraction = Vector3.RotateTowards(transform.forward, moveDirection, _rotateSpeed, 0);
+            Vector3 newDiraction = Vector3.RotateTowards(transform.forward, direction, _rotateSpeed, 0);
             transform.rotation = Quaternion.LookRotation(newDiraction);
         }
 
@@ -155,6 +154,8 @@ public class PlayerMove : MonoBehaviour, IPunObservable
         }
         EventBus.OnPlayerChangedMoveState?.Invoke(_player, active);
     }
+
+    public bool GetMoveActive() => _isMoveActive;
 
     private IEnumerator FreezeTimer()
     {

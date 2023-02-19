@@ -22,11 +22,11 @@ public class JoystickMovement : JoystickHandler
 
     private void Update()
     {
-        if (!_isInit || !_player.PhotonView.IsMine || !_player.Move.GetMoveActive) return;
+        if (!_isInit || !_player.PhotonView.IsMine || !_player.Move.GetMoveActive()) return;
         if (InputVector.x != 0 || InputVector.y != 0)
         {
-            _player.Move.MoveCharacter(new Vector3(InputVector.x, 0, InputVector.y));
-            if (!_player.Move.IsTakesAim && _player.Move.IsCanRotate) _player.Move.RotateCharacter(new Vector3(InputVector.x, 0, InputVector.y));
+            _player.Move.Move(new Vector3(InputVector.x, 0, InputVector.y));
+            if (!_player.Move.IsTakesAim && _player.Move.IsCanRotate) _player.Move.Rotate(new Vector3(InputVector.x, 0, InputVector.y));
         }
     }
 

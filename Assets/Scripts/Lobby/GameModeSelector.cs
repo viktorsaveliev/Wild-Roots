@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class SelectGameMode : MonoBehaviour
+public class GameModeSelector : MonoBehaviour
 {
     [SerializeField] private JoinRoomHandler _joinRoom;
     [SerializeField] private GameObject _selectModeUI;

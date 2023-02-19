@@ -14,10 +14,10 @@ public class JoystickAttack : JoystickHandler
 
     protected override void OnPlayerMouseDrag()
     {
-        if (!_player.gameObject.activeSelf || !_isInit || !_player.PhotonView.IsMine || !_player.Move.GetMoveActive) return;
+        if (!_player.gameObject.activeSelf || !_isInit || !_player.PhotonView.IsMine || !_player.Move.GetMoveActive()) return;
         if (InputVector.x != 0 || InputVector.y != 0)
         {
-            _player.Move.RotateCharacter(new Vector3(InputVector.x, 0, InputVector.y));
+            _player.Move.Rotate(new Vector3(InputVector.x, 0, InputVector.y));
         }
     }
 
@@ -55,10 +55,10 @@ public class JoystickAttack : JoystickHandler
         StringBus stringBus = new();
         if (!PhotonNetwork.OfflineMode)
         {
-            _player.Weapon.GetPhotonView.RPC(stringBus.PlayerHideAim, RpcTarget.All, _player.PhotonView.ViewID);
+            _player.Weapon.GetPhotonView().RPC(stringBus.PlayerHideAim, RpcTarget.All, _player.PhotonView.ViewID);
         }
 
-        Weapon weapon = _player.Weapon.GetCurrentWeapon;
+        Weapon weapon = _player.Weapon.GetCurrentWeapon();
         if (weapon != null)
         {
             if (weapon.Owner == _player.PhotonView.ViewID)
@@ -85,7 +85,7 @@ public class JoystickAttack : JoystickHandler
     {
         if (!_player.gameObject.activeSelf) return;
 
-        Weapon weapon = _player.Weapon.GetCurrentWeapon;
+        Weapon weapon = _player.Weapon.GetCurrentWeapon();
         if (weapon != null && weapon is IExplodable)
         {
             if (_updateTrajectory != null) StopCoroutine(_updateTrajectory);
@@ -97,7 +97,7 @@ public class JoystickAttack : JoystickHandler
         if (!PhotonNetwork.OfflineMode)
         {
             StringBus stringBus = new();
-            _player.Weapon.GetPhotonView.RPC(stringBus.PlayerTakeAim, RpcTarget.Others);
+            _player.Weapon.GetPhotonView().RPC(stringBus.PlayerTakeAim, RpcTarget.Others);
         }
         else
         {

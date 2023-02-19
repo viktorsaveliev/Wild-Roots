@@ -23,7 +23,7 @@ MonoBehaviour:
     Server: 
     Port: 0
     ProxyServer: 
-    Protocol: 1
+    Protocol: 0
     EnableProtocolFallback: 1
     AuthMode: 0
     EnableLobbyStatistics: 0
@@ -75,6 +75,7 @@ MonoBehaviour:
   - LoadLevelProgressForAll
   - UpdateWeaponsForAll
   - GlobalUpdateWeapons
+  - UpdateWeaponsPositionForAll
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

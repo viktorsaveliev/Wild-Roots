@@ -31,7 +31,7 @@ public class PlayerHealth : MonoBehaviour
 
     public void PlayerFell()
     {
-        if(GameSettings.GameMode == SelectGameMode.GameMode.PvP)
+        if(GameSettings.GameMode == GameModeSelector.GameMode.PvP)
         {
             if (--Health <= 0)
             {
@@ -46,7 +46,7 @@ public class PlayerHealth : MonoBehaviour
 
     public void SetDamageStrength(float plus)
     {
-        if (GameSettings.GameMode != SelectGameMode.GameMode.PvP) return;
+        if (GameSettings.GameMode != GameModeSelector.GameMode.PvP) return;
         DamageStrength += plus;
         if (DamageStrength > 1f) DamageStrength = 1f;
     }

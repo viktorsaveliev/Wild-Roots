@@ -27,7 +27,7 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
     private readonly int _secToFindPlayers = 60;
     private int _currentSecToFindPlayers;
 
-    private SelectGameMode.GameMode _selectedGameMode;
+    private GameModeSelector.GameMode _selectedGameMode;
 
     private void Start()
     {
@@ -46,16 +46,16 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
         //_connectHandler.Log("Created new room..");
     }
 
-    private void Play(SelectGameMode.GameMode gamemode)
+    private void Play(GameModeSelector.GameMode gamemode)
     {
-        if(gamemode == SelectGameMode.GameMode.PvP)
+        if(gamemode == GameModeSelector.GameMode.PvP)
         {
             if (_isJoiningRoom)
             {
                 if (PhotonNetwork.IsMasterClient)
                 {
                     DOTween.Clear();
-                    StartGame(SelectGameMode.GameMode.PvP);
+                    StartGame(GameModeSelector.GameMode.PvP);
                 }
                 return;
             }
@@ -64,7 +64,7 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
 
             _isJoiningRoom = true;
         }
-        else if(gamemode == SelectGameMode.GameMode.Deathmatch)
+        else if(gamemode == GameModeSelector.GameMode.Deathmatch)
         {
             if (_isJoiningRoom) return;
 
@@ -79,7 +79,7 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
     {
         EventBus.OnPlayerClickUI?.Invoke(0);
 
-        _selectedGameMode = (SelectGameMode.GameMode)modeID;
+        _selectedGameMode = (GameModeSelector.GameMode)modeID;
         if (!_connectHandler.IsConnected)
         {
             Notice.ShowDialog(NoticeDialog.Message.ConnectionError, this, "Notice_Retry", "Notice_Close");
@@ -94,7 +94,7 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
     {
         if(button == 0)
         {
-            Play(_selectedGameMode);
+            SelectMode((int)_selectedGameMode);
         }
         Notice.HideDialog();
     }
@@ -159,7 +159,7 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
     {
         LoadingUI.Hide();
 
-        if(GameSettings.GameMode == SelectGameMode.GameMode.PvP)
+        if(GameSettings.GameMode == GameModeSelector.GameMode.PvP)
         {
             Invoke(nameof(ActivateSearchScreen), 1f);
             EventBus.OnPlayerStartSearchMatch?.Invoke();
@@ -177,9 +177,9 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
             if (_secTimer != null) StopCoroutine(_secTimer);
             _secTimer = StartCoroutine(SecTimer());
         }
-        else if (GameSettings.GameMode == SelectGameMode.GameMode.Deathmatch)
+        else if (GameSettings.GameMode == GameModeSelector.GameMode.Deathmatch)
         {
-            StartGame(SelectGameMode.GameMode.Deathmatch);
+            StartGame(GameModeSelector.GameMode.Deathmatch);
         }
     }
 
@@ -205,7 +205,7 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
                     }
                     else
                     {
-                        StartGame(SelectGameMode.GameMode.PvP);
+                        StartGame(GameModeSelector.GameMode.PvP);
                         break;
                     }
                 }
@@ -220,9 +220,9 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
         SceneManager.LoadScene(0);
     }
 
-    public void StartGame(SelectGameMode.GameMode gamemode)
+    public void StartGame(GameModeSelector.GameMode gamemode)
     {
-        if (gamemode == SelectGameMode.GameMode.PvP)
+        if (gamemode == GameModeSelector.GameMode.PvP)
         {
             _photonView.RPC(nameof(LoadLevelProgressForAll), RpcTarget.All);
             PhotonNetwork.CurrentRoom.IsOpen = false;

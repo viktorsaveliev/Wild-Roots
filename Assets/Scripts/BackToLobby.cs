@@ -6,6 +6,7 @@ public class BackToLobby : MonoBehaviourPunCallbacks, INoticeAction
     public void ActionOnClickNotice(int button)
     {
         if (button == 0) LoadLobby();
+        else Notice.HideDialog();
     }
 
     public void ExitButton(int buttonID)
