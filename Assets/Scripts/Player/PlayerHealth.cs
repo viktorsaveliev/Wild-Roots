@@ -37,7 +37,6 @@ public class PlayerHealth : MonoBehaviour
             {
                 EventBus.OnCharacterLose?.Invoke();
             }
-            print(Health);
         }
         
         if(_character.Weapon) _character.Weapon.DeleteWeapon(true);

@@ -13,7 +13,7 @@ public class Grenade : Weapon, IExplodable
         Radius = 3f;
 
         Label = "Grenade";
-        LifetimeSeconds = 1.3f;       
+        LifetimeSeconds = 1.5f;       
         SetLocalPosAndRotate(new Vector3(-0.051f, 0.055f, 0.08f), Quaternion.Euler(-80.3f, 90, -40f));
     }
 
@@ -24,8 +24,6 @@ public class Grenade : Weapon, IExplodable
         GetComponent<CapsuleCollider>().isTrigger = false;
 
         Throw(target, isABot);
-
-        //SetOwnerLocal(-1);
         CharacterOwner.DeleteWeapon(false);
         EventBus.OnPlayerShoot?.Invoke(transform, LifetimeSeconds);
     }

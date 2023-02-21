@@ -2,6 +2,7 @@ using Photon.Pun;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.EventSystems;
 
 public class CharacterMovement : MonoBehaviour, IPunObservable, IMoveable
 {
@@ -21,7 +22,7 @@ public class CharacterMovement : MonoBehaviour, IPunObservable, IMoveable
 
     private Coroutine _freezeTimer;
     private Character _character;
-    private BotTest _behaviour;
+    private CharacterAI _behaviour;
 
     private Vector3 correctPlayerPosition;
     private Quaternion correctPlayerRotation;
@@ -55,7 +56,7 @@ public class CharacterMovement : MonoBehaviour, IPunObservable, IMoveable
         else
         {
             _agent = GetComponent<NavMeshAgent>();
-            _behaviour = GetComponent<BotTest>();
+            _behaviour = GetComponent<CharacterAI>();
 
             _agent.speed = _moveSpeed;
             _isMoveActive = true;
@@ -98,6 +99,7 @@ public class CharacterMovement : MonoBehaviour, IPunObservable, IMoveable
         if(_character.IsABot)
         {
             if (_agent.isOnNavMesh == false) return;
+            _behaviour.IsHavePath = true;
             _agent.SetDestination(direction);
         }
         else

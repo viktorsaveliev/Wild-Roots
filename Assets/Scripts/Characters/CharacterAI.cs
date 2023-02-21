@@ -1,9 +1,10 @@
+﻿using Photon.Pun;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.TextCore.Text;
 
-public class BotTest : MonoBehaviour
+public class CharacterAI : MonoBehaviour
 {
     private NavMeshAgent _agent;
     private Weapon[] _weapons;
@@ -11,6 +12,7 @@ public class BotTest : MonoBehaviour
     private const float _safeDistance = 3f;
 
     public bool IsHavePath;
+    private bool _isGoToSafeZone;
 
     private Tasks _characterTask;
     private float _characterTaskTimer;
@@ -29,12 +31,7 @@ public class BotTest : MonoBehaviour
 
     private void OnEnable()
     {
-        if (_timer != null)
-        {
-            StopCoroutine(_timer);
-            _timer = null;
-        }
-        _timer = StartCoroutine(InfinityTimer());
+        StartInfinityTimer();
     }
 
     private void OnDisable()
@@ -77,26 +74,42 @@ public class BotTest : MonoBehaviour
 
     private IEnumerator InfinityTimer()
     {
+        if (PhotonNetwork.IsMasterClient == false) yield break;
+
         float timeToRepeat = 0.2f;
         yield return new WaitForSeconds(timeToRepeat);
+
         while (true)
         {
             if (_movement.GetMoveActive() == false || _agent.enabled == false)
             {
                 yield return new WaitForSeconds(timeToRepeat);
             }
-            if (IsGetWeaponNearby(out Weapon nearestWeapon))
+
+            bool isWeaponNearby = IsGetWeaponNearby(out Vector3 nearestWeapon);
+            bool isNearNavMeshEdge = IsNearNavMeshEdge(2f, out Vector3 nearestEdge);
+            if (isWeaponNearby && isNearNavMeshEdge && _isGoToSafeZone == false)
+            {
+                _isGoToSafeZone = true;
+                _movement.Move(GetRandomDirectionAwayFrom(nearestWeapon, 120f));
+            }
+            else if (isWeaponNearby)
             {
                 MoveToSafeDistanceFromWeapon(nearestWeapon);
             }
+            else if (isNearNavMeshEdge && _isGoToSafeZone == false)
+            {
+                _isGoToSafeZone = true;
+                _movement.Move(GetRandomDirectionAwayFrom(nearestEdge, 120f));
+            }
             else
             {
-                if (IsHavePath)
+                if (IsHavePath || _isGoToSafeZone)
                 {
                     if (_agent.enabled && _agent.remainingDistance < 0.2f) //if ((_agent.pathEndPosition - _agent.transform.position).magnitude == 0)
                     {
+                        _isGoToSafeZone = false;
                         _movement.Stop();
-                        IsHavePath = false;
                     }
                 }
                 else if (_characterTask != Tasks.None)
@@ -107,7 +120,15 @@ public class BotTest : MonoBehaviour
                         {
                             float throwStrengthNormalized = 10f;
                             Vector3 direction = (_taskTarget.position - transform.position) / throwStrengthNormalized;
-                            _myWeapon.GetCurrentWeapon().Shoot(direction, transform.position, transform.rotation, true);
+                            if(PhotonNetwork.OfflineMode)
+                            {
+                                _myWeapon.GetCurrentWeapon().Shoot(direction, transform.position, transform.rotation, true);
+                            }
+                            else
+                            {
+                                StringBus stringBus = new();
+                                _myWeapon.GetCurrentWeapon().PhotonViewObject.RPC(stringBus.Shoot, RpcTarget.All, direction, transform.position, transform.rotation, true);
+                            }
                         }
                         SetTask(Tasks.None);
                     }
@@ -128,10 +149,9 @@ public class BotTest : MonoBehaviour
         }
     }
 
-    private bool IsGetWeaponNearby(out Weapon nearestWeapon)
+    private bool IsGetWeaponNearby(out Vector3 nearestWeapon)
     {
-        nearestWeapon = null;
-        //float distanceFromGrenade = 5f;
+        nearestWeapon = Vector3.zero;
         float minDistance = float.MaxValue;
         foreach(Weapon weapon in _weapons)
         {
@@ -141,16 +161,17 @@ public class BotTest : MonoBehaviour
             if(distance < minDistance)
             {
                 minDistance = distance;
-                nearestWeapon = weapon;
+                nearestWeapon = weapon.transform.position;
             }
         }
         return minDistance < _safeDistance;
     }
-    private void MoveToSafeDistanceFromWeapon(Weapon weapon)
+
+    private void MoveToSafeDistanceFromWeapon(Vector3 weaponPos)
     {
         if (_movement.GetMoveActive() == false || _agent.enabled == false) return;
 
-        Vector3 directionToGrenade = weapon.transform.position - transform.position;
+        Vector3 directionToGrenade = weaponPos - transform.position;
         float distanceToGrenade = directionToGrenade.magnitude;
         Vector3 directionToMove;
 
@@ -170,9 +191,7 @@ public class BotTest : MonoBehaviour
         }
 
         Vector3 destination = transform.position + directionToMove * _safeDistance;
-
         _movement.Move(destination);
-        IsHavePath = true;
     }
     
     private void FindNearestFreeWeapon()
@@ -194,7 +213,6 @@ public class BotTest : MonoBehaviour
         if (nearestWeapon != null)
         {
             _movement.Move(nearestWeapon.transform.position);
-            IsHavePath = true;
         }
         else
         {
@@ -253,8 +271,80 @@ public class BotTest : MonoBehaviour
             NavMesh.SamplePosition(randomDirection, out hit, 10f, NavMesh.AllAreas);
 
             _movement.Move(hit.position);
-            IsHavePath = true;
         }
+    }
+
+    private bool IsNearNavMeshEdge(float thresholdDistance, out Vector3 edgePosition)
+    {
+        edgePosition = Vector3.zero;
+        if (NavMesh.FindClosestEdge(transform.position, out NavMeshHit navMeshHit, NavMesh.AllAreas))
+        {
+            float distance = Vector3.Distance(transform.position, navMeshHit.position);
+            if (distance < thresholdDistance)
+            {
+                edgePosition = navMeshHit.position;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private List<Vector3> _validDirections = new();
+
+    private void InitializeValidDirections(Vector3 directionToAvoid, float minAngle)
+    {
+        _validDirections.Clear();
+
+        Vector3[] allDirections = new Vector3[200];
+        int index = 0;
+        float offset = 1f / Mathf.Sqrt(2f);
+        for (int i = -1; i <= 1; i += 2)
+        {
+            for (int j = -1; j <= 1; j += 2)
+            {
+                for (int k = -1; k <= 1; k += 2)
+                {
+                    allDirections[index] = new Vector3(i * offset, j * offset, k * offset);
+                    index++;
+                }
+            }
+        }
+
+        foreach (Vector3 dir in allDirections)
+        {
+            if (Vector3.Angle(directionToAvoid, dir) >= minAngle)
+            {
+                _validDirections.Add(dir);
+            }
+        }
+    }
+
+    private Vector3 GetRandomDirectionAwayFrom(Vector3 directionToAvoid, float minAngle)
+    {
+        InitializeValidDirections(directionToAvoid, minAngle);
+
+        int randomIndex = Random.Range(0, _validDirections.Count);
+        Vector3 newDirection = _validDirections[randomIndex];
+        Vector3 point = transform.position + (_safeDistance * newDirection);
+
+        if (NavMesh.SamplePosition(point, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+        {
+            return hit.position;
+        }
+        else
+        {
+            return point;
+        }
+    }
+
+    public void StartInfinityTimer()
+    {
+        if (_timer != null)
+        {
+            StopCoroutine(_timer);
+            _timer = null;
+        }
+        _timer = StartCoroutine(InfinityTimer());
     }
 
     /*private bool IsBotNearEdge(out NavMeshHit hit)

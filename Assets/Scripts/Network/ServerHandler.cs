@@ -96,6 +96,14 @@ public class ServerHandler : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsMasterClient)
         {
             _weaponSpawner.StartTimerForWeaponSpawn();
+
+            foreach (Character character in Characters)
+            {
+                if (character.TryGetComponent<CharacterAI>(out var ai))
+                {
+                    ai.StartInfinityTimer();
+                }
+            }
         }
         //_honeycombHandler = master.GetComponent<HoneycombHandler>();
         //_honeycombHandler.ReInit(_timeToNextRound);

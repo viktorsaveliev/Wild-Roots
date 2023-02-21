@@ -32,7 +32,7 @@ public class UIHandler : MonoBehaviour
 
         if(GameSettings.GameMode == GameModeSelector.GameMode.PvP)
         {
-            _playersCount.text = $"{PhotonNetwork.CurrentRoom.PlayerCount}";
+            _playersCount.text = $"{_serverHandler.Characters.Count}";
             _buttonBackToLobby.gameObject.SetActive(false);
         }
         else
