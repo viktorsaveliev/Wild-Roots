@@ -9,28 +9,28 @@ public class PlayersSpawner : MonoBehaviour
 
     private void OnEnable()
     {
-        EventBus.OnPlayerFall += SpawnPlayer;
+        EventBus.OnCharacterFall += SpawnPlayer;
     }
 
     private void OnDisable()
     {
-        EventBus.OnPlayerFall -= SpawnPlayer;
+        EventBus.OnCharacterFall -= SpawnPlayer;
     }
 
-    private IEnumerator SpawnTimer(PlayerInfo player, int health)
+    private IEnumerator SpawnTimer(Character character, int health)
     {
         yield return new WaitForSeconds(3f);
         if(health > 0)
         {
-            player.Health.FromWhomDamage = null;
-            player.transform.position = new Vector3(0, 5, 0);
-            player.transform.rotation = Quaternion.Euler(0, 0, 150);
-            player.gameObject.SetActive(true);
-            player.Move.SetMoveActive(false);
+            character.Health.FromWhomDamage = null;
+            character.transform.SetPositionAndRotation(new Vector3(0, 5, 0), Quaternion.Euler(0, 0, 150));
+            character.gameObject.SetActive(true);
+            
+            if(character.Move) character.Move.SetMoveActive(false, 2);
         }
         else
         {
-            if(player.PhotonView.IsMine)
+            if(character.PhotonView.IsMine && character.IsABot == false)
             {
                 _interface.SetActive(false);
                 _defeatText.SetActive(true);
@@ -39,8 +39,8 @@ public class PlayersSpawner : MonoBehaviour
         }
     }
 
-    private void SpawnPlayer(PlayerInfo player, int health)
+    private void SpawnPlayer(Character character, int health)
     {
-        StartCoroutine(SpawnTimer(player, health));
+        StartCoroutine(SpawnTimer(character, health));
     }
 }

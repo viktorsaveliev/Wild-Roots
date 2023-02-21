@@ -50,14 +50,14 @@ public class UIHandler : MonoBehaviour
 
     private void OnEnable()
     {
-        EventBus.OnPlayerFall += UpdateHealthUI;
-        EventBus.OnPlayerLose += MasterUpdatePlayers;
+        EventBus.OnCharacterFall += UpdateHealthUI;
+        EventBus.OnCharacterLose += MasterUpdatePlayers;
     }
 
     private void OnDisable()
     {
-        EventBus.OnPlayerFall -= UpdateHealthUI;
-        EventBus.OnPlayerLose -= MasterUpdatePlayers;
+        EventBus.OnCharacterFall -= UpdateHealthUI;
+        EventBus.OnCharacterLose -= MasterUpdatePlayers;
     }
 
     public void MasterUpdatePlayers()
@@ -65,8 +65,8 @@ public class UIHandler : MonoBehaviour
         if (PhotonNetwork.IsMasterClient)
         {
             int playersCount = 0;
-            PlayerInfo winner = null;
-            foreach (PlayerInfo player in _serverHandler.Players)
+            Character winner = null;
+            foreach (Character player in _serverHandler.Characters)
             {
                 if (player.Health && player.Health.Health > 0)
                 {
@@ -109,11 +109,11 @@ public class UIHandler : MonoBehaviour
         }
     }
 
-    private void UpdateHealthUI(PlayerInfo player, int health)
+    private void UpdateHealthUI(Character character, int health)
     {
-        if (GameSettings.GameMode == GameModeSelector.GameMode.PvP)
+        if (GameSettings.GameMode == GameModeSelector.GameMode.PvP && character.IsABot == false)
         {
-            if (player.PhotonView.IsMine && _heartsUI[health] != null)
+            if (character.PhotonView.IsMine && _heartsUI[health] != null)
             {
                 _heartsUI[health].transform.DOShakeRotation(1f, 50, 10, 90).OnComplete(() =>
                 {
@@ -122,7 +122,7 @@ public class UIHandler : MonoBehaviour
                 });
             }
         }
-        _photonView.RPC(nameof(EnableKillLogUI), RpcTarget.All, player.PhotonView.ViewID, health);
+        _photonView.RPC(nameof(EnableKillLogUI), RpcTarget.All, character.PhotonView.ViewID, health);
     }
 
     [PunRPC]
@@ -130,7 +130,7 @@ public class UIHandler : MonoBehaviour
     {
         if (_killer == null || _killed == null || _killLog == null || _weaponIcon == null || _fallIcon == null) return;
 
-        PlayerInfo killed = PhotonView.Find(ViewID).GetComponent<PlayerInfo>();
+        Character killed = PhotonView.Find(ViewID).GetComponent<Character>();
         if(!_killLogIsActive)
         {
             if(killed.Health.FromWhomDamage != null)
@@ -157,14 +157,14 @@ public class UIHandler : MonoBehaviour
         }
     }
 
-    private void DisableKillLogUI(PlayerInfo player = null, int health = 0, bool restart = false)
+    private void DisableKillLogUI(Character character = null, int health = 0, bool restart = false)
     {
         if (_killLog == null) return;
         _killLog.rectTransform.DOAnchorPosX(210f, 0.4f).OnComplete(() =>
         {
             _killLogIsActive = false;
             _killLog.gameObject.SetActive(false);
-            if (restart) EnableKillLogUI(player.GetComponent<PhotonView>().ViewID, health);
+            if (restart) EnableKillLogUI(character.GetComponent<PhotonView>().ViewID, health);
         });
     }
 

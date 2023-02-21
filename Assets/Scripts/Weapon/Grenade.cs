@@ -18,12 +18,12 @@ public class Grenade : Weapon, IExplodable
     }
 
     [PunRPC]
-    public override void Shoot(Vector2 target, Vector3 currentPos, Quaternion currentRotate)
+    public override void Shoot(Vector3 target, Vector3 currentPos, Quaternion currentRotate, bool isABot = false)
     {
         base.Shoot(target, currentPos, currentRotate);
         GetComponent<CapsuleCollider>().isTrigger = false;
 
-        Throw(target);
+        Throw(target, isABot);
 
         //SetOwnerLocal(-1);
         CharacterOwner.DeleteWeapon(false);

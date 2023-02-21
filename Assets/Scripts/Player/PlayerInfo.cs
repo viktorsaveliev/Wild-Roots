@@ -7,7 +7,7 @@ public class PlayerInfo : MonoBehaviour
     public CharacterWeapon Weapon { get; private set; }
     public PlayerHealth Health { get; private set; }
 
-    public PlayerHUD HUD;
+    public CharacterHUD HUD;
     public TakeImpulse TakeImpulse { get; private set; }
     public PhotonView PhotonView { get; private set; }
     public Rigidbody Rigidbody { get; private set; }

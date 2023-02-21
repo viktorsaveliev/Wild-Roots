@@ -5482,7 +5482,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1471120064}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 75a9dc65e89d3554694270495c2a1eaa, type: 3}
+  m_Script: {fileID: 11500000, guid: d346f1bfc62dc4e4598513ac275f6056, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _anotherPlayer: {fileID: 883278793}
@@ -5495,16 +5495,16 @@ MonoBehaviour:
   _damageGradient:
     serializedVersion: 2
     key0: {r: 1, g: 1, b: 1, a: 1}
-    key1: {r: 0.8490566, g: 0.20425417, b: 0.20425417, a: 1}
-    key2: {r: 0.7169812, g: 0, b: 0, a: 0}
+    key1: {r: 1, g: 0, b: 0, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
     key5: {r: 0, g: 0, b: 0, a: 0}
     key6: {r: 0, g: 0, b: 0, a: 0}
     key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
-    ctime1: 45875
-    ctime2: 65535
+    ctime1: 65535
+    ctime2: 0
     ctime3: 0
     ctime4: 0
     ctime5: 0
@@ -5519,7 +5519,7 @@ MonoBehaviour:
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_NumColorKeys: 3
+    m_NumColorKeys: 2
     m_NumAlphaKeys: 2
   _aimIndicator: {fileID: 532013952}
 --- !u!1 &1618053244
@@ -5888,16 +5888,16 @@ GameObject:
   - component: {fileID: 2349437205513215649}
   - component: {fileID: 2349437205513215648}
   - component: {fileID: 7507986514768326809}
-  - component: {fileID: 2349437205513215654}
   - component: {fileID: 2349437205513215653}
   - component: {fileID: 2349437205513215655}
-  - component: {fileID: 2349437205513215652}
+  - component: {fileID: 907003941660433422}
   - component: {fileID: 7784570520463602519}
   - component: {fileID: 2349437205513215658}
   - component: {fileID: 2349437205513215657}
   - component: {fileID: 2349437205677997809}
+  - component: {fileID: 2135747473977999941}
   m_Layer: 6
-  m_Name: char
+  m_Name: Character
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5969,19 +5969,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HUD: {fileID: 1471120066}
---- !u!114 &2349437205513215654
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2349437205677997808}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fb21c48f5ec079641bef14f1e168582f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  HUD: {fileID: 1471120066}
+  _isABot: 0
 --- !u!114 &2349437205513215653
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6002,7 +5990,7 @@ MonoBehaviour:
   observableSearch: 2
   ObservedComponents:
   - {fileID: 2349437205513215655}
-  - {fileID: 2349437205513215652}
+  - {fileID: 907003941660433422}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -6039,7 +6027,7 @@ MonoBehaviour:
   m_SynchronizeLayers:
   - SynchronizeType: 0
     LayerIndex: 0
---- !u!114 &2349437205513215652
+--- !u!114 &907003941660433422
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6048,7 +6036,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2349437205677997808}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2806eccdbc33b504b836e84fa174c98a, type: 3}
+  m_Script: {fileID: 11500000, guid: 6fe34571b67b72b4ca148d9b40c872fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _rootsTroop: {fileID: 590487196}
@@ -6115,6 +6103,22 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!208 &2135747473977999941
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2349437205677997808}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 0
+  m_Extents: {x: 0.2, y: 0.39, z: 0.2}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0.35, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &2349437205725355537
 GameObject:
   m_ObjectHideFlags: 0

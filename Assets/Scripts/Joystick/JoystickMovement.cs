@@ -2,12 +2,12 @@ using UnityEngine;
 
 public class JoystickMovement : JoystickHandler
 {
-    private PlayerInfo _player;
+    private Character _character;
     private bool _isInit = false;
 
-    public void Init(PlayerInfo playerControl)
+    public void Init(Character character)
     {
-        _player = playerControl;
+        _character = character;
         _isInit = true;
 
         StringBus stringBus = new();
@@ -22,18 +22,18 @@ public class JoystickMovement : JoystickHandler
 
     private void Update()
     {
-        if (!_isInit || !_player.PhotonView.IsMine || !_player.Move.GetMoveActive()) return;
+        if (!_isInit || !_character.PhotonView.IsMine || !_character.Move.GetMoveActive()) return;
         if (InputVector.x != 0 || InputVector.y != 0)
         {
-            _player.Move.Move(new Vector3(InputVector.x, 0, InputVector.y));
-            if (!_player.Move.IsTakesAim && _player.Move.IsCanRotate) _player.Move.Rotate(new Vector3(InputVector.x, 0, InputVector.y));
+            _character.Move.Move(new Vector3(InputVector.x, 0, InputVector.y));
+            if (!_character.Move.IsTakesAim && _character.Move.IsCanRotate) _character.Move.Rotate(new Vector3(InputVector.x, 0, InputVector.y));
         }
     }
 
     protected override void OnPlayerMouseUp()
     {
-        if (_player.Animator == null) return;
+        if (_character.Animator == null) return;
         StringBus stringBus = new();
-        _player.Animator.SetFloat(stringBus.AnimationSpeed, 0);
+        _character.Animator.SetFloat(stringBus.AnimationSpeed, 0);
     }
 }

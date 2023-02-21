@@ -18,7 +18,7 @@ public abstract class Weapon : MonoBehaviour
     [SerializeField] private Sprite SpriteIcon;
     public Sprite GetSpriteIcon => SpriteIcon;
 
-
+    public bool IsActive { get; protected set; }
     protected string Label;
     
     protected float Force;
@@ -80,15 +80,16 @@ public abstract class Weapon : MonoBehaviour
     protected virtual void OnLifeTimeEnded() { }
 
     [PunRPC]
-    public virtual void Shoot(Vector2 target, Vector3 currentPos, Quaternion currentRotate)
+    public virtual void Shoot(Vector3 target, Vector3 currentPos, Quaternion currentRotate, bool isABot = false)
     {
         UpdatePositionForWeapon(currentPos, currentRotate);
 
         if (LifetimeSeconds != -1) StartCoroutine(LifeTimer(LifetimeSeconds));
+        IsActive = true;
         CharacterOwner.EnableAttackAnimation(WeaponType);
     }
 
-    protected void Throw(Vector2 target)
+    protected void Throw(Vector3 target, bool isABot)
     {
         Rigidbody rigidbody = gameObject.GetComponent<Rigidbody>();
         transform.parent = null;
@@ -96,7 +97,8 @@ public abstract class Weapon : MonoBehaviour
         rigidbody.mass = 2;
         rigidbody.drag = 1;
         rigidbody.isKinematic = false;
-        rigidbody.AddForce(new Vector3(target.x, 0.5f, target.y) * 1000);
+
+        rigidbody.AddForce(new Vector3(target.x, 0.5f, isABot ? target.z : target.y) * 1000);
     }
 
     public int[] GetPlayersInRadius(Vector3 position, float radius)
@@ -142,6 +144,7 @@ public abstract class Weapon : MonoBehaviour
         gameObject.SetActive(false);
         CurrentLayerWhereImStay = -1;
         CurrentHoneycombWhereImStay = null;
+        IsActive = false;
         SetOwnerLocal(-1);
     }
 

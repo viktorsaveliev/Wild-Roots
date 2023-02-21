@@ -9,15 +9,15 @@ public class JoystickAttack : JoystickHandler
     private TrajectoryRenderer _trajectoryRenderer;
     private Coroutine _updateTrajectory;
 
-    private PlayerInfo _player;
+    private Character _character;
     private bool _isInit = false;
 
     protected override void OnPlayerMouseDrag()
     {
-        if (!_player.gameObject.activeSelf || !_isInit || !_player.PhotonView.IsMine || !_player.Move.GetMoveActive()) return;
+        if (!_character.gameObject.activeSelf || !_isInit || !_character.PhotonView.IsMine || !_character.Move.GetMoveActive()) return;
         if (InputVector.x != 0 || InputVector.y != 0)
         {
-            _player.Move.Rotate(new Vector3(InputVector.x, 0, InputVector.y));
+            _character.Move.Rotate(new Vector3(InputVector.x, 0, InputVector.y));
         }
     }
 
@@ -27,21 +27,21 @@ public class JoystickAttack : JoystickHandler
         {
             yield return new WaitForEndOfFrame();
             yield return new WaitForEndOfFrame();
-            Vector3 playerPos = new(_player.transform.position.x, _player.transform.position.y + 0.5f, _player.transform.position.z);
+            Vector3 playerPos = new(_character.transform.position.x, _character.transform.position.y + 0.5f, _character.transform.position.z);
             _trajectoryRenderer.ShowTrajectory(playerPos, new Vector3(InputVector.x, 0.5f, InputVector.y) * 8);
         }
     }
 
-    public void Init(PlayerInfo playerControl)
+    public void Init(Character character)
     {
-        _player = playerControl;
+        _character = character;
         _trajectoryRenderer = GetComponent<TrajectoryRenderer>();
         _isInit = true;
     }
 
     protected override void OnPlayerMouseUp()
     {
-        if (!_player.gameObject.activeSelf) return;
+        if (!_character.gameObject.activeSelf) return;
 
         if (_updateTrajectory != null)
         {
@@ -49,55 +49,56 @@ public class JoystickAttack : JoystickHandler
             _updateTrajectory = null;
         }
 
-        _player.Move.IsTakesAim = false;
-        _player.Move.SetDelayToRotate();
+        _character.Move.IsTakesAim = false;
+        _character.Move.SetDelayToRotate();
 
         StringBus stringBus = new();
         if (!PhotonNetwork.OfflineMode)
         {
-            _player.Weapon.GetPhotonView().RPC(stringBus.PlayerHideAim, RpcTarget.All, _player.PhotonView.ViewID);
+            _character.Weapon.GetPhotonView().RPC(stringBus.PlayerHideAim, RpcTarget.All, _character.PhotonView.ViewID);
         }
 
-        Weapon weapon = _player.Weapon.GetCurrentWeapon();
+        Weapon weapon = _character.Weapon.GetCurrentWeapon();
         if (weapon != null)
         {
-            if (weapon.Owner == _player.PhotonView.ViewID)
+            if (weapon.Owner == _character.PhotonView.ViewID)
             {
                 _trajectoryRenderer.ResetTrajectory();
 
+                Vector3 inputVector = new(InputVector.x, InputVector.y, 0);
                 if (PhotonNetwork.OfflineMode)
                 {
-                    weapon.Shoot(InputVector, _player.transform.position, _player.transform.rotation);
+                    weapon.Shoot(inputVector, _character.transform.position, _character.transform.rotation);
                 }
                 else
                 {
-                    weapon.PhotonViewObject.RPC(stringBus.Shoot, RpcTarget.All, InputVector, _player.transform.position, _player.transform.rotation);
+                    weapon.PhotonViewObject.RPC(stringBus.Shoot, RpcTarget.All, inputVector, _character.transform.position, _character.transform.rotation, false);
                 }
             }
             else
             {
-                _player.Weapon.DeleteWeapon(false);
+                _character.Weapon.DeleteWeapon(false);
             }
         }
     }
 
     protected override void OnPlayerMouseDowm()
     {
-        if (!_player.gameObject.activeSelf) return;
+        if (!_character.gameObject.activeSelf) return;
 
-        Weapon weapon = _player.Weapon.GetCurrentWeapon();
+        Weapon weapon = _character.Weapon.GetCurrentWeapon();
         if (weapon != null && weapon is IExplodable)
         {
             if (_updateTrajectory != null) StopCoroutine(_updateTrajectory);
             _updateTrajectory = StartCoroutine(UpdateTrajectory());
         }
 
-        _player.Move.IsTakesAim = true;
+        _character.Move.IsTakesAim = true;
 
         if (!PhotonNetwork.OfflineMode)
         {
             StringBus stringBus = new();
-            _player.Weapon.GetPhotonView().RPC(stringBus.PlayerTakeAim, RpcTarget.Others);
+            _character.Weapon.GetPhotonView().RPC(stringBus.PlayerTakeAim, RpcTarget.Others);
         }
         else
         {

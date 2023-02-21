@@ -6,16 +6,16 @@ public static class EventBus
     public static Action OnPlayerDisconnected;
     public static Action<GameObject> OnWeaponExploded;
 
-    public static Action<PlayerInfo, bool> OnPlayerChangedMoveState;
+    public static Action<Character, bool> OnPlayerChangedMoveState;
     public static Action<Transform, float> OnPlayerShoot;
     public static Action<GameObject> OnWeaponSpawned;
-    public static Action<PlayerInfo> OnPlayerTakeDamage;
-    public static Action<PlayerInfo, int> OnPlayerFall;
-    public static Action<PlayerInfo> OnPlayerTakeAim;
+    public static Action<Character> OnCharacterTakeDamage;
+    public static Action<Character, int> OnCharacterFall;
+    public static Action<Character> OnCharacterTakeAim;
     public static Action OnPlayerTakeWeapon;
 
     public static Action OnPlayerWin;
-    public static Action OnPlayerLose;
+    public static Action OnCharacterLose;
     public static Action OnPlayerStartSearchMatch;
 
     public static Action<int> OnMatchEnded;

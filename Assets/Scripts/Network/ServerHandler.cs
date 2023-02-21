@@ -12,9 +12,11 @@ using System;
 [RequireComponent(typeof(WeaponsHandler), typeof(HoneycombHandler))]
 public class ServerHandler : MonoBehaviourPunCallbacks
 {
-    public List<PlayerInfo> Players { get; private set; } = new();
+    public List<Character> Characters { get; private set; } = new();
 
     [SerializeField] private GameObject _playerPrefab;
+    [SerializeField] private GameObject _botPrefab;
+
     [SerializeField] private JoystickMovement _joystickMove;
     [SerializeField] private JoystickAttack _joystickAttack;
     [SerializeField] private Text _roundText;
@@ -44,7 +46,7 @@ public class ServerHandler : MonoBehaviourPunCallbacks
     private void Start()
     {
         GameObject PlayerCharacter = PhotonNetwork.Instantiate(_playerPrefab.name, new Vector3(0, 5, 0), Quaternion.identity);
-        PlayerInfo playerControl = PlayerCharacter.GetComponent<PlayerInfo>();
+        Character playerControl = PlayerCharacter.GetComponent<Character>();
 
         _joystickMove.Init(playerControl);
         _joystickAttack.Init(playerControl);
@@ -56,23 +58,31 @@ public class ServerHandler : MonoBehaviourPunCallbacks
         _weaponSpawner = GetComponent<WeaponsHandler>();
         _weaponSpawner.IsNeedUpdateHoneycomb = true;
 
+        ServerPhotonView = PhotonView.Get(this);
+        ServerPhotonView.RPC(nameof(AddCharacterInList), RpcTarget.All, playerControl.PhotonView.ViewID);
+        PhotonNetwork.LocalPlayer.TagObject = gameObject;
+
         if (PhotonNetwork.IsMasterClient)
         {
-            _weaponSpawner.CreateWeapons(CurrentRound); // _honeycombHandler.GetHoneycombCircles[1]
+            _weaponSpawner.CreateWeapons(CurrentRound);
+            if (PhotonNetwork.CurrentRoom.PlayerCount < 5)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    Character character = PhotonNetwork.InstantiateRoomObject(_botPrefab.name, new Vector3(0, 5, 0), Quaternion.identity).GetComponent<Character>();
+                    ServerPhotonView.RPC(nameof(AddCharacterInList), RpcTarget.All, character.PhotonView.ViewID);
+                }
+            }
         }
-
-        ServerPhotonView = PhotonView.Get(this);
-        ServerPhotonView.RPC(nameof(AddPlayerInList), RpcTarget.All, playerControl.PhotonView.ViewID);
-        PhotonNetwork.LocalPlayer.TagObject = gameObject;
     }
 
     #region Network
 
     [PunRPC]
-    public void AddPlayerInList(int viewID)
+    public void AddCharacterInList(int viewID)
     {
-        PlayerInfo player = PhotonView.Find(viewID).GetComponent<PlayerInfo>();
-        Players.Add(player);
+        Character player = PhotonView.Find(viewID).GetComponent<Character>();
+        Characters.Add(player);
     }
 
     public override void OnMasterClientSwitched(Player newMasterClient)
@@ -99,16 +109,16 @@ public class ServerHandler : MonoBehaviourPunCallbacks
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
-        PlayerInfo player = Players.FirstOrDefault(p => p.PhotonView.CreatorActorNr == otherPlayer.ActorNumber);
+        Character player = Characters.FirstOrDefault(p => p.PhotonView.CreatorActorNr == otherPlayer.ActorNumber);
         if(player != null)
         {
             player.Weapon.DeleteWeapon(true);
-            Players.Remove(player);
+            Characters.Remove(player);
             Destroy(player.gameObject, 1f);
 
             if (PhotonNetwork.IsMasterClient && GameSettings.GameMode == GameModeSelector.GameMode.PvP)
             {
-                EventBus.OnPlayerLose?.Invoke();
+                EventBus.OnCharacterLose?.Invoke();
             }
         }
     }

@@ -2,12 +2,21 @@ using Photon.Pun;
 
 public interface IWeaponable
 {
+    [PunRPC]
     public void GiveWeapon(int id);
-    public void DeleteWeapon(bool destroyObject);
-    public Weapon GetCurrentWeapon();
-    public void TakeAim();
-    public void HideAim(int id);
-    public void EquipPunches();
-    public PhotonView GetPhotonView();
 
+    [PunRPC]
+    public void DeleteWeapon(bool destroyObject);
+
+    public Weapon GetCurrentWeapon();
+
+    [PunRPC]
+    public void TakeAim();
+
+    [PunRPC]
+    public void HideAim(int id);
+
+    public void EquipPunches();
+
+    public PhotonView GetPhotonView();
 }

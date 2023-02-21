@@ -3,19 +3,22 @@ using UnityEngine;
 
 public class Character : MonoBehaviour
 {
-    public PlayerMove Move { get; private set; }
+    public CharacterMovement Move { get; private set; }
     public CharacterWeapon Weapon { get; private set; }
     public PlayerHealth Health { get; private set; }
 
-    public PlayerHUD HUD;
+    public CharacterHUD HUD;
     public TakeImpulse TakeImpulse { get; private set; }
     public PhotonView PhotonView { get; private set; }
     public Rigidbody Rigidbody { get; private set; }
     public Animator Animator { get; private set; }
 
+    [SerializeField] private bool _isABot;
+    public bool IsABot => _isABot;
+
     void Awake()
     {
-        Move = GetComponent<PlayerMove>();
+        Move = GetComponent<CharacterMovement>();
         Weapon = GetComponent<CharacterWeapon>();
         Health = GetComponent<PlayerHealth>();
         TakeImpulse = GetComponent<TakeImpulse>();
@@ -39,7 +42,7 @@ public class Character : MonoBehaviour
         if (!PhotonView.IsMine) return;
 
         PhotonView winner = PhotonView.Find(winnerID);
-        if (winner == null) return;
+        if (winner == null || winner.GetComponent<Character>().IsABot) return;
 
         StringBus stringBus = new();
         int level = PlayerPrefs.GetInt(stringBus.PlayerLevel);

@@ -1,26 +1,26 @@
 using UnityEngine;
 
-[RequireComponent(typeof(PlayerInfo), typeof(Rigidbody))]
+[RequireComponent(typeof(Character), typeof(Rigidbody))]
 public class TakeImpulse : MonoBehaviour
 {
-    private PlayerInfo _player;
+    private Character _character;
 
     private void Start()
     {
-        _player = GetComponent<PlayerInfo>();
+        _character = GetComponent<Character>();
     }
 
     public void SetImpulse(float force, Vector3 impulsePosition, Weapon fromWhom, bool knockout = true)
     {
-        _player.Health.FromWhomDamage = fromWhom;
-        _player.Rigidbody.AddExplosionForce(force + _player.Health.GetDamageMultiplie(), impulsePosition, 10f);
+        _character.Health.FromWhomDamage = fromWhom;
+        _character.Rigidbody.AddExplosionForce(force + _character.Health.GetDamageMultiplie(), impulsePosition, 10f);
 
         if(knockout)
         {
-            _player.Health.SetDamageStrength(0.1f);
-            if(_player.Move) _player.Move.SetMoveActive(false);
+            _character.Health.SetDamageStrength(0.1f);
+            _character.Move.SetMoveActive(false);
         }
 
-        EventBus.OnPlayerTakeDamage?.Invoke(_player);
+        EventBus.OnCharacterTakeDamage?.Invoke(_character);
     }
 }

@@ -19,7 +19,7 @@ public class PlayerMove : MonoBehaviour, IPunObservable, IMoveable
     public bool IsGrounded;
 
     private Coroutine _freezeTimer;
-    private PlayerInfo _player;
+    private Character _character;
 
     private Vector3 correctPlayerPosition;
     private Quaternion correctPlayerRotation;
@@ -39,7 +39,7 @@ public class PlayerMove : MonoBehaviour, IPunObservable, IMoveable
 
     private void Start()
     {
-        _player = GetComponent<PlayerInfo>();
+        _character = GetComponent<Character>();
         IsCanRotate = true;
 
         StringBus stringBus = new();
@@ -50,7 +50,7 @@ public class PlayerMove : MonoBehaviour, IPunObservable, IMoveable
 
     private void Update()
     {
-        if(!_player.PhotonView.IsMine)
+        if(!_character.PhotonView.IsMine)
         {
             //transform.DOMove(this.correctPlayerPosition, 0.4f);
             transform.SetPositionAndRotation(Vector3.Lerp(transform.position, this.correctPlayerPosition, Time.deltaTime * 10), 
@@ -66,7 +66,7 @@ public class PlayerMove : MonoBehaviour, IPunObservable, IMoveable
                 if (moveHorizontal == 0 && moveVertical == 0)
                 {
                     StringBus stringBus = new();
-                    _player.Animator.SetFloat(stringBus.AnimationSpeed, 0);
+                    _character.Animator.SetFloat(stringBus.AnimationSpeed, 0);
                 }
                 else
                 {
@@ -81,10 +81,16 @@ public class PlayerMove : MonoBehaviour, IPunObservable, IMoveable
     public void Move(Vector3 direction)
     {
         Vector3 offset = _moveSpeed * Time.deltaTime * direction;
-        _player.Rigidbody.MovePosition(_player.Rigidbody.position + offset);
+        _character.Rigidbody.MovePosition(_character.Rigidbody.position + offset);
 
         StringBus stringBus = new();
-        _player.Animator.SetFloat(stringBus.AnimationSpeed, _moveSpeed * Time.deltaTime);
+        _character.Animator.SetFloat(stringBus.AnimationSpeed, _moveSpeed * Time.deltaTime);
+    }
+
+    public void Stop()
+    {
+        StringBus stringBus = new();
+        _character.Animator.SetFloat(stringBus.AnimationSpeed, 0);
     }
 
     public void Rotate(Vector3 direction)
@@ -99,7 +105,7 @@ public class PlayerMove : MonoBehaviour, IPunObservable, IMoveable
         if (rotation.x != 0 || rotation.z != 0)
         {
             transform.rotation = Quaternion.Euler(0, rotation.y, 0);
-            _player.Rigidbody.freezeRotation = true;
+            _character.Rigidbody.freezeRotation = true;
         }
     }
 
@@ -125,9 +131,9 @@ public class PlayerMove : MonoBehaviour, IPunObservable, IMoveable
         {
             _isMoveActive = true;
             _moveInactiveTime = 0;
-            if(!_player.PhotonView.IsMine) _player.Rigidbody.freezeRotation = true;
+            if(!_character.PhotonView.IsMine) _character.Rigidbody.freezeRotation = true;
 
-            _player.Animator.SetBool(stringBus.AnimationFall, false);
+            _character.Animator.SetBool(stringBus.AnimationFall, false);
 
             if (_isRootsActive)
             {
@@ -139,7 +145,7 @@ public class PlayerMove : MonoBehaviour, IPunObservable, IMoveable
         {
             _isMoveActive = false;
             _moveInactiveTime = time;
-            _player.Rigidbody.freezeRotation = false;
+            _character.Rigidbody.freezeRotation = false;
 
             if (_freezeTimer != null) StopCoroutine(_freezeTimer);
             _freezeTimer = StartCoroutine(FreezeTimer());
@@ -150,9 +156,9 @@ public class PlayerMove : MonoBehaviour, IPunObservable, IMoveable
                 _isRootsActive = true;
             }
            
-            _player.Animator.SetBool(stringBus.AnimationFall, true);
+            _character.Animator.SetBool(stringBus.AnimationFall, true);
         }
-        EventBus.OnPlayerChangedMoveState?.Invoke(_player, active);
+        EventBus.OnPlayerChangedMoveState?.Invoke(_character, active);
     }
 
     public bool GetMoveActive() => _isMoveActive;
@@ -165,7 +171,7 @@ public class PlayerMove : MonoBehaviour, IPunObservable, IMoveable
 
     private void DisableMovement()
     {
-        if (!_player.PhotonView.IsMine) return;
+        if (!_character.PhotonView.IsMine) return;
         SetMoveActive(false);
     }
 

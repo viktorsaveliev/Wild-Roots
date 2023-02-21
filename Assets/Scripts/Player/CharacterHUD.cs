@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using Photon.Pun;
 using DG.Tweening;
 
-public class PlayerHUD : MonoBehaviour
+public class CharacterHUD : MonoBehaviour
 {
     [SerializeField] private GameObject _anotherPlayer;
     [SerializeField] private GameObject _minePlayer;
@@ -24,14 +24,14 @@ public class PlayerHUD : MonoBehaviour
 
     private void OnEnable()
     {
-        EventBus.OnPlayerTakeDamage += UpdateHUD;
-        EventBus.OnPlayerTakeAim += ShowAimIndicator;
+        EventBus.OnCharacterTakeDamage += UpdateHUD;
+        EventBus.OnCharacterTakeAim += ShowAimIndicator;
     }
 
     private void OnDisable()
     {
-        EventBus.OnPlayerTakeDamage -= UpdateHUD;
-        EventBus.OnPlayerTakeAim -= ShowAimIndicator;
+        EventBus.OnCharacterTakeDamage -= UpdateHUD;
+        EventBus.OnCharacterTakeAim -= ShowAimIndicator;
     }
 
     private void Start()
@@ -41,7 +41,7 @@ public class PlayerHUD : MonoBehaviour
         _target = camera.transform;
 
         _photonView = PhotonView.Get(_character);
-        if (_photonView.IsMine)
+        if (_photonView.IsMine && _character.IsABot == false)
         {
             _minePlayer.SetActive(true);
         }
@@ -60,11 +60,11 @@ public class PlayerHUD : MonoBehaviour
         //_canvas.transform.rotation = _target.transform.rotation;
     }
 
-    private void UpdateHUD(PlayerInfo player)
+    private void UpdateHUD(Character character)
     {
-        if(player == _character)
+        if(character == _character)
         {
-            if (!_photonView.IsMine)
+            if (!_photonView.IsMine || character.IsABot)
             {
                 if(_damageIndicator != null) _damageIndicator.color = _damageGradient.Evaluate(_character.Health.DamageStrength);
             }
@@ -75,9 +75,9 @@ public class PlayerHUD : MonoBehaviour
         }
     }
 
-    private void ShowAimIndicator(PlayerInfo player)
+    private void ShowAimIndicator(Character character)
     {
-        if (player != _character || _aimIndicator == null) return;
+        if (character != _character || _aimIndicator == null) return;
         _aimIndicator.enabled = true;
 
         if (_aimIndicatorAnimation != null) DOTween.Kill(_aimIndicatorAnimation);

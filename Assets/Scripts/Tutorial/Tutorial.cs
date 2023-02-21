@@ -6,14 +6,14 @@ using UnityEngine.SceneManagement;
 
 public class Tutorial : MonoBehaviour, INoticeAction
 {
-    [SerializeField] private GameObject _character;
+    [SerializeField] private GameObject _characterPrefab;
     [SerializeField] private GameObject _enemy;
     [SerializeField] private Weapon _weapon;
 
     [SerializeField] private JoystickAttack _joystickAttack;
     [SerializeField] private JoystickMovement _joystickMovement;
 
-    private PlayerInfo _player;
+    private Character _character;
 
     public enum Task
     {
@@ -28,7 +28,7 @@ public class Tutorial : MonoBehaviour, INoticeAction
     private void OnEnable()
     {
         EventBus.OnPlayerTakeWeapon += OnPlayerGetWeapon;
-        EventBus.OnPlayerFall += OnCharacterFall;
+        EventBus.OnCharacterFall += OnCharacterFall;
 
         EventBus.OnWeaponExploded += WeaponSpawner;
     }
@@ -36,7 +36,7 @@ public class Tutorial : MonoBehaviour, INoticeAction
     private void OnDisable()
     {
         EventBus.OnPlayerTakeWeapon -= OnPlayerGetWeapon;
-        EventBus.OnPlayerFall -= OnCharacterFall;
+        EventBus.OnCharacterFall -= OnCharacterFall;
 
         EventBus.OnWeaponExploded -= WeaponSpawner;
     }
@@ -50,11 +50,11 @@ public class Tutorial : MonoBehaviour, INoticeAction
     {
         Invoke(nameof(SetOfflineMode), 1f);
 
-        _player = _character.GetComponent<PlayerInfo>();
+        _character = _characterPrefab.GetComponent<Character>();
         SetTask(Task.TakeGrenade);
 
-        _joystickAttack.Init(_player);
-        _joystickMovement.Init(_player);
+        _joystickAttack.Init(_character);
+        _joystickMovement.Init(_character);
     }
 
     private void SetOfflineMode()
@@ -74,20 +74,20 @@ public class Tutorial : MonoBehaviour, INoticeAction
         SetTask(Task.ThrowGrenade);
     }
 
-    private void OnCharacterFall(PlayerInfo player, int health)
+    private void OnCharacterFall(Character character, int health)
     {
-        if(player.PhotonView.ViewID == 2)
+        if(character.PhotonView.ViewID == 2)
         {
-            _player.transform.position = new Vector3(0, 1f, -4.82f);
-            _player.gameObject.SetActive(true);
+            _character.transform.position = new Vector3(0, 1f, -4.82f);
+            _character.gameObject.SetActive(true);
 
-            if (_player.Weapon.GetCurrentWeapon() is Punch)
+            if (_character.Weapon.GetCurrentWeapon() is Punch)
             {
                 WeaponSpawner(_weapon.gameObject);
                 Invoke(nameof(ResetPlayerWeapon), 0.5f);
             }
 
-            _player.Move.SetMoveActive(true);
+            _character.Move.SetMoveActive(true);
         }
         else
         {
@@ -103,7 +103,7 @@ public class Tutorial : MonoBehaviour, INoticeAction
         Notice.HideDialog();
     }
 
-    private void ResetPlayerWeapon() => _player.Weapon.DeleteWeapon(false);
+    private void ResetPlayerWeapon() => _character.Weapon.DeleteWeapon(false);
 
     private IEnumerator LoadingLobby()
     {

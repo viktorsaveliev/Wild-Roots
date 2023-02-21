@@ -22,6 +22,7 @@ public class CharacterWeapon : MonoBehaviour, IWeaponable
 
     public Weapon GetCurrentWeapon() => _currentWeapon;
 
+    [PunRPC]
     public void GiveWeapon(int id)
     {
         if (_currentWeapon != null && _currentWeapon != _punch) DeleteWeapon(true);
@@ -44,6 +45,7 @@ public class CharacterWeapon : MonoBehaviour, IWeaponable
         _currentWeapon.Init(this);
     }
 
+    [PunRPC]
     public void DeleteWeapon(bool destroyObject)
     {
         if (_currentWeapon != null && _currentWeapon != _punch)
@@ -68,15 +70,17 @@ public class CharacterWeapon : MonoBehaviour, IWeaponable
         });
     }
 
+    [PunRPC]
     public void HideAim(int id)
     {
-        //if (!PhotonView.Find(id).TryGetComponent<PlayerInfo>(out var player)) return;
-        //player.HUD.HideAimIndicator();
+        if (!PhotonView.Find(id).TryGetComponent<Character>(out var character)) return;
+        character.HUD.HideAimIndicator();
     }
 
+    [PunRPC]
     public void TakeAim()
     {
-        //EventBus.OnPlayerTakeAim?.Invoke(GetComponent<PlayerInfo>());
+        EventBus.OnCharacterTakeAim?.Invoke(GetComponent<Character>());
     }
 
     public PhotonView GetPhotonView() => _photonView;

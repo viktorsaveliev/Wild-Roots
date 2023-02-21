@@ -2,23 +2,23 @@ using Photon.Pun;
 using System.Collections;
 using UnityEngine;
 
-[RequireComponent(typeof(PlayerInfo))]
+[RequireComponent(typeof(Character))]
 public class PlayerHealth : MonoBehaviour
 {
     public int Health { get; private set; }
     public float DamageStrength { get; private set; }
     public float DamageMultiplier { get; private set; }
     public Weapon FromWhomDamage;
-    private PlayerInfo _playerInfo;
+    private Character _character;
 
     private void OnEnable()
     {
-        EventBus.OnPlayerTakeDamage += StartTimerForResetDamageInfo;
+        EventBus.OnCharacterTakeDamage += StartTimerForResetDamageInfo;
     }
 
     private void OnDisable()
     {
-        EventBus.OnPlayerTakeDamage -= StartTimerForResetDamageInfo;
+        EventBus.OnCharacterTakeDamage -= StartTimerForResetDamageInfo;
     }
 
     private void Start()
@@ -26,7 +26,7 @@ public class PlayerHealth : MonoBehaviour
         Health = 3;
         DamageStrength = 0;
         DamageMultiplier = 1000f;
-        _playerInfo = GetComponent<PlayerInfo>();
+        _character = GetComponent<Character>();
     }
 
     public void PlayerFell()
@@ -35,13 +35,14 @@ public class PlayerHealth : MonoBehaviour
         {
             if (--Health <= 0)
             {
-                EventBus.OnPlayerLose?.Invoke();
+                EventBus.OnCharacterLose?.Invoke();
             }
+            print(Health);
         }
         
-        if(_playerInfo.Weapon) _playerInfo.Weapon.DeleteWeapon(true);
+        if(_character.Weapon) _character.Weapon.DeleteWeapon(true);
         gameObject.SetActive(false);
-        EventBus.OnPlayerFall?.Invoke(_playerInfo, Health);
+        EventBus.OnCharacterFall?.Invoke(_character, Health);
     }
 
     public void SetDamageStrength(float plus)
@@ -51,14 +52,14 @@ public class PlayerHealth : MonoBehaviour
         if (DamageStrength > 1f) DamageStrength = 1f;
     }
 
-    public void StartTimerForResetDamageInfo(PlayerInfo player)
+    public void StartTimerForResetDamageInfo(Character character)
     {
-        StartCoroutine(TimerForResetDamageInfo(player));
+        StartCoroutine(TimerForResetDamageInfo(character));
     }
 
-    public IEnumerator TimerForResetDamageInfo(PlayerInfo player)
+    public IEnumerator TimerForResetDamageInfo(Character character)
     {
-        if (player == _playerInfo)
+        if (character == _character)
         {
             yield return new WaitForSeconds(5f);
             FromWhomDamage = null;

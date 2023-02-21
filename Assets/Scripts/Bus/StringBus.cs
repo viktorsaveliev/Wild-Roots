@@ -14,8 +14,8 @@ public class StringBus
     public string SettingsSoundFX = "SettingsSoundFX";
     public string SettingsMusic = "SettingsMusic";
 
-    public string PlayerTakeAim = "PlayerTakeAim";
-    public string PlayerHideAim = "PlayerHideAim";
+    public string PlayerTakeAim = "TakeAim";
+    public string PlayerHideAim = "HideAim";
 
     public string PlayerDevice = "Device";
 

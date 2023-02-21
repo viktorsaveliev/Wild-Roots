@@ -4,10 +4,10 @@ public class FallArea : MonoBehaviour
 {
     private void OnTriggerExit(Collider other)
     {
-        PlayerInfo player = other.GetComponent<PlayerInfo>();
-        if(player)
+        Character character = other.GetComponent<Character>();
+        if(character)
         {
-            player.Health.PlayerFell();
+            character.Health.PlayerFell();
         }
     }
 }

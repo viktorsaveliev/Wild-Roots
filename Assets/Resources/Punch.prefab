@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5454213159635528179}
   - component: {fileID: 4592773111441371915}
   - component: {fileID: 110563792372839440}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Punch
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -84,7 +84,7 @@ MonoBehaviour:
   PrefabAttackFX: {fileID: 0}
   AudioFX: []
   SpriteIcon: {fileID: 0}
-  CurrentRoundLayerWhereImStay: -1
+  CurrentLayerWhereImStay: -1
   CurrentHoneycombWhereImStay: {fileID: 0}
   WeaponType: 2
 --- !u!1001 &211608197545398873
@@ -95,6 +95,10 @@ PrefabInstance:
     serializedVersion: 2
     m_TransformParent: {fileID: 4803161254258792000}
     m_Modifications:
+    - target: {fileID: 4208843958994934074, guid: 85e90c543feeadf4eb984abcc9df7cd3, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 4208843959898764097, guid: 85e90c543feeadf4eb984abcc9df7cd3, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -102,6 +106,10 @@ PrefabInstance:
     - target: {fileID: 4208843959898764098, guid: 85e90c543feeadf4eb984abcc9df7cd3, type: 3}
       propertyPath: m_Name
       value: Explosion
+      objectReference: {fileID: 0}
+    - target: {fileID: 4208843959898764098, guid: 85e90c543feeadf4eb984abcc9df7cd3, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 4208843959898764103, guid: 85e90c543feeadf4eb984abcc9df7cd3, type: 3}
       propertyPath: m_RootOrder
@@ -158,6 +166,10 @@ PrefabInstance:
     - target: {fileID: 4208843959898764103, guid: 85e90c543feeadf4eb984abcc9df7cd3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4208843960936572145, guid: 85e90c543feeadf4eb984abcc9df7cd3, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 4208843960936572150, guid: 85e90c543feeadf4eb984abcc9df7cd3, type: 3}
       propertyPath: InitialModule.startSpeed.scalar

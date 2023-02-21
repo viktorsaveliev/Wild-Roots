@@ -20,12 +20,12 @@ public class RootsMine : Weapon, IExplodable
     }
 
     [PunRPC]
-    public override void Shoot(Vector2 target, Vector3 currentPos, Quaternion currentRotate)
+    public override void Shoot(Vector3 target, Vector3 currentPos, Quaternion currentRotate, bool isABot = false)
     {
         base.Shoot(target, currentPos, currentRotate);
         GetComponent<BoxCollider>().isTrigger = false;
 
-        Throw(target);
+        Throw(target, isABot);
         CharacterOwner.DeleteWeapon(false);
 
         Invoke(nameof(SetMineActive), 1f);
@@ -40,14 +40,14 @@ public class RootsMine : Weapon, IExplodable
         PlayAttackFX();
         AudioSource.PlayClipAtPoint(AudioFX[(int)AudioType.Explode], transform.position, 1f);
 
-        PlayerMove[] targets = new PlayerMove[viewID.Length];
+        CharacterMovement[] targets = new CharacterMovement[viewID.Length];
 
         for (int i = 0; i < viewID.Length; i++)
         {
-            targets[i] = PhotonView.Find(viewID[i]).GetComponent<PlayerMove>();
+            targets[i] = PhotonView.Find(viewID[i]).GetComponent<CharacterMovement>();
         }
 
-        foreach (PlayerMove target in targets)
+        foreach (CharacterMovement target in targets)
         {
             target.SetMoveActive(false, Strength, true);
         }

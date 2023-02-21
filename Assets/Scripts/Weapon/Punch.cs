@@ -15,11 +15,11 @@ public class Punch : Weapon
     }
 
     [PunRPC]
-    public override void Shoot(Vector2 target, Vector3 currentPos, Quaternion currentRotate)
+    public override void Shoot(Vector3 target, Vector3 currentPos, Quaternion currentRotate, bool isABot = false)
     {
         if (_antiflood >= Time.time) return;
 
-        base.Shoot(target, currentPos, currentRotate);
+        base.Shoot(target, currentPos, currentRotate, isABot);
 
         if (PhotonNetwork.IsMasterClient && !PhotonNetwork.OfflineMode)
         {
@@ -44,8 +44,8 @@ public class Punch : Weapon
         }
         foreach (TakeImpulse player in players)
         {
-            PlayerWeapon characterWeapon = player.GetComponent<PlayerWeapon>();
-            if (characterWeapon != null && characterWeapon == CharacterOwner) continue;
+            Character character = player.GetComponent<Character>();
+            if (character != null && character.Weapon == CharacterOwner && !character.IsABot) continue;
 
             var direction = (player.transform.position - CharacterOwner.transform.position).normalized;
             if (Vector3.Angle(CharacterOwner.transform.forward, direction) < 60f / 2f) // ViewAngle
