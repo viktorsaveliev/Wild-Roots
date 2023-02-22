@@ -51,7 +51,7 @@ public class CharacterMovement : MonoBehaviour, IPunObservable, IMoveable
             StringBus stringBus = new();
             _playerDevice = PlayerPrefs.GetInt(stringBus.PlayerDevice);
 
-            Invoke(nameof(SetCanMovePlayer), 1);
+            SetMoveActive(true);
         }
         else
         {
@@ -116,8 +116,6 @@ public class CharacterMovement : MonoBehaviour, IPunObservable, IMoveable
         if (!_character.PhotonView.IsMine || _character.IsABot) return;
         SetMoveActive(false);
     }
-
-    private void SetCanMovePlayer() => SetMoveActive(true);
 
     public void Stop()
     {
@@ -205,7 +203,7 @@ public class CharacterMovement : MonoBehaviour, IPunObservable, IMoveable
         SetMoveActive(true);
     }
 
-    public bool GetMoveActive() => _isMoveActive;
+    public bool IsCanMove() => _isMoveActive;
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {

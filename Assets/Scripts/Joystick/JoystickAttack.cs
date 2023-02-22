@@ -14,7 +14,7 @@ public class JoystickAttack : JoystickHandler
 
     protected override void OnPlayerMouseDrag()
     {
-        if (!_character.gameObject.activeSelf || !_isInit || !_character.PhotonView.IsMine || !_character.Move.GetMoveActive()) return;
+        if (!_character.gameObject.activeSelf || !_isInit || !_character.PhotonView.IsMine || !_character.Move.IsCanMove()) return;
         if (InputVector.x != 0 || InputVector.y != 0)
         {
             _character.Move.Rotate(new Vector3(InputVector.x, 0, InputVector.y));

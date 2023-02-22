@@ -59,7 +59,7 @@ public abstract class Weapon : MonoBehaviour
             {
                 IMoveable characterMove = other.GetComponent<IMoveable>();
                 if (SpawnAnimation != null && !SpawnAnimation.IsComplete()) SpawnAnimation.Complete();
-                if (character.GetCurrentWeapon() is Punch && characterMove.GetMoveActive())
+                if (character.GetCurrentWeapon() is Punch && characterMove.IsCanMove())
                 {
                     StringBus stringBus = new();
 

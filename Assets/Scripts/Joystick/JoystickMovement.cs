@@ -22,7 +22,7 @@ public class JoystickMovement : JoystickHandler
 
     private void Update()
     {
-        if (!_isInit || !_character.PhotonView.IsMine || !_character.Move.GetMoveActive()) return;
+        if (!_isInit || !_character.PhotonView.IsMine || !_character.Move.IsCanMove()) return;
         if (InputVector.x != 0 || InputVector.y != 0)
         {
             _character.Move.Move(new Vector3(InputVector.x, 0, InputVector.y));

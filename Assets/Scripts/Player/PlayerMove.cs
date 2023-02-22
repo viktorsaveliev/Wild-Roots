@@ -161,7 +161,7 @@ public class PlayerMove : MonoBehaviour, IPunObservable, IMoveable
         EventBus.OnPlayerChangedMoveState?.Invoke(_character, active);
     }
 
-    public bool GetMoveActive() => _isMoveActive;
+    public bool IsCanMove() => _isMoveActive;
 
     private IEnumerator FreezeTimer()
     {

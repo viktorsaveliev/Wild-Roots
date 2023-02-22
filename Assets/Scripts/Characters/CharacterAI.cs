@@ -56,7 +56,7 @@ public class CharacterAI : MonoBehaviour
 
     private void Update()
     {
-        if (_movement.GetMoveActive())
+        if (_movement.IsCanMove())
         {
             if (_characterTask == Tasks.AimAtTarget)
             {
@@ -72,6 +72,28 @@ public class CharacterAI : MonoBehaviour
         }
     }
 
+    private Coroutine _checkForStack;
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(_movement.IsCanMove() && _agent.enabled && _checkForStack == null && _isGoToSafeZone == false)
+        {
+            _checkForStack = StartCoroutine(OnCharacterStoped(collision.transform.position, Random.Range(1, 3)));
+        }
+    }
+
+    private IEnumerator OnCharacterStoped(Vector3 position, float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        if(Vector3.Distance(transform.position, position) < 1f)
+        {
+            if (_movement.IsCanMove() && _agent.enabled)
+            {
+                Vector3 collisionPos = GetRandomDirectionAwayFrom(position);
+                _movement.Move(collisionPos);
+            }
+        }
+        _checkForStack = null;
+    }
     private IEnumerator InfinityTimer()
     {
         if (PhotonNetwork.IsMasterClient == false) yield break;
@@ -81,17 +103,17 @@ public class CharacterAI : MonoBehaviour
 
         while (true)
         {
-            if (_movement.GetMoveActive() == false || _agent.enabled == false)
+            if (_movement.IsCanMove() == false || _agent.enabled == false)
             {
                 yield return new WaitForSeconds(timeToRepeat);
             }
 
             bool isWeaponNearby = IsGetWeaponNearby(out Vector3 nearestWeapon);
-            bool isNearNavMeshEdge = IsNearNavMeshEdge(2f, out Vector3 nearestEdge);
+            bool isNearNavMeshEdge = IsNearNavMeshEdge(1.5f, out Vector3 nearestEdge);
             if (isWeaponNearby && isNearNavMeshEdge && _isGoToSafeZone == false)
             {
                 _isGoToSafeZone = true;
-                _movement.Move(GetRandomDirectionAwayFrom(nearestWeapon, 120f));
+                _movement.Move(GetRandomDirectionAwayFrom(nearestWeapon));
             }
             else if (isWeaponNearby)
             {
@@ -100,7 +122,7 @@ public class CharacterAI : MonoBehaviour
             else if (isNearNavMeshEdge && _isGoToSafeZone == false)
             {
                 _isGoToSafeZone = true;
-                _movement.Move(GetRandomDirectionAwayFrom(nearestEdge, 120f));
+                _movement.Move(GetRandomDirectionAwayFrom(nearestEdge));
             }
             else
             {
@@ -169,7 +191,7 @@ public class CharacterAI : MonoBehaviour
 
     private void MoveToSafeDistanceFromWeapon(Vector3 weaponPos)
     {
-        if (_movement.GetMoveActive() == false || _agent.enabled == false) return;
+        if (_movement.IsCanMove() == false || _agent.enabled == false) return;
 
         Vector3 directionToGrenade = weaponPos - transform.position;
         float distanceToGrenade = directionToGrenade.magnitude;
@@ -186,7 +208,6 @@ public class CharacterAI : MonoBehaviour
         }
         else
         {
-            // Move in the opposite direction to the grenade
             directionToMove = -directionToGrenade.normalized;
         }
 
@@ -227,7 +248,7 @@ public class CharacterAI : MonoBehaviour
 
         foreach (Character character in _characters)
         {
-            if (character == _currentCharacter || character.Move.GetMoveActive() == false) continue;
+            if (character == _currentCharacter) continue;
 
             float distance = Vector3.Distance(transform.position, character.transform.position);
 
@@ -289,51 +310,19 @@ public class CharacterAI : MonoBehaviour
         return false;
     }
 
-    private List<Vector3> _validDirections = new();
-
-    private void InitializeValidDirections(Vector3 directionToAvoid, float minAngle)
+    private Vector3 GetRandomDirectionAwayFrom(Vector3 directionToAvoid)
     {
-        _validDirections.Clear();
+        float angle = Random.Range(120f, 240f);
+        Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.up);
+        Vector3 newDirection = rotation * directionToAvoid;
 
-        Vector3[] allDirections = new Vector3[200];
-        int index = 0;
-        float offset = 1f / Mathf.Sqrt(2f);
-        for (int i = -1; i <= 1; i += 2)
+        if (NavMesh.SamplePosition(transform.position + newDirection, out NavMeshHit hit, 2f, NavMesh.AllAreas))
         {
-            for (int j = -1; j <= 1; j += 2)
-            {
-                for (int k = -1; k <= 1; k += 2)
-                {
-                    allDirections[index] = new Vector3(i * offset, j * offset, k * offset);
-                    index++;
-                }
-            }
-        }
-
-        foreach (Vector3 dir in allDirections)
-        {
-            if (Vector3.Angle(directionToAvoid, dir) >= minAngle)
-            {
-                _validDirections.Add(dir);
-            }
-        }
-    }
-
-    private Vector3 GetRandomDirectionAwayFrom(Vector3 directionToAvoid, float minAngle)
-    {
-        InitializeValidDirections(directionToAvoid, minAngle);
-
-        int randomIndex = Random.Range(0, _validDirections.Count);
-        Vector3 newDirection = _validDirections[randomIndex];
-        Vector3 point = transform.position + (_safeDistance * newDirection);
-
-        if (NavMesh.SamplePosition(point, out NavMeshHit hit, 2f, NavMesh.AllAreas))
-        {
-            return hit.position;
+            return (hit.position - transform.position).normalized;
         }
         else
         {
-            return point;
+            return directionToAvoid;
         }
     }
 
@@ -346,51 +335,4 @@ public class CharacterAI : MonoBehaviour
         }
         _timer = StartCoroutine(InfinityTimer());
     }
-
-    /*private bool IsBotNearEdge(out NavMeshHit hit)
-    {
-        float edgeThreshold = 2f;
-        float distanceThreshold = _agent.radius + edgeThreshold;
-
-        if (NavMesh.SamplePosition(transform.position, out hit, distanceThreshold, NavMesh.AllAreas))
-        {
-            return hit.distance < distanceThreshold;
-        }
-        else
-        {
-            hit = new NavMeshHit();
-            return true;
-        }
-    }
-
-    // Move the bot to a safe location on the platform
-    private void MoveToSafeLocation()
-    {
-        if (IsBotNearEdge(out NavMeshHit hit))
-        {
-            if (_antiflood >= Time.time) return;
-            // Get the position of the closest point on the NavMesh to the bot's position
-            Vector3 closestPoint = hit.position;
-
-            // Calculate the direction away from the edge
-            Vector3 directionAwayFromEdge = transform.position - closestPoint;
-            directionAwayFromEdge.y = 0f;
-            directionAwayFromEdge.Normalize();
-
-            // Calculate the safe position as the current position plus the direction away from the edge times the safe distance
-            Vector3 safePosition = transform.position + directionAwayFromEdge * _safeDistance;
-
-            // Calculate a path to the safe position
-            NavMeshPath path = new();
-            if (NavMesh.CalculatePath(transform.position, safePosition, NavMesh.AllAreas, path))
-            {
-                // Set the NavMeshAgent to follow the path to the safe position
-                _agent.SetPath(path);
-            }
-
-            SetAntiflood();
-        }
-        _isHaveTask = true;
-        print("move to safe");
-    }*/
 }

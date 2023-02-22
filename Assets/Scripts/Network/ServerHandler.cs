@@ -4,10 +4,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using DG.Tweening;
 using UnityEngine.UI;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System;
 
 [RequireComponent(typeof(WeaponsHandler), typeof(HoneycombHandler))]
 public class ServerHandler : MonoBehaviourPunCallbacks
@@ -16,6 +14,7 @@ public class ServerHandler : MonoBehaviourPunCallbacks
 
     [SerializeField] private GameObject _playerPrefab;
     [SerializeField] private GameObject _botPrefab;
+    [SerializeField] private Transform[] _spawnPositions;
 
     [SerializeField] private JoystickMovement _joystickMove;
     [SerializeField] private JoystickAttack _joystickAttack;
@@ -61,16 +60,18 @@ public class ServerHandler : MonoBehaviourPunCallbacks
         ServerPhotonView = PhotonView.Get(this);
         ServerPhotonView.RPC(nameof(AddCharacterInList), RpcTarget.All, playerControl.PhotonView.ViewID);
         PhotonNetwork.LocalPlayer.TagObject = gameObject;
+        PlayerCharacter.transform.position = _spawnPositions[Characters.Count - 1].position;
 
         if (PhotonNetwork.IsMasterClient)
         {
             _weaponSpawner.CreateWeapons(CurrentRound);
             if (PhotonNetwork.CurrentRoom.PlayerCount < 5)
             {
-                for (int i = 0; i < 3; i++)
+                for (int i = 0; i < 4 - PhotonNetwork.CurrentRoom.PlayerCount; i++)
                 {
                     Character character = PhotonNetwork.InstantiateRoomObject(_botPrefab.name, new Vector3(0, 5, 0), Quaternion.identity).GetComponent<Character>();
                     ServerPhotonView.RPC(nameof(AddCharacterInList), RpcTarget.All, character.PhotonView.ViewID);
+                    character.transform.position = _spawnPositions[Characters.Count - 1].position;
                 }
             }
         }

@@ -6,5 +6,5 @@ public interface IMoveable
     public void Stop();
     public void Rotate(Vector3 direction);
     public void SetMoveActive(bool active, float time = 2, bool activateRoots = false);
-    public bool GetMoveActive();
+    public bool IsCanMove();
 }
