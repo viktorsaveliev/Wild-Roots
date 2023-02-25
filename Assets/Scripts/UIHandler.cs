@@ -122,26 +122,35 @@ public class UIHandler : MonoBehaviour
                 });
             }
         }
-        _photonView.RPC(nameof(EnableKillLogUI), RpcTarget.All, character.PhotonView.ViewID, health);
+        if(PhotonNetwork.IsMasterClient)
+        {
+            int killerViewID = -1;
+            if(character.Health.FromWhomDamage != null) killerViewID = character.Health.FromWhomDamage.CharacterOwner.GetPhotonView().ViewID;
+            _photonView.RPC(nameof(EnableKillLogUI), RpcTarget.All, character.PhotonView.ViewID, killerViewID, health);
+        }
     }
 
     [PunRPC]
-    public void EnableKillLogUI(int ViewID, int health)
+    public void EnableKillLogUI(int ViewID, int killerViewID, int health)
     {
         if (_killer == null || _killed == null || _killLog == null || _weaponIcon == null || _fallIcon == null) return;
 
         Character killed = PhotonView.Find(ViewID).GetComponent<Character>();
-        if(!_killLogIsActive)
+        Character killer = null;
+
+        if (killerViewID != -1) killer = PhotonView.Find(killerViewID).GetComponent<Character>();
+
+        if (!_killLogIsActive)
         {
-            if(killed.Health.FromWhomDamage != null)
+            if(killerViewID != -1)
             {
-                _killer.text = $"Player {killed.Health.FromWhomDamage.CharacterOwner.GetPhotonView().ViewID}";
-                _killed.text = $"Player {ViewID}";
+                _killer.text = $"{killer.Nickname}";
+                _killed.text = $"{killed.Nickname}";
                 _weaponIcon.sprite = killed.Health.FromWhomDamage.GetSpriteIcon;
             }
             else
             {
-                _killer.text = _killed.text = $"Player {ViewID}";
+                _killer.text = _killed.text = $"{killed.Nickname}";
                 _weaponIcon.sprite = _fallIcon;
             }
             _killLog.gameObject.SetActive(true);
@@ -159,12 +168,17 @@ public class UIHandler : MonoBehaviour
 
     private void DisableKillLogUI(Character character = null, int health = 0, bool restart = false)
     {
-        if (_killLog == null) return;
+        if (_killLog == null || _killLogIsActive == false) return;
         _killLog.rectTransform.DOAnchorPosX(210f, 0.4f).OnComplete(() =>
         {
             _killLogIsActive = false;
             _killLog.gameObject.SetActive(false);
-            if (restart) EnableKillLogUI(character.GetComponent<PhotonView>().ViewID, health);
+            if (restart)
+            {
+                int killerViewID = -1;
+                if(character.Health.FromWhomDamage != null) killerViewID = character.Health.FromWhomDamage.CharacterOwner.GetPhotonView().ViewID;
+                EnableKillLogUI(character.GetComponent<PhotonView>().ViewID, killerViewID, health);
+            }
         });
     }
 

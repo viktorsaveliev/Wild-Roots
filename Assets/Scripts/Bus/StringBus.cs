@@ -22,4 +22,17 @@ public class StringBus
     public string PlayerLevel = "PlayerLevel";
     public string PlayerExp = "PlayerExp";
     public string PlayerWinsCount = "PlayerWinsCount";
+
+    public string[] NicknameBus =
+    {
+        "Pogo Stick", "Jellybean", "Cupcake", "Muffin", "Peanut", "Buttercup",
+        "Sugarplum", "Banana Peel", "Popcorn", "Pumpkin", "Gummy Bear",
+        "Cotton Candy", "Bubblegum", "Scooter", "Sunny Side", "Lemon Drop", 
+        "Cherry Pie", "Cookie Dough", "Chocolate Chip", "Snickerdoodle", "Tootsie Roll",
+        "Jolly Rancher", "Gummy Worm", "M&M", "Skittles", "Starburst", "Smarties", "Nerds",
+        "Sweet Tart", "Fruit Loop", "Lucky Charm", "Captain Crunch", "Cocoa Puff", "Cheerio",
+        "Corn Pop", "Frosted Flake", "Raisin Bran", "Cookie Crisp", "Cinnamon Toast", "Honeycomb",
+        "Pop Tart", "Oreo", "Jivchik", "Reese's Pieces", "Twizzler", "Kit Kat", "Snickers", 
+        "Butterfinger", "Milky Way"
+    };
 }

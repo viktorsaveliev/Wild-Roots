@@ -1,6 +1,5 @@
 ﻿using Photon.Pun;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -56,6 +55,7 @@ public class CharacterAI : MonoBehaviour
 
     private void Update()
     {
+        if(PhotonNetwork.IsMasterClient == false) return;
         if (_movement.IsCanMove())
         {
             if (_characterTask == Tasks.AimAtTarget)
@@ -75,6 +75,7 @@ public class CharacterAI : MonoBehaviour
     private Coroutine _checkForStack;
     private void OnCollisionEnter(Collision collision)
     {
+        if (_agent == null || _movement == null || PhotonNetwork.IsMasterClient == false) return;
         if(_movement.IsCanMove() && _agent.enabled && _checkForStack == null && _isGoToSafeZone == false)
         {
             _checkForStack = StartCoroutine(OnCharacterStoped(collision.transform.position, Random.Range(1, 3)));
@@ -177,7 +178,7 @@ public class CharacterAI : MonoBehaviour
         float minDistance = float.MaxValue;
         foreach(Weapon weapon in _weapons)
         {
-            if (!weapon.IsActive || weapon is RootsMine) continue;
+            if (!weapon.IsActive || weapon is RootsMine || weapon is Punch) continue;
 
             float distance = Vector3.Distance(transform.position, weapon.transform.position);
             if(distance < minDistance)
@@ -248,7 +249,7 @@ public class CharacterAI : MonoBehaviour
 
         foreach (Character character in _characters)
         {
-            if (character == _currentCharacter) continue;
+            if (character == _currentCharacter || character.gameObject.activeSelf == false) continue;
 
             float distance = Vector3.Distance(transform.position, character.transform.position);
 
@@ -261,7 +262,15 @@ public class CharacterAI : MonoBehaviour
 
         if (target != null)
         {
-            _myWeapon.TakeAim();
+            if (PhotonNetwork.OfflineMode)
+            {
+                _myWeapon.TakeAim();
+            }
+            else
+            {
+                StringBus stringBus = new();
+                _myWeapon.GetPhotonView().RPC(stringBus.PlayerTakeAim, RpcTarget.All);
+            }
             SetTask(Tasks.AimAtTarget, Random.Range(0.5f, 2f), target.transform);
         }
         else
@@ -275,7 +284,18 @@ public class CharacterAI : MonoBehaviour
         _characterTask = task;
         _characterTaskTimer = Time.time + time;
         _taskTarget = target;
-        if(task == Tasks.None) _myWeapon.HideAim(_currentCharacter.PhotonView.ViewID);
+        if (task == Tasks.None)
+        {
+            if (PhotonNetwork.OfflineMode)
+            {
+                _myWeapon.HideAim(_currentCharacter.PhotonView.ViewID);
+            }
+            else
+            {
+                StringBus stringBus = new();
+                _myWeapon.GetPhotonView().RPC(stringBus.PlayerHideAim, RpcTarget.All, _currentCharacter.PhotonView.ViewID);
+            }
+        }
     }
 
     private void RandomAction()

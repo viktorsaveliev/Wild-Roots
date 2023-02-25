@@ -22,6 +22,8 @@ public class PlayersSpawner : MonoBehaviour
         yield return new WaitForSeconds(3f);
         if(health > 0)
         {
+            character.Rigidbody.velocity = Vector3.zero;
+            character.TakeImpulse.SetImmunity(2f);
             character.Health.FromWhomDamage = null;
             character.transform.SetPositionAndRotation(new Vector3(0, 5, 0), Quaternion.Euler(0, 0, 150));
             character.gameObject.SetActive(true);

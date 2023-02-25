@@ -54,9 +54,8 @@ public abstract class Weapon : MonoBehaviour
         IWeaponable character = other.GetComponent<IWeaponable>();
         if (character != null && character.GetCurrentWeapon() is Punch && Owner == -1)
         {
-            //if (character.GetPhotonView.IsMine) AudioSource.PlayClipAtPoint(AudioFX[(int)AudioType.Pickup], transform.position);
-            if (PhotonNetwork.IsMasterClient)
-            {
+            //if (PhotonNetwork.IsMasterClient)
+            //{
                 IMoveable characterMove = other.GetComponent<IMoveable>();
                 if (SpawnAnimation != null && !SpawnAnimation.IsComplete()) SpawnAnimation.Complete();
                 if (character.GetCurrentWeapon() is Punch && characterMove.IsCanMove())
@@ -66,7 +65,8 @@ public abstract class Weapon : MonoBehaviour
                     if (PhotonNetwork.OfflineMode) character.GiveWeapon(PhotonViewObject.ViewID);
                     else character.GetPhotonView().RPC(stringBus.GiveWeapon, RpcTarget.All, PhotonViewObject.ViewID);
                 }
-            }
+                AudioSource.PlayClipAtPoint(AudioFX[(int)AudioType.Pickup], transform.position);
+            //}
         }
     }
     #endregion

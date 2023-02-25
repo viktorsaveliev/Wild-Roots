@@ -55,6 +55,8 @@ public class Tutorial : MonoBehaviour, INoticeAction
 
         _joystickAttack.Init(_character);
         _joystickMovement.Init(_character);
+
+        _enemy.GetComponent<Character>().Nickname = "Ivan";
     }
 
     private void SetOfflineMode()

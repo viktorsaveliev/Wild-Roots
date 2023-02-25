@@ -16,7 +16,9 @@ public class Character : MonoBehaviour
     [SerializeField] private bool _isABot;
     public bool IsABot => _isABot;
 
-    void Awake()
+    public string Nickname;
+
+    private void Awake()
     {
         Move = GetComponent<CharacterMovement>();
         Weapon = GetComponent<CharacterWeapon>();
@@ -25,6 +27,12 @@ public class Character : MonoBehaviour
         PhotonView = GetComponent<PhotonView>();
         Rigidbody = GetComponent<Rigidbody>();
         Animator = GetComponent<Animator>();
+
+        if(_isABot == false)
+        {
+            StringBus stringBus = new();
+            Nickname = stringBus.NicknameBus[Random.Range(0, stringBus.NicknameBus.Length)];
+        }
     }
 
     private void OnEnable()
@@ -63,7 +71,7 @@ public class Character : MonoBehaviour
         }
         else
         {
-            levelExp += 50;
+            levelExp += 30;
             if (levelExp >= (level * 3 * 100))
             {
                 level++;

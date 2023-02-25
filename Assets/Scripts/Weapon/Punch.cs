@@ -3,15 +3,55 @@ using Photon.Pun;
 
 public class Punch : Weapon
 {
+    private const int MAX_CHARACTERS_PUSHING = 3;
+    private int[] _closedCharactersViewID = new int[MAX_CHARACTERS_PUSHING] { -1, -1, -1 };
     private float _antiflood;
 
     public override void Init(CharacterWeapon character)
     {
         base.Init(character);
-        Force = 1000;
+        Force = 1500;
         Label = "Punch";
         LifetimeSeconds = -1;
         Radius = 1f;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        Character target = other.GetComponent<Character>();
+        if(target)
+        {
+            SetCharacterInArray(target);
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        Character target = other.GetComponent<Character>();
+        if (target)
+        {
+            RemoveCharacterInArray(target);
+        }
+    }
+
+    private void SetCharacterInArray(Character target)
+    {
+        for (int i = 0; i < _closedCharactersViewID.Length; i++)
+        {
+            if (_closedCharactersViewID[i] != -1) continue;
+            _closedCharactersViewID[i] = target.PhotonView.ViewID;
+            break;
+        }
+    }
+
+    private void RemoveCharacterInArray(Character target)
+    {
+        for (int i = 0; i < _closedCharactersViewID.Length; i++)
+        {
+            if (_closedCharactersViewID[i] != target.PhotonView.ViewID) continue;
+            _closedCharactersViewID[i] = -1;
+            break;
+        }
     }
 
     [PunRPC]
@@ -21,13 +61,13 @@ public class Punch : Weapon
 
         base.Shoot(target, currentPos, currentRotate, isABot);
 
-        if (PhotonNetwork.IsMasterClient && !PhotonNetwork.OfflineMode)
+        if (!PhotonNetwork.OfflineMode)
         {
-            PhotonViewObject.RPC(nameof(Punches), RpcTarget.All, GetPlayersInRadius(CharacterOwner.transform.position, Radius), transform.position, Force);
+            PhotonViewObject.RPC(nameof(Punches), RpcTarget.All, _closedCharactersViewID, CharacterOwner.transform.position, Force);
         }
         else
         {
-            Punches(GetPlayersInRadius(CharacterOwner.transform.position, Radius), transform.position, Force);
+            Punches(_closedCharactersViewID, CharacterOwner.transform.position, Force);
         }
 
         PlayAttackFX();
@@ -40,18 +80,18 @@ public class Punch : Weapon
 
         for (int i = 0; i < viewID.Length; i++)
         {
+            if (viewID[i] == -1) continue;
             players[i] = PhotonView.Find(viewID[i]).GetComponent<TakeImpulse>();
         }
+
         foreach (TakeImpulse player in players)
         {
-            Character character = player.GetComponent<Character>();
-            if (character != null && character.Weapon == CharacterOwner && !character.IsABot) continue;
-
-            var direction = (player.transform.position - CharacterOwner.transform.position).normalized;
-            if (Vector3.Angle(CharacterOwner.transform.forward, direction) < 60f / 2f) // ViewAngle
-            {
-                player.SetImpulse(force, position, this, false);
-            }
+            if (player == null) continue; //  || (character.Weapon == CharacterOwner && !character.IsABot)
+            if(!player.TryGetComponent<Character>(out var character)) continue;
+            
+            player.SetImpulse(force, position, this, character.IsABot ? 1 : 0);
+            //var direction = (player.transform.position - CharacterOwner.transform.position).normalized;
+            //if (Vector3.Angle(CharacterOwner.transform.forward, direction) < 60f / 2f) // ViewAngle
         }
         _antiflood = Time.time + 1f;
     }

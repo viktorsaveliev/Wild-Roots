@@ -62,16 +62,35 @@ public class ServerHandler : MonoBehaviourPunCallbacks
         PhotonNetwork.LocalPlayer.TagObject = gameObject;
         PlayerCharacter.transform.position = _spawnPositions[Characters.Count - 1].position;
 
+        ServerPhotonView.RPC(nameof(SetCharacterNickname), RpcTarget.Others, playerControl.PhotonView.ViewID, playerControl.Nickname);
+
         if (PhotonNetwork.IsMasterClient)
         {
-            _weaponSpawner.CreateWeapons(CurrentRound);
+            _weaponSpawner.CreateWeapons(CurrentRound+1);
             if (PhotonNetwork.CurrentRoom.PlayerCount < 5)
             {
-                for (int i = 0; i < 4 - PhotonNetwork.CurrentRoom.PlayerCount; i++)
+                for (int i = 0; i < 5 - PhotonNetwork.CurrentRoom.PlayerCount; i++)
                 {
                     Character character = PhotonNetwork.InstantiateRoomObject(_botPrefab.name, new Vector3(0, 5, 0), Quaternion.identity).GetComponent<Character>();
                     ServerPhotonView.RPC(nameof(AddCharacterInList), RpcTarget.All, character.PhotonView.ViewID);
                     character.transform.position = _spawnPositions[Characters.Count - 1].position;
+
+                    StringBus stringBus = new();
+                    character.Nickname = stringBus.NicknameBus[Random.Range(0, stringBus.NicknameBus.Length)];
+
+                    ServerPhotonView.RPC(nameof(SetCharacterNickname), RpcTarget.Others, character.PhotonView.ViewID, character.Nickname);
+                }
+            }
+        }
+        else
+        {
+            if(GameSettings.GameMode == GameModeSelector.GameMode.Deathmatch)
+            {
+                foreach (Character character in Characters)
+                {
+                    if (character.IsABot == false) continue;
+                    PhotonNetwork.Destroy(character.PhotonView);
+                    break;
                 }
             }
         }
@@ -100,7 +119,8 @@ public class ServerHandler : MonoBehaviourPunCallbacks
 
             foreach (Character character in Characters)
             {
-                if (character.TryGetComponent<CharacterAI>(out var ai))
+                if (character.gameObject.activeSelf == false) continue;
+                if (character.TryGetComponent(out CharacterAI ai))
                 {
                     ai.StartInfinityTimer();
                 }
@@ -133,6 +153,13 @@ public class ServerHandler : MonoBehaviourPunCallbacks
     }
 
     #endregion
+
+    [PunRPC]
+    public void SetCharacterNickname(int viewID, string nickname)
+    {
+        Character character = PhotonView.Find(viewID).GetComponent<Character>();
+        character.Nickname = nickname;
+    }
 
     private void ResetPlayerData()
     {

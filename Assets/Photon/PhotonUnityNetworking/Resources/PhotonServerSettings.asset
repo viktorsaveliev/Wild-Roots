@@ -79,6 +79,7 @@ MonoBehaviour:
   - HideAim
   - TakeAim
   - AddCharacterInList
+  - SetCharacterNickname
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

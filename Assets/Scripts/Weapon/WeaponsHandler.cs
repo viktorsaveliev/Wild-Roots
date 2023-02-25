@@ -8,7 +8,7 @@ using DG.Tweening;
 [RequireComponent(typeof(HoneycombHandler), typeof(PhotonView), typeof(ServerHandler))]
 public class WeaponsHandler : MonoBehaviour
 {
-    [SerializeField] private Transform _weaponsParent;
+    [SerializeField] private Transform _weaponsContainer;
 
     private const int MAX_WEAPON_TYPE = 2;
     [SerializeField] private GameObject[] _weaponPrefabs = new GameObject[MAX_WEAPON_TYPE];
@@ -130,7 +130,7 @@ public class WeaponsHandler : MonoBehaviour
         if (randomPos < 0 || randomPos >= _honeycombs.Count) return; 
         Weapon weapon = PhotonView.Find(weaponViewID).GetComponent<Weapon>();
 
-        weapon.transform.parent = _weaponsParent;
+        weapon.transform.parent = _weaponsContainer;
         weapon.CurrentLayerWhereImStay = currentRound;
         weapon.CurrentHoneycombWhereImStay = _honeycombs[randomPos];
         weapon.WeaponType = (WeaponType)weaponType;
@@ -249,7 +249,7 @@ public class WeaponsHandler : MonoBehaviour
 
         weaponObject.transform.position = new Vector3(honeycombPos.x, 0.85f, honeycombPos.z);
         weaponObject.transform.rotation = Quaternion.Euler(_weaponsRotation[(int)weapon.WeaponType]);
-        weaponObject.transform.parent = _weaponsParent;
+        weaponObject.transform.parent = _weaponsContainer;
 
         weaponObject.GetComponent<Collider>().isTrigger = true;
 

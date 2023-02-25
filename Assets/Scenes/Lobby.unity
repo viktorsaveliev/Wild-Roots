@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -356,7 +356,16 @@ PrefabInstance:
       propertyPath: sceneViewId
       value: 14
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 7420270954826734770, guid: aa3e6f18f1a6f434a9899457fdcb0a53, type: 3}
+      propertyPath: ObservedComponents.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7420270954826734770, guid: aa3e6f18f1a6f434a9899457fdcb0a53, type: 3}
+      propertyPath: ObservedComponents.Array.data[0]
+      value: 
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5401692721849540121, guid: aa3e6f18f1a6f434a9899457fdcb0a53, type: 3}
     m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: aa3e6f18f1a6f434a9899457fdcb0a53, type: 3}
 --- !u!4 &43918792 stripped
@@ -1393,7 +1402,16 @@ PrefabInstance:
       propertyPath: sceneViewId
       value: 13
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 7420270954826734770, guid: aa3e6f18f1a6f434a9899457fdcb0a53, type: 3}
+      propertyPath: ObservedComponents.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7420270954826734770, guid: aa3e6f18f1a6f434a9899457fdcb0a53, type: 3}
+      propertyPath: ObservedComponents.Array.data[0]
+      value: 
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5401692721849540121, guid: aa3e6f18f1a6f434a9899457fdcb0a53, type: 3}
     m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: aa3e6f18f1a6f434a9899457fdcb0a53, type: 3}
 --- !u!4 &257858924 stripped
@@ -8388,7 +8406,16 @@ PrefabInstance:
       propertyPath: sceneViewId
       value: 11
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 7420270954826734770, guid: aa3e6f18f1a6f434a9899457fdcb0a53, type: 3}
+      propertyPath: ObservedComponents.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7420270954826734770, guid: aa3e6f18f1a6f434a9899457fdcb0a53, type: 3}
+      propertyPath: ObservedComponents.Array.data[0]
+      value: 
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5401692721849540121, guid: aa3e6f18f1a6f434a9899457fdcb0a53, type: 3}
     m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: aa3e6f18f1a6f434a9899457fdcb0a53, type: 3}
 --- !u!4 &1075648341 stripped
@@ -15851,7 +15878,8 @@ PrefabInstance:
       propertyPath: sceneViewId
       value: 3
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5401692721849540121, guid: aa3e6f18f1a6f434a9899457fdcb0a53, type: 3}
     m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: aa3e6f18f1a6f434a9899457fdcb0a53, type: 3}
 --- !u!4 &1946017462 stripped

@@ -2,7 +2,6 @@ using Photon.Pun;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.EventSystems;
 
 public class CharacterMovement : MonoBehaviour, IPunObservable, IMoveable
 {
@@ -65,10 +64,9 @@ public class CharacterMovement : MonoBehaviour, IPunObservable, IMoveable
 
     private void Update()
     {
-        if (_character.IsABot) return;
-
-        if (!_character.PhotonView.IsMine)
+        if (_character.PhotonView.IsMine == false && PhotonNetwork.OfflineMode == false)
         {
+            if (PhotonNetwork.IsMasterClient && _character.IsABot) return;
             //transform.DOMove(this.correctPlayerPosition, 0.4f);
             transform.SetPositionAndRotation(Vector3.Lerp(transform.position, this.correctPlayerPosition, Time.deltaTime * 10),
                 Quaternion.Lerp(transform.rotation, this.correctPlayerRotation, Time.deltaTime * 10));
@@ -180,12 +178,13 @@ public class CharacterMovement : MonoBehaviour, IPunObservable, IMoveable
         else
         {
             if (_character.IsABot) _agent.enabled = false;
+
             _isMoveActive = false;
             _moveInactiveTime = time;
             _character.Rigidbody.freezeRotation = false;
 
             if (_freezeTimer != null) StopCoroutine(_freezeTimer);
-            _freezeTimer = StartCoroutine(FreezeTimer());
+            if(gameObject.activeSelf) _freezeTimer = StartCoroutine(FreezeTimer());
 
             if (activateRoots)
             {

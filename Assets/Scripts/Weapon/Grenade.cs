@@ -8,7 +8,7 @@ public class Grenade : Weapon, IExplodable
     {
         base.Init(character);
 
-        Force = 1500f;
+        Force = 2000f;
         Strength = 1;
         Radius = 3f;
 

@@ -47,7 +47,7 @@ public class CharacterHUD : MonoBehaviour
         }
         else
         {
-            _nickname.text = $"Player {_photonView.ViewID}";
+            _nickname.text = $"{_character.Nickname}";
             _anotherPlayer.SetActive(true);
         }
 

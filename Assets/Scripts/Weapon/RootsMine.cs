@@ -15,7 +15,7 @@ public class RootsMine : Weapon, IExplodable
         IsMineActive = false;
 
         Label = "Roots Mine";
-        LifetimeSeconds = 15f;
+        LifetimeSeconds = 25f;
         SetLocalPosAndRotate(new Vector3(-0.051f, 0.055f, 0.08f), Quaternion.Euler(97.74f, 0, 0));
     }
 

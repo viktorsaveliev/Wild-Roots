@@ -1,4 +1,3 @@
-using Photon.Pun;
 using System.Collections;
 using UnityEngine;
 
@@ -60,7 +59,7 @@ public class PlayerHealth : MonoBehaviour
     {
         if (character == _character)
         {
-            yield return new WaitForSeconds(5f);
+            yield return new WaitForSeconds(10f);
             FromWhomDamage = null;
         }
     }
