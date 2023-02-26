@@ -123,6 +123,7 @@ public class CharacterAI : MonoBehaviour
             else if (isNearNavMeshEdge && _isGoToSafeZone == false)
             {
                 _isGoToSafeZone = true;
+                StartCoroutine(ResetAction(Random.Range(0.5f, 1.5f)));
                 _movement.Move(GetRandomDirectionAwayFrom(nearestEdge));
             }
             else
@@ -271,7 +272,7 @@ public class CharacterAI : MonoBehaviour
                 StringBus stringBus = new();
                 _myWeapon.GetPhotonView().RPC(stringBus.PlayerTakeAim, RpcTarget.All);
             }
-            SetTask(Tasks.AimAtTarget, Random.Range(0.5f, 2f), target.transform);
+            SetTask(Tasks.AimAtTarget, Random.Range(0.3f, 1.7f), target.transform);
         }
         else
         {
@@ -354,5 +355,12 @@ public class CharacterAI : MonoBehaviour
             _timer = null;
         }
         _timer = StartCoroutine(InfinityTimer());
+    }
+
+    private IEnumerator ResetAction(float time)
+    {
+        yield return new WaitForSeconds(time);
+        _isGoToSafeZone = false;
+        _movement.Stop();
     }
 }

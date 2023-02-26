@@ -60,7 +60,7 @@ public class ServerHandler : MonoBehaviourPunCallbacks
         ServerPhotonView = PhotonView.Get(this);
         ServerPhotonView.RPC(nameof(AddCharacterInList), RpcTarget.All, playerControl.PhotonView.ViewID);
         PhotonNetwork.LocalPlayer.TagObject = gameObject;
-        PlayerCharacter.transform.position = _spawnPositions[Characters.Count - 1].position;
+        PlayerCharacter.transform.position = _spawnPositions[PhotonNetwork.LocalPlayer.ActorNumber-1].position;
 
         ServerPhotonView.RPC(nameof(SetCharacterNickname), RpcTarget.Others, playerControl.PhotonView.ViewID, playerControl.Nickname);
 
@@ -69,11 +69,11 @@ public class ServerHandler : MonoBehaviourPunCallbacks
             _weaponSpawner.CreateWeapons(CurrentRound+1);
             if (PhotonNetwork.CurrentRoom.PlayerCount < 5)
             {
-                for (int i = 0; i < 5 - PhotonNetwork.CurrentRoom.PlayerCount; i++)
+                for (int i = PhotonNetwork.CurrentRoom.PlayerCount; i < 5; i++)
                 {
                     Character character = PhotonNetwork.InstantiateRoomObject(_botPrefab.name, new Vector3(0, 5, 0), Quaternion.identity).GetComponent<Character>();
                     ServerPhotonView.RPC(nameof(AddCharacterInList), RpcTarget.All, character.PhotonView.ViewID);
-                    character.transform.position = _spawnPositions[Characters.Count - 1].position;
+                    character.transform.position = _spawnPositions[i].position;
 
                     StringBus stringBus = new();
                     character.Nickname = stringBus.NicknameBus[Random.Range(0, stringBus.NicknameBus.Length)];

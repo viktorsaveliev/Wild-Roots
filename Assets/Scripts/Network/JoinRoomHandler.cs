@@ -194,20 +194,19 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
             {
                 if (_currentSecToFindPlayers <= 0)
                 {
-                    if (PhotonNetwork.CurrentRoom.PlayerCount < 2)
+                    /*if (PhotonNetwork.CurrentRoom.PlayerCount < 2)
                     {
                         /*_character.transform.DOScale(5f, 1f);
                         _character.transform.DOMoveY(0.84f, 1f);
                         _mainLobby.SetActive(true);
-                        _searchScreen.SetActive(false);*/
+                        _searchScreen.SetActive(false);
                         PhotonNetwork.LeaveRoom();
                         Notice.ShowDialog(NoticeDialog.Message.EmptyQueue);
                     }
                     else
-                    {
-                        StartGame(GameModeSelector.GameMode.PvP);
-                        break;
-                    }
+                    {*/
+                    StartGame(GameModeSelector.GameMode.PvP);
+                    break;
                 }
                 else _photonView.RPC(nameof(UpdateWaitingUI), RpcTarget.All, _currentSecToFindPlayers);
             }
