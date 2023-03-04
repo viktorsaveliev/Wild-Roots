@@ -1,3 +1,4 @@
+using CrazyGames;
 using UnityEngine;
 
 public class WinnerShower : MonoBehaviour
@@ -26,5 +27,7 @@ public class WinnerShower : MonoBehaviour
 
         _interface.SetActive(false);
         _defeatScreen.SetActive(false);
+
+        CrazyEvents.Instance.HappyTime();
     }
 }

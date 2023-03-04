@@ -1,5 +1,6 @@
 using Photon.Pun;
 using UnityEngine.SceneManagement;
+using CrazyGames;
 
 public class BackToLobby : MonoBehaviourPunCallbacks, INoticeAction
 {
@@ -32,6 +33,9 @@ public class BackToLobby : MonoBehaviourPunCallbacks, INoticeAction
     public override void OnLeftRoom()
     {
         base.OnLeftRoom();
+
+        CrazyAds.Instance.beginAdBreak();
+
         LoadingUI.UpdateProgress(0.5f);
         SceneManager.LoadScene(0);
     }
