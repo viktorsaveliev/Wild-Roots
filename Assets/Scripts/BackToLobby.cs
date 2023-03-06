@@ -24,7 +24,7 @@ public class BackToLobby : MonoBehaviourPunCallbacks, INoticeAction
 
     private void LoadLobby()
     {
-        if(PhotonNetwork.OfflineMode == false) PhotonNetwork.DestroyPlayerObjects(PhotonNetwork.LocalPlayer);
+        if (PhotonNetwork.OfflineMode == false) PhotonNetwork.DestroyPlayerObjects(PhotonNetwork.LocalPlayer);
 
         LoadingUI.Show(LoadingShower.Type.Progress);
         PhotonNetwork.LeaveRoom();

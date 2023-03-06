@@ -1,29 +1,29 @@
 public class StringBus
 {
-    public string GiveWeapon = "GiveWeapon";
-    public string Explode = "Explode";
-    public string Shoot = "Shoot";
+    public readonly string GiveWeapon = "GiveWeapon";
+    public readonly string Explode = "Explode";
+    public readonly string Shoot = "Shoot";
 
-    public string AnimationSpeed = "Speed";
-    public string AnimationWithWeapon = "WithWeapon";
-    public string AnimationAttackGrenade = "AttackGrenade";
-    public string AnimationFall = "Fall";
-    public string AnimationPunch = "Punch";
+    public readonly string AnimationSpeed = "Speed";
+    public readonly string AnimationWithWeapon = "WithWeapon";
+    public readonly string AnimationAttackGrenade = "AttackGrenade";
+    public readonly string AnimationFall = "Fall";
+    public readonly string AnimationPunch = "Punch";
 
-    public string Language = "Language";
-    public string SettingsSoundFX = "SettingsSoundFX";
-    public string SettingsMusic = "SettingsMusic";
+    public readonly string Language = "Language";
+    public readonly string SettingsSoundFX = "SettingsSoundFX";
+    public readonly string SettingsMusic = "SettingsMusic";
 
-    public string PlayerTakeAim = "TakeAim";
-    public string PlayerHideAim = "HideAim";
+    public readonly string PlayerTakeAim = "TakeAim";
+    public readonly string PlayerHideAim = "HideAim";
 
-    public string PlayerDevice = "Device";
+    public readonly string PlayerDevice = "Device";
 
-    public string PlayerLevel = "PlayerLevel";
-    public string PlayerExp = "PlayerExp";
-    public string PlayerWinsCount = "PlayerWinsCount";
+    public readonly string PlayerLevel = "PlayerLevel";
+    public readonly string PlayerExp = "PlayerExp";
+    public readonly string PlayerWinsCount = "PlayerWinsCount";
 
-    public string[] NicknameBus =
+    public readonly string[] NicknameBus =
     {
         "Pogo Stick", "Jellybean", "Cupcake", "Muffin", "Peanut", "Buttercup",
         "Sugarplum", "Banana Peel", "Popcorn", "Pumpkin", "Gummy Bear",
@@ -35,4 +35,8 @@ public class StringBus
         "Pop Tart", "Oreo", "Jivchik", "Reese's Pieces", "Twizzler", "Kit Kat", "Snickers", 
         "Butterfinger", "Milky Way"
     };
+
+    public readonly string AccStatus = "AccStatus";
+    public readonly string Email = "Email";
+    public readonly string Password = "Password";
 }
