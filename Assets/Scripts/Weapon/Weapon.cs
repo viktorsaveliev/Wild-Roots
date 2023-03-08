@@ -54,22 +54,37 @@ public abstract class Weapon : MonoBehaviour
         IWeaponable character = other.GetComponent<IWeaponable>();
         if (character != null && character.GetCurrentWeapon() is Punch && Owner == -1)
         {
-            //if (PhotonNetwork.IsMasterClient)
-            //{
-                IMoveable characterMove = other.GetComponent<IMoveable>();
-                if (SpawnAnimation != null && !SpawnAnimation.IsComplete()) SpawnAnimation.Complete();
-                if (character.GetCurrentWeapon() is Punch && characterMove.IsCanMove())
+            StringBus stringBus = new();
+            if (PhotonNetwork.IsMasterClient)
+            {
+                AssignToPlayer(character);
+            }
+            else
+            {
+                if(character.GetPhotonView().IsMine)
                 {
-                    StringBus stringBus = new();
-
-                    if (PhotonNetwork.OfflineMode) character.GiveWeapon(PhotonViewObject.ViewID);
-                    else character.GetPhotonView().RPC(stringBus.GiveWeapon, RpcTarget.All, PhotonViewObject.ViewID);
+                    character.GetPhotonView().RPC(stringBus.AskForAWeapon, RpcTarget.MasterClient, character.GetPhotonView().ViewID, PhotonViewObject.ViewID);
                 }
-                AudioSource.PlayClipAtPoint(AudioFX[(int)AudioType.Pickup], transform.position);
-            //}
+            }
         }
     }
     #endregion
+
+    public void AssignToPlayer(IWeaponable character)
+    {
+        IMoveable characterMove = character.GetPhotonView().gameObject.GetComponent<IMoveable>();
+        if (SpawnAnimation != null && !SpawnAnimation.IsComplete()) SpawnAnimation.Complete();
+        if (character.GetCurrentWeapon() is Punch && characterMove.IsCanMove())
+        {
+            if (PhotonNetwork.OfflineMode) character.GiveWeapon(PhotonViewObject.ViewID);
+            else
+            {
+                StringBus stringBus = new();
+                character.GetPhotonView().RPC(stringBus.GiveWeapon, RpcTarget.All, PhotonViewObject.ViewID);
+            }
+        }
+        AudioSource.PlayClipAtPoint(AudioFX[(int)AudioType.Pickup], transform.position);
+    }
 
     private IEnumerator LifeTimer(float seconds)
     {

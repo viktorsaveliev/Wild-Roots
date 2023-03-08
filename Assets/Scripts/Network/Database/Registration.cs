@@ -1,6 +1,5 @@
 using UnityEngine;
 using TMPro;
-using UnityEngine.UI;
 using UnityEngine.Networking;
 using System.Collections;
 
@@ -51,7 +50,7 @@ public class Registration : MonoBehaviour
 
         if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
         {
-            Debug.LogError("Error while checking user email: " + www.error);
+            Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
             yield break;
         }
 
@@ -77,11 +76,12 @@ public class Registration : MonoBehaviour
 
         if (www.result == UnityWebRequest.Result.Success)
         {
-            Debug.Log("User registered successfully");
+            LoadData.Instance.LoadAccount(email, password, false);
+            Hide();
         }
         else
         {
-            Debug.Log("Error registering user: " + www.error);
+            Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
         }
     }
 }

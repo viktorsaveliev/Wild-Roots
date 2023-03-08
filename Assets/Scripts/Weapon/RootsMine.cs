@@ -42,7 +42,8 @@ public class RootsMine : Weapon, IExplodable
 
         CharacterMovement[] targets = new CharacterMovement[viewID.Length];
 
-        for (int i = 0; i < viewID.Length; i++)
+        int length = viewID.Length;
+        for (int i = 0; i < length; i++)
         {
             targets[i] = PhotonView.Find(viewID[i]).GetComponent<CharacterMovement>();
         }

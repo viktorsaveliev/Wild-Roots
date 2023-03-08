@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
-using System.Net;
 using TMPro;
 using UnityEngine.UI;
 
@@ -44,41 +43,35 @@ public class Authorization : MonoBehaviour
         using UnityWebRequest www = UnityWebRequest.Post("https://www.wildroots.fun/public/authorization.php", form);
         yield return www.SendWebRequest();
 
+        StringBus stringBus = new();
         if (www.result != UnityWebRequest.Result.Success)
         {
-            Debug.LogError("Error while checking user: " + www.error);
+            if (PlayerPrefs.GetInt(stringBus.AccStatus) == 2)
+            {
+                Show();
+            }
+            Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
         }
         else
         {
             bool successful = bool.Parse(www.downloadHandler.text);
-            if(successful)
+            if (successful)
             {
-                StringBus stringBus = new();
-                if (_rememberMe.isOn)
-                {
-                    PlayerPrefs.SetInt(stringBus.AccStatus, 2);
-                    PlayerPrefs.SetString(stringBus.Email, email);
-                    PlayerPrefs.SetString(stringBus.Password, password);
-
-                    print("remembered");
-                }
-                else
-                {
-                    PlayerPrefs.SetInt(stringBus.AccStatus, 1);
-                    PlayerPrefs.DeleteKey(stringBus.Email);
-                    PlayerPrefs.DeleteKey(stringBus.Password);
-                }
-                PlayerPrefs.Save();
-                print("autorizatcisz");
+                LoadData.Instance.LoadAccount(email, password, _rememberMe.isOn);
+                Hide();
             }
             else
             {
+                if(PlayerPrefs.GetInt(stringBus.AccStatus) == 2)
+                {
+                    Show();
+                }
                 print("neverno");
             }
         }
     }
 
-    private string GetIPAddress()
+    /*private string GetIPAddress()
     {
         string ipAddress = "";
         IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
@@ -93,7 +86,7 @@ public class Authorization : MonoBehaviour
         }
 
         return ipAddress;
-    }
+    }*/
 
     public void Show() => _authPanel.SetActive(true);
     public void Hide() => _authPanel.SetActive(false);

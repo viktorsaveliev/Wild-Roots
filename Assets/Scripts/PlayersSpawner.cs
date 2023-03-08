@@ -23,12 +23,12 @@ public class PlayersSpawner : MonoBehaviour
         if(health > 0)
         {
             character.Rigidbody.velocity = Vector3.zero;
-            character.TakeImpulse.SetImmunity(2f);
             character.Health.FromWhomDamage = null;
             character.transform.SetPositionAndRotation(new Vector3(0, 5, 0), Quaternion.Euler(0, 0, 150));
             character.gameObject.SetActive(true);
-            
-            if(character.Move) character.Move.SetMoveActive(false, 2);
+            character.TakeImpulse.SetImmunity(3f);
+
+            if (character.Move) character.Move.SetMoveActive(false, 2);
         }
         else
         {

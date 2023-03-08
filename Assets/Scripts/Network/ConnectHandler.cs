@@ -2,6 +2,7 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.UI;
+using CrazyGames;
 
 public class ConnectHandler : MonoBehaviourPunCallbacks
 {
@@ -25,6 +26,20 @@ public class ConnectHandler : MonoBehaviourPunCallbacks
         IsConnected = true;
         print($"Connected to region: {PhotonNetwork.CloudRegion}");
         print($"Players online: {PhotonNetwork.CountOfPlayers}");
+
+        bool isInviteLink = CrazyEvents.Instance.IsInviteLink();
+        if(isInviteLink)
+        {
+            string roomId = CrazyEvents.Instance.GetInviteLinkParameter("roomId");
+
+            if (roomId == null && roomId == "")
+            {
+                Debug.Log("[ERROR]: Inactive link: " + roomId);
+                return;
+            }
+
+            PhotonNetwork.JoinRoom(roomId);
+        }
     }
 
     public override void OnDisconnected(DisconnectCause cause)

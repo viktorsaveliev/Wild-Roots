@@ -80,6 +80,8 @@ MonoBehaviour:
   - TakeAim
   - AddCharacterInList
   - SetCharacterNickname
+  - GiveMeAWeapon
+  - AskForAWeapon
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

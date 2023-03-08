@@ -37,7 +37,13 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
 
     private void CreateRoom()
     {
-        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 5, CleanupCacheOnLeave = false, IsOpen = true, IsVisible = true });
+        string roomName = GenerateRoomName(6);
+#if (!UNITY_EDITOR)
+        PhotonNetwork.CreateRoom(roomName, new RoomOptions { MaxPlayers = 5, CleanupCacheOnLeave = false, IsOpen = true, IsVisible = true });
+#else
+        PhotonNetwork.CreateRoom(roomName, new RoomOptions { MaxPlayers = 5, CleanupCacheOnLeave = false, IsOpen = false, IsVisible = true });
+#endif
+        print(roomName);
         //_currentSecToFindPlayers = _secToFindPlayers;
 
         //if (_secTimer != null) StopCoroutine(_secTimer);
@@ -60,8 +66,11 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
                 return;
             }
             LoadingUI.Show(LoadingShower.Type.Simple);
+#if (!UNITY_EDITOR)
             PhotonNetwork.JoinRandomRoom();
-
+#else
+            CreateRoom();
+#endif
             _isJoiningRoom = true;
         }
         else if(gamemode == GameModeSelector.GameMode.Deathmatch)
@@ -123,12 +132,13 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
 
     public override void OnJoinRoomFailed(short returnCode, string message)
     {
-        if (returnCode == 32758) // Game does not exist
+        /*if (returnCode == 32758) // Game does not exist
         {
             PhotonNetwork.CreateRoom("Deathmatch", new RoomOptions { MaxPlayers = 20, CleanupCacheOnLeave = false, IsOpen = true, IsVisible = false });
         }
-        else if (returnCode == 32757) // MaxCCU
+        else */if (returnCode == 32757) // MaxCCU
         {
+            LoadingUI.Hide();
             Notice.ShowDialog(NoticeDialog.Message.ServerFull);
         }
         else
@@ -265,5 +275,20 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
         {
             _currentSecToFindPlayers = 3;
         }
+    }
+
+    private const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+    public string GenerateRoomName(int length)
+    {
+        char[] password = new char[length];
+        System.Random random = new();
+
+        for (int i = 0; i < password.Length; i++)
+        {
+            password[i] = chars[random.Next(chars.Length)];
+        }
+
+        return new string(password);
     }
 }

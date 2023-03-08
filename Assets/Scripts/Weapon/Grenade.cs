@@ -32,8 +32,8 @@ public class Grenade : Weapon, IExplodable
     public void Explode(int[] viewID, Vector3 position, float force)
     {
         TakeImpulse[] players = new TakeImpulse[viewID.Length];
-
-        for (int i = 0; i < viewID.Length; i++)
+        int length = viewID.Length;
+        for (int i = 0; i < length; i++)
         {
             players[i] = PhotonView.Find(viewID[i]).GetComponent<TakeImpulse>();
         }

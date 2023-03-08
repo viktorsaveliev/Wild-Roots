@@ -6,7 +6,7 @@ public class Guide : MonoBehaviour, INoticeAction
 {
     private void Start()
     {
-        StringBus stringBus = new();
+        /*StringBus stringBus = new();
         int level = PlayerPrefs.GetInt(stringBus.PlayerLevel);
         if(level == 0)
         {
@@ -14,7 +14,7 @@ public class Guide : MonoBehaviour, INoticeAction
 
             PlayerPrefs.SetInt(stringBus.PlayerLevel, 1);
             PlayerPrefs.Save();
-        }
+        }*/
     }
 
     public void ActionOnClickNotice(int button)

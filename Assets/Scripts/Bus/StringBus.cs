@@ -16,12 +16,9 @@ public class StringBus
 
     public readonly string PlayerTakeAim = "TakeAim";
     public readonly string PlayerHideAim = "HideAim";
+    public readonly string AskForAWeapon = "AskForAWeapon";
 
     public readonly string PlayerDevice = "Device";
-
-    public readonly string PlayerLevel = "PlayerLevel";
-    public readonly string PlayerExp = "PlayerExp";
-    public readonly string PlayerWinsCount = "PlayerWinsCount";
 
     public readonly string[] NicknameBus =
     {
@@ -39,4 +36,6 @@ public class StringBus
     public readonly string AccStatus = "AccStatus";
     public readonly string Email = "Email";
     public readonly string Password = "Password";
+    public readonly string PlayerID = "PlayerID";
+    public readonly string GuestAcc = "GuestAcc";
 }

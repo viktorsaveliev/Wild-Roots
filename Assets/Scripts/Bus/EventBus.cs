@@ -24,4 +24,6 @@ public static class EventBus
 
     public static Action OnSetTutorialTaskForPlayer;
     public static Action OnPlayerEndTutorial;
+
+    public static Action OnPlayerLoadAccount;
 }

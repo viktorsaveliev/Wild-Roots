@@ -39,6 +39,17 @@ public class CharacterWeapon : MonoBehaviour, IWeaponable
         EventBus.OnPlayerTakeWeapon?.Invoke();
     }
 
+    [PunRPC]
+    public void AskForAWeapon(int characterViewID, int weaponViewID) // Only for Master Client
+    {
+        CharacterWeapon character = PhotonView.Find(characterViewID).GetComponent<CharacterWeapon>();
+        Weapon weapon = PhotonView.Find(weaponViewID).GetComponent<Weapon>();
+        if (character != null && character.GetCurrentWeapon() is Punch && weapon.Owner == -1)
+        {
+            weapon.AssignToPlayer(character);
+        }
+    }
+
     public void EquipPunches()
     {
         _currentWeapon = _punch;

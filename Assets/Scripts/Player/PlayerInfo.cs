@@ -24,7 +24,7 @@ public class PlayerInfo : MonoBehaviour
         Animator = GetComponent<Animator>();
     }
 
-    private void OnEnable()
+    /*private void OnEnable()
     {
         EventBus.OnMatchEnded += CheckWinner;
     }
@@ -71,5 +71,5 @@ public class PlayerInfo : MonoBehaviour
         PlayerPrefs.SetInt(stringBus.PlayerLevel, level);
         PlayerPrefs.SetInt(stringBus.PlayerExp, levelExp);
         PlayerPrefs.Save();
-    }
+    }*/
 }
