@@ -91,7 +91,11 @@ public class Character : MonoBehaviour
 
     private void UpdateLevel()
     {
-        if (!PhotonView.IsMine) return;
+        StringBus stringBus = new();
+        bool isGuest = PlayerPrefs.GetInt(stringBus.GuestAcc) == 1;
+
+        if (!PhotonView.IsMine || isGuest) return;
+        
         LoadData.Instance.LoadLevelData(this);
     }
 }
