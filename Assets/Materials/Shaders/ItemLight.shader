@@ -7,6 +7,7 @@ Shader "Custom/ItemHighlight" {
         _Lightness ("Lightness", Range (0.0, 2.0)) = 1.0
         _Speed ("Speed", Range (0.0, 10.0)) = 1.0
         _Alpha ("Alpha", Range (0.0, 1.0)) = 1.0
+        _BorderSize ("Border Size", Range (0.0, 0.5)) = 0.1
     }
 
     SubShader {
@@ -35,6 +36,7 @@ Shader "Custom/ItemHighlight" {
             float _Lightness;
             float _Speed;
             float _Alpha;
+            float _BorderSize;
 
             v2f vert (appdata v) {
                 v2f o;
@@ -44,16 +46,16 @@ Shader "Custom/ItemHighlight" {
             }
 
             fixed4 frag (v2f i) : SV_Target {
-                float dist = length(i.uv - 0.5);
-                float smoothDist = smoothstep(_Range - _Softness, _Range, dist);
-                float sinVal = sin(_Time.y * _Speed);
-                float lightness = (_Lightness + sinVal) * smoothDist;
+    float dist = length(i.uv - 0.5);
+    float smoothDist = smoothstep(_Range, _Range - _Softness, dist);
+    float sinVal = sin(_Time.y * _Speed);
+    float lightness = (_Lightness + sinVal) * smoothDist;
 
-                float4 color = lerp(_BaseColor, _HighlightColor, lightness);
-                color.a = _Alpha;
+    float4 color = lerp(_BaseColor, _HighlightColor, lightness);
+    color.a = _Alpha * (1.0 - smoothDist);
 
-                return color;
-            }
+    return color;
+}
             ENDCG
         }
     }

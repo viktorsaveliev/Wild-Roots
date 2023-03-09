@@ -6089,6 +6089,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _shieldSphere: {fileID: 7079218604793795459}
+  _shieldSound: {fileID: 8300000, guid: 4c42a1f74fdd54148809e2e0da7a4e10, type: 3}
 --- !u!95 &2349437205677997809
 Animator:
   serializedVersion: 4

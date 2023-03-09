@@ -6,6 +6,7 @@ using DG.Tweening;
 public class TakeImpulse : MonoBehaviour
 {
     [SerializeField] private GameObject _shieldSphere;
+    [SerializeField] private AudioClip _shieldSound;
 
     private Character _character;
     private float _immunity;
@@ -20,7 +21,11 @@ public class TakeImpulse : MonoBehaviour
     {
         if (_immunity >= Time.time)
         {
-            if (_shieldSphere != null) _shieldSphere.transform.DOShakeScale(0.3f, 1.2f, 10, 60);
+            if (_shieldSphere != null)
+            {
+                _shieldSphere.transform.DOShakeScale(0.3f, 1.2f, 10, 60);
+                AudioSource.PlayClipAtPoint(_shieldSound, transform.position);
+            }
             return;
         }
 

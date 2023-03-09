@@ -60,8 +60,8 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 7c5e8eeff3f0a994ca0e22287365afc4, type: 3}
-        m_Scale: {x: -0, y: 0.3}
+        m_Texture: {fileID: 2800000, guid: ae24b4f7acabd6147ad0af8804a0a634, type: 3}
+        m_Scale: {x: -0, y: 0}
         m_Offset: {x: 1, y: 1}
     - _MainTex2:
         m_Texture: {fileID: 0}
@@ -116,12 +116,12 @@ Material:
     - _BiasMT3: 1
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
-    - _Bri: -0.39
+    - _Bri: 1
     - _BumpAmt: 6
     - _BumpScale: 1
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
-    - _Con: 2
+    - _Con: 1.15
     - _Cull: 2
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
@@ -153,7 +153,7 @@ Material:
     - _InterAlpha: 1
     - _InterEdge: 12
     - _InterPow: 6.4
-    - _InvFade: 5
+    - _InvFade: 0.01
     - _LightIntensity: 0.5
     - _LightRange: 1.5
     - _Lightness: 0.92
@@ -190,10 +190,10 @@ Material:
     - _fTA: 1
     - _fTAE: 1
     - _interT: 1
-    - _inv1: 0
+    - _inv1: 1
     - _inv2: 0
     - _inv3: 0
-    - _invAlpha1: 1
+    - _invAlpha1: 0
     - _invAlpha2: 0
     - _invAlpha3: 0
     - _numberTex: 0
@@ -216,7 +216,7 @@ Material:
     - _HoloDirection: {r: 0, g: 1, b: 0, a: 0}
     - _InterColor: {r: 0.8732334, g: 0.5801887, b: 1, a: 1}
     - _OutlineColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Pan1: {r: 0, g: 0.03, b: 0, a: 0}
+    - _Pan1: {r: 0, g: 0.2, b: 0, a: 0}
     - _Pan2: {r: 0, g: 0, b: 0, a: 0}
     - _Pan3: {r: 0, g: 0, b: 0, a: 0}
     - _PanDs: {r: 0, g: 0, b: 0, a: 0}
@@ -233,12 +233,12 @@ Material:
     - _ScaleDis: {r: 1, g: 1, b: 0.5, a: 0.5}
     - _ScaleDsl: {r: 2.75, g: 2.88, b: 1.67, a: 0.5}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
-    - _Tile1: {r: 0.1, g: 1, b: 0, a: 0}
+    - _Tile1: {r: 0.1, g: 2, b: 0, a: 0}
     - _Tile2: {r: 1, g: 1, b: 0, a: 0}
     - _Tile3: {r: 1, g: 1, b: 0, a: 0}
     - _TileDs: {r: 1, g: 1, b: 0, a: 0}
     - _TileDsl: {r: 0.66, g: 1.06, b: 0.48, a: 0.36}
-    - _TintColor: {r: 0, g: 0.9553201, b: 1, a: 0.2}
+    - _TintColor: {r: 0, g: 1, b: 0.61270547, a: 0.22745098}
   m_BuildTextureStacks: []
 --- !u!114 &850847580045390758
 MonoBehaviour:

@@ -43,7 +43,6 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
 #else
         PhotonNetwork.CreateRoom(roomName, new RoomOptions { MaxPlayers = 5, CleanupCacheOnLeave = false, IsOpen = false, IsVisible = true });
 #endif
-        print(roomName);
         //_currentSecToFindPlayers = _secToFindPlayers;
 
         //if (_secTimer != null) StopCoroutine(_secTimer);
