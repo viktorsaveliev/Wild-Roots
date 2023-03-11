@@ -183,6 +183,15 @@ MonoBehaviour:
     m_Localized: Game Mode
     m_Metadata:
       m_Items: []
+  - m_Id: 15084251921829888
+    m_Localized: 'Invalid nickname format: your nickname must be between 4 and 24
+      characters long and must not contain prohibited words'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15134707960303616
+    m_Localized: 'Note: You are playing as a guest, your stats will not be saved'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

@@ -38,4 +38,19 @@ public class StringBus
     public readonly string Password = "Password";
     public readonly string PlayerID = "PlayerID";
     public readonly string GuestAcc = "GuestAcc";
+
+    public readonly string GameDomain = "https://www.wildroots.fun/public/";
+
+    public readonly string[] YouNeedBeCute =
+    {
+        "der'mo","nigger","niger","gavno","gymno","gamno","kakawka","niga","nigga",
+        "kakalllka","pis`ka","topmo3","tormoz","inatb","debilu","wluha","wlyha","wlyxa","wluxa","puzdec","cy_ka","gayh","na)(","inatb",
+        "nahooi","krisa","kpica","fuck","mlya","baran","scyko","gamno","popa","gopa","jopa","6u4","bich","4mo","epanytsya","piska","nucbka","pedarasika",
+        "lolllapa","hooi","idiot","prudyrok","pridyrok","loh","jlOx","l0x","lox","de6il","zalupa","zalypa","debil","gandon","gondon","blea","blya","huy","xyu",
+        "xye","huj","xui","huli","/7uga","/7uda","nuga","nugp","nugep","nuda","nudp","nudr","pudp","pi3da","/7u3g","hui","pizdec","hyevuu","naebal",
+        "zhopa","nu3g","pizda","pi3d","zopa","zadrot","paskud","loshar","pudaras","peduk","dryan'","lox","loh","sosi","cocu","coci","zaebal","zaibal",
+        "ueban","hyi","hyu","http","www.",".ru",".com",".ua",".info",".net","suki","su4ka","cuka","cuki","cuku","sooqa","soooqa","syka",
+        
+        "puta","pendeho"
+    };
 }

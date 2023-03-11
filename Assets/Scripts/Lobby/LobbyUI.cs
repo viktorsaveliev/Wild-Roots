@@ -48,14 +48,12 @@ public class LobbyUI : MonoBehaviour
 
     private void UpdateInfo()
     {
-        StringBus stringBus = new();
-        if (PlayerPrefs.GetInt(stringBus.GuestAcc) == 1) return;
-
-        LoadData.Instance.LoadLevelData(_character);
-
-        int maxLevelExp = _character.Level * 3 * 100;
+        //StringBus stringBus = new();
+        //if (PlayerPrefs.GetInt(stringBus.GuestAcc) == 1) return;
 
         if (_character.Level == 0) _character.Level = 1;
+
+        int maxLevelExp = _character.Level * 3 * 100;
         _level.text = $"{_character.Level}";
         _levelExp.text = $"{_character.Exp}/{maxLevelExp}";
 
@@ -63,7 +61,6 @@ public class LobbyUI : MonoBehaviour
         _levelExpProgressBar.fillAmount = exp / maxLevelExp;
 
         _winsCount.text = $"{_character.Wins}";
-        print("B");
     }
 
     private void ShowLobby()
@@ -71,5 +68,4 @@ public class LobbyUI : MonoBehaviour
         _lobby.SetActive(true);
         Invoke(nameof(UpdateInfo), 1f);
     }
-    
 }

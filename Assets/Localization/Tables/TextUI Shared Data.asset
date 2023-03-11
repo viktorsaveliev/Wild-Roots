@@ -171,6 +171,14 @@ MonoBehaviour:
     m_Key: Mode_Info
     m_Metadata:
       m_Items: []
+  - m_Id: 15084251921829888
+    m_Key: Notice_InvalidNickname
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15134707960303616
+    m_Key: Note_Guest
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

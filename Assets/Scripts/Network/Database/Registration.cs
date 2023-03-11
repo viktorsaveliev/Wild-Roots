@@ -2,6 +2,8 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.Networking;
 using System.Collections;
+using DG.Tweening;
+using System.Net;
 
 public class Registration : MonoBehaviour
 {
@@ -10,35 +12,61 @@ public class Registration : MonoBehaviour
     [SerializeField] private TMP_InputField _repeatPassword;
     [SerializeField] private GameObject _regPanel;
 
-    public void Show() => _regPanel.SetActive(true);
-    public void Hide() => _regPanel.SetActive(false);
+    [SerializeField] private TMP_Text _emailError;
+    [SerializeField] private TMP_Text _passwordError;
+
+    public void Show()
+    {
+        _regPanel.transform.localPosition = new Vector2(-2000f, 0);
+        _regPanel.SetActive(true);
+        _regPanel.transform.DOLocalMoveX(0f, 0.3f);
+
+        EventBus.OnPlayerClickUI?.Invoke(2);
+    }
+    
+    public void Hide()
+    {
+        _regPanel.transform.DOScale(0.1f, 0.2f).OnComplete(() =>
+        {
+            _regPanel.SetActive(false);
+            _regPanel.transform.localScale = new Vector2(0.8f, 0.8f);
+        });
+    }
+    
 
     public void RegisterButton()
     {
-        if(_email.text == string.Empty || _password.text == string.Empty || _repeatPassword.text == string.Empty)
+        ResetErrorText();
+
+        if (_email.text == string.Empty || _password.text == string.Empty || _repeatPassword.text == string.Empty)
         {
-            print("Заполните все поля");
+            _emailError.text = "Fill in all the fields";
+            EventBus.OnPlayerClickUI?.Invoke(3);
             return;
         }
 
         if(_password.text != _repeatPassword.text)
         {
-            print("Пароли не совпадают");
+            _passwordError.text = "Password mismatch";
+            EventBus.OnPlayerClickUI?.Invoke(3);
             return;
         }
 
         if(_password.text.Length < 6)
         {
-            print("Длина пароля должна быть минимум 6 символов");
+            _passwordError.text = "Password length must be at least 6 characters";
+            EventBus.OnPlayerClickUI?.Invoke(3);
             return;
         }
 
         if (_email.text.Contains('@') == false)
         {
-            print("Неверный формат ввода");
+            _emailError.text = "Invalid e-mail format";
+            EventBus.OnPlayerClickUI?.Invoke(3);
             return;
         }
         StartCoroutine(CheckIfUserExists(_email.text));
+        EventBus.OnPlayerClickUI?.Invoke(0);
     }
 
     private IEnumerator CheckIfUserExists(string email)
@@ -57,7 +85,8 @@ public class Registration : MonoBehaviour
         bool userExists = bool.Parse(www.downloadHandler.text);
         if (userExists)
         {
-            Debug.Log("User with email " + email + " already exists in the database.");
+            _emailError.text = "This account is already registered";
+            EventBus.OnPlayerClickUI?.Invoke(3);
         }
         else
         {
@@ -70,6 +99,7 @@ public class Registration : MonoBehaviour
         WWWForm form = new();
         form.AddField("email", email);
         form.AddField("password", password);
+        form.AddField("regIP", GetUserIP());
 
         using UnityWebRequest www = UnityWebRequest.Post("https://www.wildroots.fun/public/register.php", form);
         yield return www.SendWebRequest();
@@ -81,7 +111,21 @@ public class Registration : MonoBehaviour
         }
         else
         {
+            EventBus.OnPlayerClickUI?.Invoke(3);
             Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
         }
+    }
+
+    public string GetUserIP()
+    {
+        string externalIP = new WebClient().DownloadString("http://checkip.dyndns.org/");
+        externalIP = (new System.Text.RegularExpressions.Regex(@"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}")).Matches(externalIP)[0].ToString();
+        return externalIP;
+    }
+
+    private void ResetErrorText()
+    {
+        _emailError.text = string.Empty;
+        _passwordError.text = string.Empty;
     }
 }

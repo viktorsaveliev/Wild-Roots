@@ -62,6 +62,8 @@ public class ServerHandler : MonoBehaviourPunCallbacks
         PhotonNetwork.LocalPlayer.TagObject = gameObject;
         PlayerCharacter.transform.position = _spawnPositions[PhotonNetwork.LocalPlayer.ActorNumber-1].position;
 
+        playerControl.Nickname = PhotonNetwork.LocalPlayer.NickName;
+
         ServerPhotonView.RPC(nameof(SetCharacterNickname), RpcTarget.Others, playerControl.PhotonView.ViewID, playerControl.Nickname);
 
         if (PhotonNetwork.IsMasterClient)

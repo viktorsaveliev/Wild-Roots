@@ -3,9 +3,12 @@ using UnityEngine;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
 using CrazyGames;
+using Photon.Pun;
 
 public class LoadData : MonoBehaviour
 {
+    [SerializeField] private GameObject _regauthPanel;
+
     public static LoadData Instance;
 
     private void Start()
@@ -24,7 +27,7 @@ public class LoadData : MonoBehaviour
 
         WWWForm form = new();
         form.AddField("ID", PlayerPrefs.GetInt(stringBus.PlayerID));
-        using UnityWebRequest www = UnityWebRequest.Post("https://www.wildroots.fun/public/get_level.php", form);
+        using UnityWebRequest www = UnityWebRequest.Post(stringBus.GameDomain + "get_data.php", form);
         yield return www.SendWebRequest();
 
         // Handle JSON response
@@ -36,6 +39,10 @@ public class LoadData : MonoBehaviour
             player.Level = playerData.level;
             player.Exp = playerData.exp;
             player.Wins = playerData.wins;
+            player.Nickname = playerData.nickname;
+
+            PhotonNetwork.LocalPlayer.NickName = player.Nickname;
+            EventBus.OnPlayerChangeNickname?.Invoke();
         }
         else
         {
@@ -52,6 +59,8 @@ public class LoadData : MonoBehaviour
 
     private IEnumerator IELoadAccount(string email, string password, bool remember)
     {
+        _regauthPanel.SetActive(false);
+
         StringBus stringBus = new();
 
         if (remember)
@@ -69,7 +78,7 @@ public class LoadData : MonoBehaviour
 
         WWWForm form = new();
         form.AddField("email", email);
-        using UnityWebRequest www = UnityWebRequest.Post("https://www.wildroots.fun/public/get_id.php", form);
+        using UnityWebRequest www = UnityWebRequest.Post(stringBus.GameDomain + "get_id.php", form);
         yield return www.SendWebRequest();
 
         if (www.result == UnityWebRequest.Result.Success)
@@ -100,4 +109,5 @@ public class PlayerData
     public int level;
     public int exp;
     public int wins;
+    public string nickname;
 }

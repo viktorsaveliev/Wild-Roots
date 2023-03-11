@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class PlayAsGuest : MonoBehaviour
 {
+    [SerializeField] private GameObject _note;
+
     private Registration _reg;
     private Authorization _auth;
 
@@ -14,8 +16,11 @@ public class PlayAsGuest : MonoBehaviour
 
     public void OnClickButton()
     {
-        StringBus stringBus = new();
+        _note.SetActive(true);
 
+        EventBus.OnPlayerClickUI?.Invoke(0);
+
+        StringBus stringBus = new();
         CrazySDK.Instance.GetUserInfo(userInfo =>
         {
             int deviceType = 0;
@@ -34,5 +39,6 @@ public class PlayAsGuest : MonoBehaviour
         PlayerPrefs.Save();
 
         EventBus.OnPlayerLoadAccount?.Invoke();
+        gameObject.SetActive(false);
     }
 }

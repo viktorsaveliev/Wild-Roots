@@ -26,4 +26,5 @@ public static class EventBus
     public static Action OnPlayerEndTutorial;
 
     public static Action OnPlayerLoadAccount;
+    public static Action OnPlayerChangeNickname;
 }

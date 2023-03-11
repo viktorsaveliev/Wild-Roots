@@ -41,7 +41,8 @@ public class NoticeDialog : MonoBehaviour
         EndTutorial,
         ServerFull,
         EmptyQueue,
-        BackToLobby
+        BackToLobby,
+        InvalidNickname
     }
 
     public Message CurrentMessage { get; private set; }
@@ -63,7 +64,8 @@ public class NoticeDialog : MonoBehaviour
         "Notice_EndTutorial",
         "Notice_ServerFull",
         "Notice_EmptyQueue",
-        "Notice_BackToLobby"
+        "Notice_BackToLobby",
+        "Notice_InvalidNickname"
     };
 
     public void ShowDialog(Message message, INoticeAction action = null, string leftButtonTextKey = "Notice_Close", string rightButtonTextKey = null)

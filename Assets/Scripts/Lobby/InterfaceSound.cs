@@ -5,7 +5,7 @@ public class InterfaceSound : MonoBehaviour
     [SerializeField] private AudioClip[] _click;
     private AudioSource _audio;
 
-    private void Start()
+    private void Awake()
     {
         _audio = GetComponent<AudioSource>();    
     }
@@ -20,8 +20,10 @@ public class InterfaceSound : MonoBehaviour
         EventBus.OnPlayerClickUI -= PlayClickSound;
     }
 
-    private void PlayClickSound(int id)
+    public void PlayClickSound(int id)
     {
+        if (id < 0 || id > _click.Length - 1) id = _click.Length - 1;
+
         StringBus stringBus= new();
         int checkSoundSettings = PlayerPrefs.GetInt(stringBus.SettingsSoundFX);
         if (checkSoundSettings == 0) 
