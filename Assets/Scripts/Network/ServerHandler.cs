@@ -34,7 +34,7 @@ public class ServerHandler : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            if(PhotonNetwork.GetPing() > 100 && PhotonNetwork.CurrentRoom.PlayerCount > 1)
+            if(PhotonNetwork.GetPing() > 150 && PhotonNetwork.CurrentRoom.PlayerCount > 1)
             {
                 PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer.GetNext());
                 print("[WRS]: Changed Master Client. Reason: high ping");

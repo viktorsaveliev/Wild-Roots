@@ -1,10 +1,13 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
 
 public class SaveData : MonoBehaviour
 {
+    [SerializeField] private TMP_InputField _nickname;
     [SerializeField] private GameObject _saveDataIndicator;
+
     public static SaveData Instance;
 
     private void Start()
@@ -12,12 +15,45 @@ public class SaveData : MonoBehaviour
         Instance = this;
     }
 
-    public void SaveLevelData(int playerID, Character player)
+    public void SaveNewPassword(string password)
     {
-        StartCoroutine(IEUpdateLevel(playerID, player));
+        StartCoroutine(IESaveNewPassword(password));
     }
 
-    private IEnumerator IEUpdateLevel(int playerID, Character player)
+    private IEnumerator IESaveNewPassword(string password)
+    {
+        StringBus stringBus = new();
+
+        WWWForm form = new();
+        form.AddField("password", password);
+        form.AddField("email", PlayerPrefs.GetString("email"));
+        using UnityWebRequest www = UnityWebRequest.Post(stringBus.GameDomain + "update_password.php", form);
+        yield return www.SendWebRequest();
+        if (www.result == UnityWebRequest.Result.Success)
+        {
+            bool success = bool.Parse(www.downloadHandler.text);
+            if (success == false)
+            {
+                Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
+            }
+            else
+            {
+                Notice.ShowDialog(NoticeDialog.Message.PasswordChanged);
+            }
+        }
+        else
+        {
+            Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
+        }
+        PlayerPrefs.DeleteKey("email");
+    }
+
+    public void SaveLevelData(int playerID, Character player)
+    {
+        StartCoroutine(IESaveLevelData(playerID, player));
+    }
+
+    private IEnumerator IESaveLevelData(int playerID, Character player)
     {
         if(_saveDataIndicator != null) _saveDataIndicator.SetActive(true);
         WWWForm form = new();
@@ -26,7 +62,8 @@ public class SaveData : MonoBehaviour
         form.AddField("exp", player.Exp);
         form.AddField("wins", player.Wins);
 
-        using UnityWebRequest www = UnityWebRequest.Post("https://www.wildroots.fun/public/update_level.php", form);
+        StringBus stringBus = new();
+        using UnityWebRequest www = UnityWebRequest.Post(stringBus.GameDomain + "update_level.php", form);
         yield return www.SendWebRequest();
 
         if (www.result == UnityWebRequest.Result.Success)
@@ -36,7 +73,6 @@ public class SaveData : MonoBehaviour
             {
                 Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
             }
-            else print("yes level");
         }
         else
         {

@@ -192,6 +192,15 @@ MonoBehaviour:
     m_Localized: 'Note: You are playing as a guest, your stats will not be saved'
     m_Metadata:
       m_Items: []
+  - m_Id: 15489893132193792
+    m_Localized: Your password has been successfully changed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15491496203571200
+    m_Localized: A pin code has been sent to your email, enter it to change your
+      password
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

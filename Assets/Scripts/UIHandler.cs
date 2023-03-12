@@ -68,7 +68,7 @@ public class UIHandler : MonoBehaviour
             Character winner = null;
             foreach (Character player in _serverHandler.Characters)
             {
-                if (player.Health && player.Health.Health > 0)
+                if (player.Health && player.Health.Value > 0)
                 {
                     playersCount++;
                     winner = player;

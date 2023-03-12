@@ -35,7 +35,7 @@ public class PlayAsGuest : MonoBehaviour
         _auth.Hide();
         gameObject.SetActive(false);
 
-        PlayerPrefs.SetInt(stringBus.GuestAcc, 1);
+        PlayerPrefs.SetInt(stringBus.IsGuest, 1);
         PlayerPrefs.Save();
 
         EventBus.OnPlayerLoadAccount?.Invoke();

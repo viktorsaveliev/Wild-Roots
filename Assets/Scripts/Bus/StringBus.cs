@@ -36,8 +36,8 @@ public class StringBus
     public readonly string AccStatus = "AccStatus";
     public readonly string Email = "Email";
     public readonly string Password = "Password";
-    public readonly string PlayerID = "PlayerID";
-    public readonly string GuestAcc = "GuestAcc";
+    public readonly string UserID = "PlayerID";
+    public readonly string IsGuest = "GuestAcc";
 
     public readonly string GameDomain = "https://www.wildroots.fun/public/";
 

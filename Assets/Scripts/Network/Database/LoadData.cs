@@ -16,17 +16,17 @@ public class LoadData : MonoBehaviour
         Instance = this;
     }
 
-    public void LoadLevelData(Character player)
+    public void LoadUserData(Character player)
     {
-        StartCoroutine(IELoadLevelData(player));
+        StartCoroutine(IELoadUserData(player));
     }
 
-    private IEnumerator IELoadLevelData(Character player)
+    private IEnumerator IELoadUserData(Character player)
     {
         StringBus stringBus = new();
 
         WWWForm form = new();
-        form.AddField("ID", PlayerPrefs.GetInt(stringBus.PlayerID));
+        form.AddField("ID", PlayerPrefs.GetInt(stringBus.UserID));
         using UnityWebRequest www = UnityWebRequest.Post(stringBus.GameDomain + "get_data.php", form);
         yield return www.SendWebRequest();
 
@@ -50,14 +50,14 @@ public class LoadData : MonoBehaviour
         }
     }
 
-    public void LoadAccount(string email, string password, bool remember)
+    public void GetUserID(string email, string password, bool remember)
     {
         StringBus stringBus = new();
-        PlayerPrefs.DeleteKey(stringBus.GuestAcc);
-        StartCoroutine(IELoadAccount(email, password, remember));
+        PlayerPrefs.DeleteKey(stringBus.IsGuest);
+        StartCoroutine(IEGetUserID(email, password, remember));
     }
 
-    private IEnumerator IELoadAccount(string email, string password, bool remember)
+    private IEnumerator IEGetUserID(string email, string password, bool remember)
     {
         _regauthPanel.SetActive(false);
 
@@ -84,7 +84,7 @@ public class LoadData : MonoBehaviour
         if (www.result == UnityWebRequest.Result.Success)
         {
             int playerID = int.Parse(www.downloadHandler.text);
-            PlayerPrefs.SetInt(stringBus.PlayerID, playerID);
+            PlayerPrefs.SetInt(stringBus.UserID, playerID);
         }
 
         CrazySDK.Instance.GetUserInfo(userInfo =>

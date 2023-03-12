@@ -179,6 +179,14 @@ MonoBehaviour:
     m_Key: Note_Guest
     m_Metadata:
       m_Items: []
+  - m_Id: 15489893132193792
+    m_Key: Notice_PasswordChanged
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15491496203571200
+    m_Key: Notice_PincodeSended
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

@@ -9,26 +9,30 @@ public class RestorePassword : MonoBehaviour
     [SerializeField] private TMP_InputField _inputField;
     [SerializeField] private TMP_Text _headEmail;
     [SerializeField] private TMP_Text _header;
+    [SerializeField] private TMP_Text _errorText;
 
     [SerializeField] private GameObject _resetPass;
+    [SerializeField] private ChangePassword _changePass;
 
     private bool _pincodeSended;
     private string _savedEmail;
 
     public void SendPincode()
     {
+        ResetErrorText();
+
         EventBus.OnPlayerClickUI?.Invoke(0);
 
         if (_inputField.text == string.Empty)
         {
-            print("Заполните все поля");
+            _errorText.text = "Fill in all the fields";
             return;
         }
         if (_pincodeSended == false)
         {
             if (_inputField.text.Contains('@') == false)
             {
-                print("Неверный формат ввода");
+                _errorText.text = "Invalid e-mail format";
                 return;
             }
             StartCoroutine(GetPasswordAndSendToEmail(_inputField.text));
@@ -37,7 +41,7 @@ public class RestorePassword : MonoBehaviour
         {
             if (_inputField.text.Length != 4 || _savedEmail == string.Empty)
             {
-                print("Неверный пинкод");
+                _errorText.text = "Invalid PIN-code format";
                 return;
             }
             StartCoroutine(CheckPincode(int.Parse(_inputField.text)));
@@ -59,16 +63,17 @@ public class RestorePassword : MonoBehaviour
             bool success = bool.Parse(www.downloadHandler.text);
             if (success)
             {
-                print("введите новый пароль");
+                _changePass.Show();
+                Hide();
             }
             else
             {
-                print("Неверный пинкод");
+                _errorText.text = "Wrong PIN-code";
             }
         }
         else
         {
-            print(www.error);
+            Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
         }
     }
 
@@ -87,6 +92,7 @@ public class RestorePassword : MonoBehaviour
             if(success)
             {
                 _savedEmail = email;
+                PlayerPrefs.SetString("email", email);
 
                 _inputField.text = string.Empty;
                 _inputField.placeholder.GetComponent<TMP_Text>().text = "enter your pincode";
@@ -94,6 +100,7 @@ public class RestorePassword : MonoBehaviour
                 _headEmail.text = "PIN-code:";
 
                 _pincodeSended = true;
+                Notice.ShowDialog(NoticeDialog.Message.PincodeSended);
             }
             else
             {
@@ -104,6 +111,11 @@ public class RestorePassword : MonoBehaviour
         {
             Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
         }
+    }
+
+    private void ResetErrorText()
+    {
+        _errorText.text = string.Empty;
     }
 
     public void Show()

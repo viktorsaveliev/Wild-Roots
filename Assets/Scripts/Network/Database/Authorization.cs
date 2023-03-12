@@ -61,7 +61,7 @@ public class Authorization : MonoBehaviour
         {
             if (isRemember)
             {
-                PlayerPrefs.DeleteKey(stringBus.GuestAcc);
+                PlayerPrefs.DeleteKey(stringBus.AccStatus);
                 Show();
             }
             Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
@@ -71,7 +71,7 @@ public class Authorization : MonoBehaviour
             bool successful = bool.Parse(www.downloadHandler.text);
             if (successful)
             {
-                LoadData.Instance.LoadAccount(email, password, isRemember || _rememberMe.isOn);
+                LoadData.Instance.GetUserID(email, password, isRemember || _rememberMe.isOn);
                 Hide();
             }
             else

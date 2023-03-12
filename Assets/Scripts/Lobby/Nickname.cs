@@ -47,7 +47,7 @@ public class Nickname : MonoBehaviour
         }
 
         StringBus stringBus = new();
-        if (PlayerPrefs.GetInt(stringBus.GuestAcc) == 1)
+        if (PlayerPrefs.GetInt(stringBus.IsGuest) == 1)
         {
             PhotonNetwork.LocalPlayer.NickName = _nickname.text;
             EventBus.OnPlayerClickUI?.Invoke(2);
@@ -64,9 +64,9 @@ public class Nickname : MonoBehaviour
 
         WWWForm form = new();
         form.AddField("nickname", nickname);
-        form.AddField("ID", PlayerPrefs.GetInt(stringBus.PlayerID));
+        form.AddField("ID", PlayerPrefs.GetInt(stringBus.UserID));
 
-        using UnityWebRequest www = UnityWebRequest.Post("https://www.wildroots.fun/public/update_nickname.php", form);
+        using UnityWebRequest www = UnityWebRequest.Post(stringBus.GameDomain + "update_nickname.php", form);
         yield return www.SendWebRequest();
 
         if (www.result != UnityWebRequest.Result.Success)

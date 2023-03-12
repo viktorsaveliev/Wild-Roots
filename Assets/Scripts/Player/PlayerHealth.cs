@@ -4,7 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(Character))]
 public class PlayerHealth : MonoBehaviour
 {
-    public int Health { get; private set; }
+    public int Value { get; private set; }
     public float DamageStrength { get; private set; }
     public float DamageMultiplier { get; private set; }
     public Weapon FromWhomDamage;
@@ -22,7 +22,7 @@ public class PlayerHealth : MonoBehaviour
 
     private void Start()
     {
-        Health = 3;
+        Value = 3;
         DamageStrength = 0;
         DamageMultiplier = 1000f;
         _character = GetComponent<Character>();
@@ -32,7 +32,7 @@ public class PlayerHealth : MonoBehaviour
     {
         if(GameSettings.GameMode == GameModeSelector.GameMode.PvP)
         {
-            if (--Health <= 0)
+            if (--Value <= 0)
             {
                 EventBus.OnCharacterLose?.Invoke();
             }
@@ -40,7 +40,7 @@ public class PlayerHealth : MonoBehaviour
         
         if(_character.Weapon) _character.Weapon.DeleteWeapon(true);
         gameObject.SetActive(false);
-        EventBus.OnCharacterFall?.Invoke(_character, Health);
+        EventBus.OnCharacterFall?.Invoke(_character, Value);
     }
 
     public void SetDamageStrength(float plus)

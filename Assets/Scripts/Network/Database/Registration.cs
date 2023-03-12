@@ -101,12 +101,13 @@ public class Registration : MonoBehaviour
         form.AddField("password", password);
         form.AddField("regIP", GetUserIP());
 
-        using UnityWebRequest www = UnityWebRequest.Post("https://www.wildroots.fun/public/register.php", form);
+        StringBus stringBus = new();
+        using UnityWebRequest www = UnityWebRequest.Post(stringBus.GameDomain + "register.php", form);
         yield return www.SendWebRequest();
 
         if (www.result == UnityWebRequest.Result.Success)
         {
-            LoadData.Instance.LoadAccount(email, password, false);
+            LoadData.Instance.GetUserID(email, password, false);
             Hide();
         }
         else

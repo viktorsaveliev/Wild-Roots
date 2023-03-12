@@ -21,6 +21,8 @@ public class Character : MonoBehaviour
     public int Exp;
     public int Wins;
 
+    private bool _isReceivedPrize;
+
     private void Awake()
     {
         Move = GetComponent<CharacterMovement>();
@@ -52,16 +54,15 @@ public class Character : MonoBehaviour
 
     private void CheckWinner(int winnerID)
     {
-       
-        if (!PhotonView.IsMine) return;
+        if (!PhotonView.IsMine || _isReceivedPrize) return;
 
         PhotonView winner = PhotonView.Find(winnerID);
         if (winner == null || winner.GetComponent<Character>().IsABot) return;
 
         StringBus stringBus = new();
-        bool isGuest = PlayerPrefs.GetInt(stringBus.GuestAcc) == 1;
+        bool isGuest = PlayerPrefs.GetInt(stringBus.IsGuest) == 1;
 
-        if(isGuest == false) LoadData.Instance.LoadLevelData(this);
+        if(isGuest == false) LoadData.Instance.LoadUserData(this);
 
         if (winner.IsMine)
         {
@@ -85,17 +86,18 @@ public class Character : MonoBehaviour
             }
         }
 
-        int id = PlayerPrefs.GetInt(stringBus.PlayerID);
-        if (isGuest == false) SaveData.Instance.SaveLevelData(id, this);
+        int id = PlayerPrefs.GetInt(stringBus.UserID);
+        if (isGuest == false && id > 0) SaveData.Instance.SaveLevelData(id, this);
+        _isReceivedPrize = true;
     }
 
     private void UpdateLevel()
     {
         StringBus stringBus = new();
-        bool isGuest = PlayerPrefs.GetInt(stringBus.GuestAcc) == 1;
+        bool isGuest = PlayerPrefs.GetInt(stringBus.IsGuest) == 1;
 
         if (!PhotonView.IsMine || isGuest) return;
         
-        LoadData.Instance.LoadLevelData(this);
+        LoadData.Instance.LoadUserData(this);
     }
 }
