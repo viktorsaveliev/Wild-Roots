@@ -26,7 +26,7 @@ public class LoadData : MonoBehaviour
         StringBus stringBus = new();
 
         WWWForm form = new();
-        form.AddField("ID", PlayerPrefs.GetInt(stringBus.UserID));
+        form.AddField("id", PlayerPrefs.GetInt(stringBus.UserID));
         using UnityWebRequest www = UnityWebRequest.Post(stringBus.GameDomain + "get_data.php", form);
         yield return www.SendWebRequest();
 
@@ -40,6 +40,7 @@ public class LoadData : MonoBehaviour
             player.Exp = playerData.exp;
             player.Wins = playerData.wins;
             player.Nickname = playerData.nickname;
+            Coins.UpdateValue(playerData.coins, false);
 
             PhotonNetwork.LocalPlayer.NickName = player.Nickname;
             EventBus.OnPlayerChangeNickname?.Invoke();
@@ -110,4 +111,5 @@ public class PlayerData
     public int exp;
     public int wins;
     public string nickname;
+    public int coins;
 }

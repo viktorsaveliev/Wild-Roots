@@ -10,6 +10,7 @@ using System.Linq;
 [RequireComponent(typeof(WeaponsHandler), typeof(HoneycombHandler))]
 public class ServerHandler : MonoBehaviourPunCallbacks
 {
+    private const int MAX_PLAYERS = 5;
     public List<Character> Characters { get; private set; } = new();
 
     [SerializeField] private GameObject _playerPrefab;
@@ -27,7 +28,7 @@ public class ServerHandler : MonoBehaviourPunCallbacks
 
     private Coroutine _timer;
     [SerializeField] private Text _textTime;
-    private WeaponsHandler _weaponSpawner;
+    private WeaponsHandler _weapons;
     public PhotonView ServerPhotonView;
 
     private void Awake()
@@ -54,8 +55,8 @@ public class ServerHandler : MonoBehaviourPunCallbacks
         _honeycombHandler = GetComponent<HoneycombHandler>();
         _honeycombHandler.Init();
 
-        _weaponSpawner = GetComponent<WeaponsHandler>();
-        _weaponSpawner.IsNeedUpdateHoneycomb = true;
+        _weapons = GetComponent<WeaponsHandler>();
+        _weapons.IsNeedUpdateHoneycomb = true;
 
         ServerPhotonView = PhotonView.Get(this);
         ServerPhotonView.RPC(nameof(AddCharacterInList), RpcTarget.All, playerControl.PhotonView.ViewID);
@@ -68,23 +69,22 @@ public class ServerHandler : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.IsMasterClient)
         {
-            _weaponSpawner.CreateWeapons(CurrentRound+1);
+            _weapons.CreateWeapons(CurrentRound+1);
             if (PhotonNetwork.CurrentRoom.PlayerCount < 5)
             {
-                for (int i = PhotonNetwork.CurrentRoom.PlayerCount; i < 5; i++)
+                for (int i = PhotonNetwork.CurrentRoom.PlayerCount; i < MAX_PLAYERS; i++)
                 {
-                    Character character = PhotonNetwork.InstantiateRoomObject(_botPrefab.name, new Vector3(0, 5, 0), Quaternion.identity).GetComponent<Character>();
-                    ServerPhotonView.RPC(nameof(AddCharacterInList), RpcTarget.All, character.PhotonView.ViewID);
-                    character.transform.position = _spawnPositions[i].position;
+                    Character character = PhotonNetwork.InstantiateRoomObject(_botPrefab.name, _spawnPositions[i].position, Quaternion.identity).GetComponent<Character>();
 
                     StringBus stringBus = new();
                     character.Nickname = stringBus.NicknameBus[Random.Range(0, stringBus.NicknameBus.Length)];
 
+                    ServerPhotonView.RPC(nameof(AddCharacterInList), RpcTarget.All, character.PhotonView.ViewID);
                     ServerPhotonView.RPC(nameof(SetCharacterNickname), RpcTarget.Others, character.PhotonView.ViewID, character.Nickname);
                 }
             }
         }
-        else
+        /*else
         {
             if(GameSettings.GameMode == GameModeSelector.GameMode.Deathmatch)
             {
@@ -94,6 +94,18 @@ public class ServerHandler : MonoBehaviourPunCallbacks
                     PhotonNetwork.Destroy(character.PhotonView);
                     break;
                 }
+            }
+        }*/
+    }
+
+    private void OnApplicationFocus(bool focus)
+    {
+        if (focus == false)
+        {
+            if (PhotonNetwork.IsMasterClient && PhotonNetwork.CurrentRoom.PlayerCount > 1)
+            {
+                PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer.GetNext());
+                print("[WRS]: Changed Master Client. Reason: turned the game");
             }
         }
     }
@@ -109,15 +121,15 @@ public class ServerHandler : MonoBehaviourPunCallbacks
 
     public override void OnMasterClientSwitched(Player newMasterClient)
     {
-        if (GameSettings.GameMode == GameModeSelector.GameMode.Deathmatch)
+        /*if (GameSettings.GameMode == GameModeSelector.GameMode.Deathmatch)
         {
-            _weaponSpawner.UpdateWeaponsPool();
-        }
+            _weapons.UpdateWeaponsPool();
+        }*/
 
-        _weaponSpawner.IsNeedUpdateHoneycomb = true;
+        _weapons.IsNeedUpdateHoneycomb = true;
         if (PhotonNetwork.IsMasterClient)
         {
-            _weaponSpawner.StartTimerForWeaponSpawn();
+            _weapons.StartTimerForWeaponSpawn();
 
             foreach (Character character in Characters)
             {

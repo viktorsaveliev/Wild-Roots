@@ -33,7 +33,7 @@ public class UIHandler : MonoBehaviour
         if(GameSettings.GameMode == GameModeSelector.GameMode.PvP)
         {
             _playersCount.text = $"{_serverHandler.Characters.Count}";
-            _buttonBackToLobby.gameObject.SetActive(false);
+            //_buttonBackToLobby.gameObject.SetActive(false);
         }
         else
         {

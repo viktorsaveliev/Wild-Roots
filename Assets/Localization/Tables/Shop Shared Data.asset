@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: Shop Shared Data
+  m_EditorClassIdentifier: 
+  m_TableCollectionName: Shop
+  m_TableCollectionNameGuidString: d684685bfe002bb48859bd0efe1026a3
+  m_Entries:
+  - m_Id: 6476058624
+    m_Key: CoinsPrice
+    m_Metadata:
+      m_Items: []
+  - m_Id: 138969927680
+    m_Key: Resources
+    m_Metadata:
+      m_Items: []
+  - m_Id: 227524268032
+    m_Key: Skins
+    m_Metadata:
+      m_Items: []
+  - m_Id: 343236726784
+    m_Key: ShopName
+    m_Metadata:
+      m_Items: []
+  - m_Id: 430163677184
+    m_Key: CoinsName
+    m_Metadata:
+      m_Items: []
+  - m_Id: 130490736627712
+    m_Key: Rarity_Regular
+    m_Metadata:
+      m_Items: []
+  - m_Id: 130587599884288
+    m_Key: Rarity_Rare
+    m_Metadata:
+      m_Items: []
+  - m_Id: 130614091108352
+    m_Key: Rarity_Legendary
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 8979049888560447488
+  references:
+    version: 2
+    RefIds:
+    - rid: 8979049888560447488
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1678803210433

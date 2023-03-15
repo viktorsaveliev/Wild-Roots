@@ -5,7 +5,6 @@ using UnityEngine.Networking;
 
 public class SaveData : MonoBehaviour
 {
-    [SerializeField] private TMP_InputField _nickname;
     [SerializeField] private GameObject _saveDataIndicator;
 
     public static SaveData Instance;
