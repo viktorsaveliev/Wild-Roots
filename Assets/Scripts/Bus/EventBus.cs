@@ -25,6 +25,7 @@ public static class EventBus
     public static Action OnSetTutorialTaskForPlayer;
     public static Action OnPlayerEndTutorial;
 
-    public static Action OnPlayerLoadAccount;
+    public static Action OnPlayerGetUserIDFromDB;
     public static Action OnPlayerChangeNickname;
+    public static Action<int> OnPlayerChangeSkin;
 }

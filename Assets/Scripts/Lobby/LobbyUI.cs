@@ -21,12 +21,12 @@ public class LobbyUI : MonoBehaviour
 
     private void OnEnable()
     {
-        EventBus.OnPlayerLoadAccount += ShowLobby;
+        EventBus.OnPlayerGetUserIDFromDB += ShowLobby;
     }
 
     private void OnDisable()
     {
-        EventBus.OnPlayerLoadAccount -= ShowLobby;
+        EventBus.OnPlayerGetUserIDFromDB -= ShowLobby;
     }
 
     private void Start()

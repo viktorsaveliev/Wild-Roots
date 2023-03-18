@@ -38,7 +38,7 @@ public class PlayAsGuest : MonoBehaviour
         PlayerPrefs.SetInt(stringBus.IsGuest, 1);
         PlayerPrefs.Save();
 
-        EventBus.OnPlayerLoadAccount?.Invoke();
+        EventBus.OnPlayerGetUserIDFromDB?.Invoke();
         gameObject.SetActive(false);
     }
 }

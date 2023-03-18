@@ -6,6 +6,7 @@ public class Character : MonoBehaviour
     public CharacterMovement Move { get; private set; }
     public CharacterWeapon Weapon { get; private set; }
     public PlayerHealth Health { get; private set; }
+    public CharacterSkin Skin { get; private set; }
 
     public CharacterHUD HUD;
     public TakeImpulse TakeImpulse { get; private set; }
@@ -28,6 +29,7 @@ public class Character : MonoBehaviour
         Move = GetComponent<CharacterMovement>();
         Weapon = GetComponent<CharacterWeapon>();
         Health = GetComponent<PlayerHealth>();
+        Skin = GetComponent<CharacterSkin>();
         TakeImpulse = GetComponent<TakeImpulse>();
         PhotonView = GetComponent<PhotonView>();
         Rigidbody = GetComponent<Rigidbody>();
@@ -43,13 +45,13 @@ public class Character : MonoBehaviour
     private void OnEnable()
     {
         EventBus.OnMatchEnded += CheckWinner;
-        EventBus.OnPlayerLoadAccount += UpdateLevel;
+        EventBus.OnPlayerGetUserIDFromDB += UpdateLevel;
     }
 
     private void OnDisable()
     {
         EventBus.OnMatchEnded -= CheckWinner;
-        EventBus.OnPlayerLoadAccount -= UpdateLevel;
+        EventBus.OnPlayerGetUserIDFromDB -= UpdateLevel;
     }
 
     private void CheckWinner(int winnerID)

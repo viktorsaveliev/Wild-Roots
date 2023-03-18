@@ -46,10 +46,10 @@ public class ServerHandler : MonoBehaviourPunCallbacks
     private void Start()
     {
         GameObject PlayerCharacter = PhotonNetwork.Instantiate(_playerPrefab.name, new Vector3(0, 5, 0), Quaternion.identity);
-        Character playerControl = PlayerCharacter.GetComponent<Character>();
+        Character player = PlayerCharacter.GetComponent<Character>();
 
-        _joystickMove.Init(playerControl);
-        _joystickAttack.Init(playerControl);
+        _joystickMove.Init(player);
+        _joystickAttack.Init(player);
         //Camera.main.GetComponent<CameraMoveToPlayer>().Player = playerControl;
 
         _honeycombHandler = GetComponent<HoneycombHandler>();
@@ -59,13 +59,18 @@ public class ServerHandler : MonoBehaviourPunCallbacks
         _weapons.IsNeedUpdateHoneycomb = true;
 
         ServerPhotonView = PhotonView.Get(this);
-        ServerPhotonView.RPC(nameof(AddCharacterInList), RpcTarget.All, playerControl.PhotonView.ViewID);
+        ServerPhotonView.RPC(nameof(AddCharacterInList), RpcTarget.All, player.PhotonView.ViewID);
         PhotonNetwork.LocalPlayer.TagObject = gameObject;
         PlayerCharacter.transform.position = _spawnPositions[PhotonNetwork.LocalPlayer.ActorNumber-1].position;
 
-        playerControl.Nickname = PhotonNetwork.LocalPlayer.NickName;
+        player.Nickname = PhotonNetwork.LocalPlayer.NickName;
+        player.Skin.UpdateForAll();
 
-        ServerPhotonView.RPC(nameof(SetCharacterNickname), RpcTarget.Others, playerControl.PhotonView.ViewID, playerControl.Nickname);
+        StringBus stringBus = new();
+        PlayerPrefs.DeleteKey(stringBus.SkinID);
+        PlayerPrefs.Save();
+
+        ServerPhotonView.RPC(nameof(SetCharacterNickname), RpcTarget.Others, player.PhotonView.ViewID, player.Nickname);
 
         if (PhotonNetwork.IsMasterClient)
         {
@@ -75,8 +80,6 @@ public class ServerHandler : MonoBehaviourPunCallbacks
                 for (int i = PhotonNetwork.CurrentRoom.PlayerCount; i < MAX_PLAYERS; i++)
                 {
                     Character character = PhotonNetwork.InstantiateRoomObject(_botPrefab.name, _spawnPositions[i].position, Quaternion.identity).GetComponent<Character>();
-
-                    StringBus stringBus = new();
                     character.Nickname = stringBus.NicknameBus[Random.Range(0, stringBus.NicknameBus.Length)];
 
                     ServerPhotonView.RPC(nameof(AddCharacterInList), RpcTarget.All, character.PhotonView.ViewID);

@@ -50,6 +50,18 @@ MonoBehaviour:
     m_Localized: Legendary skin
     m_Metadata:
       m_Items: []
+  - m_Id: 743725709971456
+    m_Localized: Watch
+    m_Metadata:
+      m_Items: []
+  - m_Id: 743787047473152
+    m_Localized: Buy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1574853601710080
+    m_Localized: Wardrobe
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

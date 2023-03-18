@@ -38,6 +38,7 @@ public class StringBus
     public readonly string Password = "Password";
     public readonly string UserID = "PlayerID";
     public readonly string IsGuest = "GuestAcc";
+    public readonly string SkinID = "SkinID";
 
     public readonly string GameDomain = "https://www.wildroots.fun/public/";
 

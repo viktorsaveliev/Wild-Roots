@@ -16,7 +16,7 @@ public class CoinsHandler : MonoBehaviour
     {
         Ads,
         Winner,
-        EndMatch
+        NewLevel
     }
 
     public void GiveCoins(GiveReason reason)
@@ -30,7 +30,7 @@ public class CoinsHandler : MonoBehaviour
         bool isGuest = PlayerPrefs.GetInt(stringBus.IsGuest) == 1;
         if (isGuest)
         {
-            UpdateCoins(_coins + 100);
+            UpdateUI(_coins + 100);
             yield break;
         }
 
@@ -57,7 +57,7 @@ public class CoinsHandler : MonoBehaviour
             bool success = int.TryParse(www.downloadHandler.text, out int value);
             if (success)
             {
-                UpdateCoins(value);
+                UpdateUI(value);
             }
             else
             {
@@ -71,23 +71,43 @@ public class CoinsHandler : MonoBehaviour
         }
     }
 
-    public void UpdateCoins(int value, bool anim = true)
+    public void UpdateValue(int newValue, bool anim = true)
     {
-        int differenceValue = value - _coins;
+        _coins = newValue;
+        UpdateUI(_coins, anim);
+    }
+
+    private void UpdateUI(int newValue, bool anim = true)
+    {
+        int differenceValue = newValue - _coins;
         if(_coinsText != null)
         {
             if(anim)
             {
-                _differenceText.text = $"{(differenceValue > 0 ? '+' : '-')}{differenceValue}";
-                _coinsText.DOCounter(_coins, value, 2f);
+                _differenceText.text = $"{(differenceValue > 0 ? '+' : ' ')}{differenceValue}";
+                _coinsText.DOCounter(_coins, newValue, 2f);
                 _animator.SetTrigger("update");
             }
             else
             {
-                _coinsText.text = value.ToString();
+                _coinsText.text = newValue.ToString();
             }
         }
-        _coins = value;
+    }
+
+    public void Pay(int value)
+    {
+        UpdateUI(_coins - value);
+
+        _coins -= value;
+
+        if (_coins < 0)
+        {
+            _coins = 0;
+            print("Error #002: Coins have wrong value!");
+        }
+
+        StartCoroutine(SaveData.Instance.Coins(_coins));
     }
 
     public int GetValue() => _coins;

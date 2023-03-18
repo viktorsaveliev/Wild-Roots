@@ -33,6 +33,8 @@ public class LoadData : MonoBehaviour
         // Handle JSON response
         if (www.result == UnityWebRequest.Result.Success)
         {
+            //LoadingUI.Show(LoadingShower.Type.Simple);
+
             string jsonString = www.downloadHandler.text;
             PlayerData playerData = JsonConvert.DeserializeObject<PlayerData>(jsonString);
 
@@ -40,6 +42,9 @@ public class LoadData : MonoBehaviour
             player.Exp = playerData.exp;
             player.Wins = playerData.wins;
             player.Nickname = playerData.nickname;
+
+            player.Skin.Change(playerData.skinID);
+
             Coins.UpdateValue(playerData.coins, false);
 
             PhotonNetwork.LocalPlayer.NickName = player.Nickname;
@@ -100,7 +105,7 @@ public class LoadData : MonoBehaviour
 
         PlayerPrefs.Save();
 
-        EventBus.OnPlayerLoadAccount?.Invoke();
+        EventBus.OnPlayerGetUserIDFromDB?.Invoke();
     }
 }
 
@@ -112,4 +117,5 @@ public class PlayerData
     public int wins;
     public string nickname;
     public int coins;
+    public int skinID;
 }

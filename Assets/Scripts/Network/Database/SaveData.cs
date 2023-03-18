@@ -79,4 +79,55 @@ public class SaveData : MonoBehaviour
         }
         if (_saveDataIndicator != null) _saveDataIndicator.SetActive(false);
     }
+
+    public IEnumerator Coins(int value)
+    {
+        StringBus stringBus = new();
+
+        WWWForm form = new();
+        form.AddField("coins", value);
+        form.AddField("ID", PlayerPrefs.GetInt(stringBus.UserID));
+        using UnityWebRequest www = UnityWebRequest.Post(stringBus.GameDomain + "save_coins.php", form);
+        yield return www.SendWebRequest();
+        if (www.result == UnityWebRequest.Result.Success)
+        {
+            bool success = bool.Parse(www.downloadHandler.text);
+            if (success == false)
+            {
+                Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
+            }
+        }
+        else
+        {
+            Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
+        }
+    }
+
+    public void Skin()
+    {
+        StartCoroutine(SkinID());
+    }
+
+    private IEnumerator SkinID()
+    {
+        StringBus stringBus = new();
+
+        WWWForm form = new();
+        form.AddField("skinID", PlayerPrefs.GetInt(stringBus.SkinID));
+        form.AddField("ID", PlayerPrefs.GetInt(stringBus.UserID));
+        using UnityWebRequest www = UnityWebRequest.Post(stringBus.GameDomain + "save_skin_id.php", form);
+        yield return www.SendWebRequest();
+        if (www.result == UnityWebRequest.Result.Success)
+        {
+            bool success = bool.Parse(www.downloadHandler.text);
+            if (success == false)
+            {
+                Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
+            }
+        }
+        else
+        {
+            Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
+        }
+    }
 }

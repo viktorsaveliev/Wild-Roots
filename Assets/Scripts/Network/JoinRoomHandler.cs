@@ -186,10 +186,10 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
             if (_secTimer != null) StopCoroutine(_secTimer);
             _secTimer = StartCoroutine(SecTimer());
         }
-        else if (GameSettings.GameMode == GameModeSelector.GameMode.Deathmatch)
+        /*else if (GameSettings.GameMode == GameModeSelector.GameMode.Deathmatch)
         {
             StartGame(GameModeSelector.GameMode.Deathmatch);
-        }
+        }*/
     }
 
     private void ActivateSearchScreen() => _searchScreen.SetActive(true);

@@ -343,7 +343,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 5373297927949169488}
         m_TargetAssemblyTypeName: ShopItem, Assembly-CSharp
-        m_MethodName: SelectItem
+        m_MethodName: Select
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -366,10 +366,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _nameText: {fileID: 5373297928606699444}
-  _priceText: {fileID: 5373297928574625013}
   _rarityText: {fileID: 5649048600308956361}
-  _itemImage: {fileID: 5373297928193762965}
+  _itemIcon: {fileID: 5373297928193762965}
   _rarityBG: {fileID: 5373297928411696107}
+  _item: {fileID: 0}
+  _priceText: {fileID: 5373297928574625013}
 --- !u!1 &5373297928193762963
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,11 +1,19 @@
 using CrazyGames;
 using UnityEngine;
 
-public class AdsForCoins : MonoBehaviour
+public class AdsForCoins : MonoBehaviour, IConfirmMenuAction
 {
-    public void StartAdsForReward()
+    [SerializeField] private ConfirmMenu _confirmMenu;
+    [SerializeField] private Sprite _icon2D;
+
+    public void OnClick()
     {
-        EventBus.OnPlayerClickUI?.Invoke(0);
+        _confirmMenu.Show2D(this, "Coins", _icon2D);
+    }
+
+    public void Action()
+    {
+        _confirmMenu.Hide();
         CrazyAds.Instance.beginAdBreakRewarded(GiveReward, ErrorReward);
     }
 

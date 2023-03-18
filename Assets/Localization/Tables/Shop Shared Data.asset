@@ -47,6 +47,18 @@ MonoBehaviour:
     m_Key: Rarity_Legendary
     m_Metadata:
       m_Items: []
+  - m_Id: 743725709971456
+    m_Key: WatchButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 743787047473152
+    m_Key: BuyButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1574853601710080
+    m_Key: Wardrobe
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
