@@ -13,4 +13,6 @@ MonoBehaviour:
   m_Name: CrazyGamesSettings
   m_EditorClassIdentifier: 
   whitelistedDomains:
-  - https://vitomix.itch.io/wild-roots
+  - itch.io
+  - vitomix.itch.io
+  - v6p9d9t4.ssl.hwcdn.net

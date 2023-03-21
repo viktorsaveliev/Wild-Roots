@@ -3,7 +3,6 @@ using TMPro;
 using UnityEngine.Networking;
 using System.Collections;
 using DG.Tweening;
-using System.Net;
 
 public class Registration : MonoBehaviour
 {
@@ -82,6 +81,8 @@ public class Registration : MonoBehaviour
             yield break;
         }
 
+        print(www.downloadHandler.text);
+
         bool userExists = bool.Parse(www.downloadHandler.text);
         if (userExists)
         {
@@ -99,7 +100,7 @@ public class Registration : MonoBehaviour
         WWWForm form = new();
         form.AddField("email", email);
         form.AddField("password", password);
-        form.AddField("regIP", GetUserIP());
+        form.AddField("regIP", "Web-server");
 
         StringBus stringBus = new();
         using UnityWebRequest www = UnityWebRequest.Post(stringBus.GameDomain + "register.php", form);
@@ -117,12 +118,12 @@ public class Registration : MonoBehaviour
         }
     }
 
-    public string GetUserIP()
+    /*public string GetUserIP()
     {
         string externalIP = new WebClient().DownloadString("http://checkip.dyndns.org/");
         externalIP = (new System.Text.RegularExpressions.Regex(@"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}")).Matches(externalIP)[0].ToString();
         return externalIP;
-    }
+    }*/
 
     private void ResetErrorText()
     {

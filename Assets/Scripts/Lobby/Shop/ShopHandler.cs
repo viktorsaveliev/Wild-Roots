@@ -74,6 +74,7 @@ public class ShopHandler : MonoBehaviour
             if(success)
             {
                 Coins.Pay(price);
+                PlayerPrefs.SetInt(stringBus.NeedUpdateWardrobe, 1);
                 EventBus.OnPlayerClickUI?.Invoke(4);
             }
             else

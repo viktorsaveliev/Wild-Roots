@@ -4,6 +4,7 @@ using System.Collections;
 using TMPro;
 using UnityEngine.UI;
 using DG.Tweening;
+using CrazyGames;
 
 public class Authorization : MonoBehaviour
 {
@@ -14,6 +15,52 @@ public class Authorization : MonoBehaviour
 
     [SerializeField] private TMP_Text _emailError;
     [SerializeField] private TMP_Text _passwordError;
+
+    private bool _isMobileDevice;
+
+    private void Start()
+    {
+        StringBus stringBus = new();
+        CrazySDK.Instance.GetUserInfo(userInfo =>
+        {
+            int deviceType = 0;
+            if (userInfo.device.type == "desktop" || userInfo.browser.name == "demo")
+            {
+                deviceType = 1;
+            }
+            else
+            {
+                _isMobileDevice = true;
+            }
+            PlayerPrefs.SetInt(stringBus.PlayerDevice, deviceType);
+        }); 
+    }
+
+    private TouchScreenKeyboard _keyboard;
+    public void OpenKeyboardForEmail()
+    {
+        //if (_isMobileDevice == false) return;
+        //_email.keyboardType = TouchScreenKeyboardType.Default;
+        _keyboard = TouchScreenKeyboard.Open(string.Empty, TouchScreenKeyboardType.Default);
+        TouchScreenKeyboard.hideInput = true;
+    }
+
+    private void Update()
+    {
+        if(TouchScreenKeyboard.visible == false && _keyboard != null)
+        {
+            if(_keyboard.status == TouchScreenKeyboard.Status.Canceled || _keyboard.status == TouchScreenKeyboard.Status.Done)
+            {
+                _email.text = _keyboard.text;
+            }
+        }
+    }
+
+    public void AutoInputData(string email, string password)
+    {
+        _email.text = email;
+        _password.text = password;
+    }
 
     public void CheckLogin()
     {
@@ -64,7 +111,8 @@ public class Authorization : MonoBehaviour
                 PlayerPrefs.DeleteKey(stringBus.AccStatus);
                 Show();
             }
-            Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
+
+            Notice.ShowDialog(www.error);
         }
         else
         {

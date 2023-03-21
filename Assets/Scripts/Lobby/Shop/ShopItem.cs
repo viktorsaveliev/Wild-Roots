@@ -49,6 +49,12 @@ public class ShopItem : CustomizeItem, IConfirmMenuAction
         }
 
         StringBus stringBus = new();
+        if (PlayerPrefs.GetInt(stringBus.IsGuest) == 1)
+        {
+            print("Войдите в аккаунт, чтобы купить скин");
+            return;
+        }
+
         int userID = PlayerPrefs.GetInt(stringBus.UserID);
         StartCoroutine(_shop.BuyNewSkin(userID, GetItemID, _price));
 

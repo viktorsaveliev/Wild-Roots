@@ -18,9 +18,11 @@ public class ConnectDatabase : MonoBehaviour
                 break;
 
             case 2:
+                _authorization.Show();
                 string email = PlayerPrefs.GetString(stringBus.Email);
                 string password = PlayerPrefs.GetString(stringBus.Password);
-                StartCoroutine(_authorization.GetPlayerLogin(email, password));
+                _authorization.AutoInputData(email, password);
+                //StartCoroutine(_authorization.GetPlayerLogin(email, password));
                 break;
 
             default:

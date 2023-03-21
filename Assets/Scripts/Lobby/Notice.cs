@@ -14,6 +14,11 @@ public class Notice : MonoBehaviour
         _notice.ShowDialog(message, action, leftButtonTextKey, rightButtonTextKey);
     }
 
+    public static void ShowDialog(string message, INoticeAction action = null, string leftButtonTextKey = "Notice_Close")
+    {
+        _notice.ShowDialog(message, action, leftButtonTextKey);
+    }
+
     public static void HideDialog()
     {
         _notice.HideDialog();

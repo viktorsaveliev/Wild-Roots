@@ -33,7 +33,7 @@ public class LoadData : MonoBehaviour
         // Handle JSON response
         if (www.result == UnityWebRequest.Result.Success)
         {
-            //LoadingUI.Show(LoadingShower.Type.Simple);
+            LoadingUI.Show(LoadingShower.Type.Simple);
 
             string jsonString = www.downloadHandler.text;
             PlayerData playerData = JsonConvert.DeserializeObject<PlayerData>(jsonString);
@@ -43,12 +43,14 @@ public class LoadData : MonoBehaviour
             player.Wins = playerData.wins;
             player.Nickname = playerData.nickname;
 
-            player.Skin.Change(playerData.skinID);
+            player.Skin.Change(playerData.skinID, true);
 
             Coins.UpdateValue(playerData.coins, false);
 
             PhotonNetwork.LocalPlayer.NickName = player.Nickname;
             EventBus.OnPlayerChangeNickname?.Invoke();
+
+            //player.gameObject.SetActive(true);
         }
         else
         {
@@ -91,6 +93,10 @@ public class LoadData : MonoBehaviour
         {
             int playerID = int.Parse(www.downloadHandler.text);
             PlayerPrefs.SetInt(stringBus.UserID, playerID);
+        }
+        else
+        {
+            Notice.ShowDialog(www.downloadHandler.error);
         }
 
         CrazySDK.Instance.GetUserInfo(userInfo =>

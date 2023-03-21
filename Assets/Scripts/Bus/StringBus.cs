@@ -54,4 +54,6 @@ public class StringBus
         
         "puta","pendeho"
     };
+
+    public readonly string NeedUpdateWardrobe = "NeedUpdateWardrobe";
 }

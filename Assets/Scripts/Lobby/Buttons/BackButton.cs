@@ -10,7 +10,7 @@ public class BackButton : MonoBehaviour
 
     public void OnClick()
     {
-        _character.SetActive(true);
+        _character.SetActive(false);
         _lobby.SetActive(true);
         _currentScreen.SetActive(false);
 
@@ -19,5 +19,6 @@ public class BackButton : MonoBehaviour
             SaveData.Instance.Skin();
         }
         EventBus.OnPlayerClickUI?.Invoke(0);
+        _character.SetActive(true);
     }
 }

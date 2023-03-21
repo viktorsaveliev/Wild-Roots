@@ -14,9 +14,32 @@ public class Wardrobe : MonoBehaviour
 
     private void Start()
     {
+        StringBus stringBus = new();
+        bool isNeedUpdate = PlayerPrefs.GetInt(stringBus.NeedUpdateWardrobe) == 1;
+        if (isNeedUpdate)
+        {
+            PlayerPrefs.DeleteKey(stringBus.NeedUpdateWardrobe);
+        }
+
         _loading.SetActive(true);
         _loadAssets = FindObjectOfType<LoadAssets>();
         StartCoroutine(LoadMySkins());
+    }
+
+    private void OnEnable()
+    {
+        StringBus stringBus = new();
+        bool isNeedUpdate = PlayerPrefs.GetInt(stringBus.NeedUpdateWardrobe) == 1;
+        if(isNeedUpdate)
+        {
+            foreach (Transform child in _content.transform)
+            {
+                Destroy(child.gameObject);
+            }
+            _loading.SetActive(true);
+            StartCoroutine(LoadMySkins());
+            PlayerPrefs.DeleteKey(stringBus.NeedUpdateWardrobe);
+        }
     }
 
     private IEnumerator LoadMySkins()
@@ -24,6 +47,12 @@ public class Wardrobe : MonoBehaviour
         StartCoroutine(AddStandartSkin());
 
         StringBus stringBus = new();
+        if(PlayerPrefs.GetInt(stringBus.IsGuest) == 1)
+        {
+            print("Войдите в аккаунт, чтобы увидеть свои скины");
+            yield break;
+        }
+
         WWWForm form = new();
         form.AddField("ID", PlayerPrefs.GetInt(stringBus.UserID));
         using UnityWebRequest request = UnityWebRequest.Post(stringBus.GameDomain + "get_my_skins_id.php", form);

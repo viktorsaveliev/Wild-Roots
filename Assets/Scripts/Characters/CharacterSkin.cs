@@ -80,13 +80,14 @@ public class CharacterSkin : MonoBehaviour
         }
         else
         {
-            Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
+            Notice.ShowDialog(www.error);
         }
     }
 
     public void Change(int id) => StartCoroutine(ChangeSkin(id));
+    public void Change(int id, bool updateAnim = false) => StartCoroutine(ChangeSkin(id, updateAnim));
 
-    private IEnumerator ChangeSkin(int id)
+    private IEnumerator ChangeSkin(int id, bool updateAnim = false)
     {
         if (_loader.GetLoadedSkin.ContainsKey(id) == false) yield return Load(id);
         
@@ -103,8 +104,12 @@ public class CharacterSkin : MonoBehaviour
         PlayerPrefs.SetInt(stringBus.SkinID, _skinID);
         PlayerPrefs.Save();
 
-        //Invoke(nameof(UpdateAnimation), 0.3f);
-        //gameObject.SetActive(false);
+        if (updateAnim)
+        {
+            Invoke(nameof(UpdateAnimation), 0.3f);
+            gameObject.SetActive(false);
+        }
+
     }
 
     private void UpdateAnimation()

@@ -106,6 +106,27 @@ public class NoticeDialog : MonoBehaviour
         _taskTextEvent.SetEntry(_noticeKey[(int)message]);
     }
 
+    public void ShowDialog(string message, INoticeAction action = null, string leftButtonTextKey = "Notice_Close")
+    {
+        if (!_isShowed)
+        {
+            _noticeBG.SetActive(true);
+            _notice.SetActive(true);
+            _isShowed = true;
+            _notice.transform.DOScale(1, 0.3f).SetEase(Ease.OutExpo);
+        }
+
+        _leftButtonTextEvent.SetEntry(leftButtonTextKey);
+
+        
+        _buttons[(int)Buttons.Right].gameObject.SetActive(false);
+        _buttons[(int)Buttons.Left].rectTransform.anchoredPosition = new Vector2(0, -151.52f);
+
+        SetAction(action);
+
+        _text.text = message;
+    }
+
     public void HideDialog()
     {
         if (!_isShowed) return;
