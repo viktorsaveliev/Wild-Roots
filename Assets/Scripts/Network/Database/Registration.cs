@@ -14,6 +14,19 @@ public class Registration : MonoBehaviour
     [SerializeField] private TMP_Text _emailError;
     [SerializeField] private TMP_Text _passwordError;
 
+    private bool _isMobileDevice;
+
+    public void Show(bool isMobileDevice)
+    {
+        _isMobileDevice = isMobileDevice;
+
+        _regPanel.transform.localPosition = new Vector2(-2000f, 0);
+        _regPanel.SetActive(true);
+        _regPanel.transform.DOLocalMoveX(0f, 0.3f);
+
+        EventBus.OnPlayerClickUI?.Invoke(2);
+    }
+
     public void Show()
     {
         _regPanel.transform.localPosition = new Vector2(-2000f, 0);
@@ -22,7 +35,7 @@ public class Registration : MonoBehaviour
 
         EventBus.OnPlayerClickUI?.Invoke(2);
     }
-    
+
     public void Hide()
     {
         _regPanel.transform.DOScale(0.1f, 0.2f).OnComplete(() =>
@@ -31,7 +44,15 @@ public class Registration : MonoBehaviour
             _regPanel.transform.localScale = new Vector2(0.8f, 0.8f);
         });
     }
-    
+
+    public void ShowKeyboard(int inputIndex)
+    {
+        //if (_isMobileDevice == false) return;
+
+        if(inputIndex == 0) Keyboard.Show(_email);
+        else if(inputIndex == 1) Keyboard.Show(_password);
+        else Keyboard.Show(_repeatPassword);
+    }
 
     public void RegisterButton()
     {

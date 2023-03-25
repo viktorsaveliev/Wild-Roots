@@ -29,6 +29,14 @@ public class Nickname : MonoBehaviour
         EventBus.OnPlayerChangeNickname -= SetNickname;
     }
 
+    public void ShowKeyboard()
+    {
+        StringBus stringBus = new();
+        bool isMobile = PlayerPrefs.GetInt(stringBus.PlayerDevice) == 0;
+        if (isMobile == false) return;
+        Keyboard.Show(_nickname);
+    }
+
     private void SetNickname()
     {
         _nickname.text = PhotonNetwork.LocalPlayer.NickName;

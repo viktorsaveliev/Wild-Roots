@@ -4,7 +4,6 @@ using System.Collections;
 using TMPro;
 using UnityEngine.UI;
 using DG.Tweening;
-using CrazyGames;
 
 public class Authorization : MonoBehaviour
 {
@@ -18,48 +17,17 @@ public class Authorization : MonoBehaviour
 
     private bool _isMobileDevice;
 
-    private void Start()
-    {
-        StringBus stringBus = new();
-        CrazySDK.Instance.GetUserInfo(userInfo =>
-        {
-            int deviceType = 0;
-            if (userInfo.device.type == "desktop" || userInfo.browser.name == "demo")
-            {
-                deviceType = 1;
-            }
-            else
-            {
-                _isMobileDevice = true;
-            }
-            PlayerPrefs.SetInt(stringBus.PlayerDevice, deviceType);
-        }); 
-    }
-
-    private TouchScreenKeyboard _keyboard;
-    public void OpenKeyboardForEmail()
+    public void ShowKeyboard(int inputIndex)
     {
         //if (_isMobileDevice == false) return;
-        //_email.keyboardType = TouchScreenKeyboardType.Default;
-        _keyboard = TouchScreenKeyboard.Open(string.Empty, TouchScreenKeyboardType.Default);
-        TouchScreenKeyboard.hideInput = true;
-    }
-
-    private void Update()
-    {
-        if(TouchScreenKeyboard.visible == false && _keyboard != null)
-        {
-            if(_keyboard.status == TouchScreenKeyboard.Status.Canceled || _keyboard.status == TouchScreenKeyboard.Status.Done)
-            {
-                _email.text = _keyboard.text;
-            }
-        }
+        Keyboard.Show(inputIndex == 0 ? _email : _password);
     }
 
     public void AutoInputData(string email, string password)
     {
         _email.text = email;
         _password.text = password;
+        _rememberMe.isOn = true;
     }
 
     public void CheckLogin()
@@ -109,7 +77,7 @@ public class Authorization : MonoBehaviour
             if (isRemember)
             {
                 PlayerPrefs.DeleteKey(stringBus.AccStatus);
-                Show();
+                //Show(_isMobileDevice);
             }
 
             Notice.ShowDialog(www.error);
@@ -127,7 +95,7 @@ public class Authorization : MonoBehaviour
                 if(isRemember)
                 {
                     PlayerPrefs.DeleteKey(stringBus.AccStatus);
-                    Show();
+                    //Show(_isMobileDevice);
                 }
                 _emailError.text = "Invalid e-mail or password";
                 EventBus.OnPlayerClickUI?.Invoke(3);
@@ -139,6 +107,17 @@ public class Authorization : MonoBehaviour
     {
         _emailError.text = string.Empty;
         _passwordError.text = string.Empty;
+    }
+
+    public void Show(bool isMobileDevice)
+    {
+        _isMobileDevice = isMobileDevice;
+
+        _authPanel.transform.localPosition = new Vector2(-2000f, 0);
+        _authPanel.SetActive(true);
+        _authPanel.transform.DOLocalMoveX(0f, 0.3f);
+
+        EventBus.OnPlayerClickUI?.Invoke(2);
     }
 
     public void Show()
