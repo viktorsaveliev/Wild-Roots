@@ -1,4 +1,3 @@
-using CrazyGames;
 using UnityEngine;
 
 public class PlayAsGuest : MonoBehaviour
@@ -17,6 +16,7 @@ public class PlayAsGuest : MonoBehaviour
 
     public void OnClickButton()
     {
+        LoadingUI.Show(LoadingShower.Type.Simple);
         _note.SetActive(true);
 
         EventBus.OnPlayerClickUI?.Invoke(0);
@@ -32,6 +32,8 @@ public class PlayAsGuest : MonoBehaviour
 
         EventBus.OnPlayerGetUserIDFromDB?.Invoke();
         gameObject.SetActive(false);
+
+        ConnectDatabase.IsUserEnter = true;
         _character.SetActive(true);
     }
 }

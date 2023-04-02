@@ -12,13 +12,18 @@ public class ConnectHandler : MonoBehaviourPunCallbacks
 
     private void Awake()
     {
+        Connect();
+        _textVerison.text = BaseGameData.GameVersion;
+    }
+
+    public void Connect()
+    {
         if (!PhotonNetwork.IsConnected)
         {
             PhotonNetwork.AutomaticallySyncScene = true;
             PhotonNetwork.GameVersion = BaseGameData.GameVersion;
             PhotonNetwork.ConnectUsingSettings();
         }
-        _textVerison.text = BaseGameData.GameVersion;
     }
 
     public override void OnConnectedToMaster()

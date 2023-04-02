@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,41 +10,61 @@ public class LobbyUI : MonoBehaviour
     [SerializeField] private Text _levelExp;
     [SerializeField] private Image _levelExpProgressBar;
 
-    /*[SerializeField] private Text _battlePass;
-    [SerializeField] private Text _battlePassExp;
-    [SerializeField] private Image _battlePassExpProgressBar;*/
+    [SerializeField] private Text _coinsText;
+    [SerializeField] private Text _differenceText;
+    [SerializeField] private Animator _animator;
 
     [SerializeField] private Text _winsCount;
 
     [SerializeField] private GameObject _lobby;
     [SerializeField] private GameObject _registrationPanel;
-    public static bool IsGameLoaded = false;
+
+    private int _coins = 0;
 
     private void OnEnable()
     {
         EventBus.OnPlayerGetUserIDFromDB += ShowLobby;
+        EventBus.OnPlayerUpdateCoinsValue += UpdateCoinsUI;
     }
 
     private void OnDisable()
     {
         EventBus.OnPlayerGetUserIDFromDB -= ShowLobby;
+        EventBus.OnPlayerUpdateCoinsValue -= UpdateCoinsUI;
     }
 
     private void Start()
     {
-        if(IsGameLoaded)
+        if(ConnectDatabase.IsUserEnter)
         {
             _registrationPanel.SetActive(false);
-            
             _lobby.SetActive(true);
+
+            LoadData.Instance.LoadUserData(_character);
             Invoke(nameof(UpdateInfo), 1f);
-        }
-        else
-        {
-            IsGameLoaded = true;
         }
 
         LoadingUI.Hide();
+    }
+
+    private void UpdateCoinsUI(int newValue, bool anim)
+    {
+        int differenceValue = newValue - _coins;
+
+        if (_coinsText != null)
+        {
+            if (anim)
+            {
+                _differenceText.text = $"{(differenceValue > 0 ? '+' : ' ')}{differenceValue}";
+                _coinsText.DOCounter(_coins, newValue, 2f);
+                _animator.SetTrigger("update");
+            }
+            else
+            {
+                _coinsText.text = newValue.ToString();
+            }
+        }
+        _coins = newValue;
     }
 
     private void UpdateInfo()

@@ -50,7 +50,7 @@ public class CharacterSkin : MonoBehaviour
     [PunRPC]
     public void UpdateMySkinForAllPlayers(int skinID)
     {
-        Change(skinID);
+        Change(skinID, true);
     }
 
     private void SetSkinForGuest()
@@ -60,7 +60,7 @@ public class CharacterSkin : MonoBehaviour
 
         if(isGuest)
         {
-            Change(1); // default skin
+            Change(1, true); // default skin
         }
     }
 
@@ -89,6 +89,12 @@ public class CharacterSkin : MonoBehaviour
 
     private IEnumerator ChangeSkin(int id, bool updateAnim = false)
     {
+        if (id == 0)
+        {
+            id = 1;
+            Notice.ShowDialog("Load data error #021");
+        }
+
         if (_loader.GetLoadedSkin.ContainsKey(id) == false) yield return Load(id);
         
         if (_currentModel != null)

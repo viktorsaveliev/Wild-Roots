@@ -44,6 +44,7 @@ public class ShopItem : CustomizeItem, IConfirmMenuAction
     {
         if(Coins.GetValue() < _price)
         {
+            print("Dont have money");
             EventBus.OnPlayerClickUI?.Invoke(3);
             return;
         }

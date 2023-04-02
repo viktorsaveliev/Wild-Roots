@@ -1,4 +1,5 @@
 using Photon.Pun;
+using System.Collections;
 using UnityEngine;
 
 public class Character : MonoBehaviour
@@ -45,13 +46,13 @@ public class Character : MonoBehaviour
     private void OnEnable()
     {
         EventBus.OnMatchEnded += CheckWinner;
-        EventBus.OnPlayerGetUserIDFromDB += UpdateLevel;
+        EventBus.OnPlayerGetUserIDFromDB += UpdateData;
     }
 
     private void OnDisable()
     {
         EventBus.OnMatchEnded -= CheckWinner;
-        EventBus.OnPlayerGetUserIDFromDB -= UpdateLevel;
+        EventBus.OnPlayerGetUserIDFromDB -= UpdateData;
     }
 
     private void CheckWinner(int winnerID)
@@ -61,39 +62,46 @@ public class Character : MonoBehaviour
         PhotonView winner = PhotonView.Find(winnerID);
         if (winner == null || winner.GetComponent<Character>().IsABot) return;
 
-        StringBus stringBus = new();
-        bool isGuest = PlayerPrefs.GetInt(stringBus.IsGuest) == 1;
-
-        if(isGuest == false) LoadData.Instance.LoadUserData(this);
-
         if (winner.IsMine)
         {
             Wins++;
-
-            Exp += 100;
-            if (Exp >= (Level * 3 * 100))
-            {
-                Level++;
-                Exp = 0;
-            }
+            StartCoroutine(GiveExp(100));
             EventBus.OnPlayerWin?.Invoke();
         }
         else
         {
-            Exp += 30;
-            if (Exp >= (Level * 3 * 100))
-            {
-                Level++;
-                Exp = 0;
-            }
+            StartCoroutine(GiveExp(30));
         }
 
-        int id = PlayerPrefs.GetInt(stringBus.UserID);
-        if (isGuest == false && id > 0) SaveData.Instance.SaveLevelData(id, this);
         _isReceivedPrize = true;
     }
 
-    private void UpdateLevel()
+    private IEnumerator GiveExp(int exp)
+    {
+        StringBus stringBus = new();
+        bool isGuest = PlayerPrefs.GetInt(stringBus.IsGuest) == 1;
+
+        if (isGuest == false)
+        {
+            yield return StartCoroutine(LoadData.Instance.IELoadUserData(this));
+        }
+
+        Exp += exp;
+        if (Exp >= (Level * 3 * 100))
+        {
+            Level++;
+            Exp = 0;
+        }
+
+        int id = PlayerPrefs.GetInt(stringBus.UserID);
+        if (isGuest == false && id > 0)
+        {
+            SaveData.Instance.SaveLevelData(id, this);
+        }
+        print($"gived {exp} exp");
+    }
+
+    private void UpdateData()
     {
         StringBus stringBus = new();
         bool isGuest = PlayerPrefs.GetInt(stringBus.IsGuest) == 1;

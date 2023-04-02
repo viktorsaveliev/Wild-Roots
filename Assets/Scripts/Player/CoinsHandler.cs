@@ -1,15 +1,9 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.UI;
-using DG.Tweening;
 
 public class CoinsHandler : MonoBehaviour
 {
-    [SerializeField] private Text _coinsText;
-    [SerializeField] private Text _differenceText;
-    [SerializeField] private Animator _animator;
-
     private int _coins;
 
     public enum GiveReason
@@ -30,7 +24,7 @@ public class CoinsHandler : MonoBehaviour
         bool isGuest = PlayerPrefs.GetInt(stringBus.IsGuest) == 1;
         if (isGuest)
         {
-            UpdateUI(_coins + 100);
+            UpdateValue(_coins + 100, true);
             yield break;
         }
 
@@ -57,7 +51,7 @@ public class CoinsHandler : MonoBehaviour
             bool success = int.TryParse(www.downloadHandler.text, out int value);
             if (success)
             {
-                UpdateUI(value);
+                UpdateValue(value, true);
             }
             else
             {
@@ -74,30 +68,12 @@ public class CoinsHandler : MonoBehaviour
     public void UpdateValue(int newValue, bool anim = true)
     {
         _coins = newValue;
-        UpdateUI(_coins, anim);
-    }
-
-    private void UpdateUI(int newValue, bool anim = true)
-    {
-        int differenceValue = newValue - _coins;
-        if(_coinsText != null)
-        {
-            if(anim)
-            {
-                _differenceText.text = $"{(differenceValue > 0 ? '+' : ' ')}{differenceValue}";
-                _coinsText.DOCounter(_coins, newValue, 2f);
-                _animator.SetTrigger("update");
-            }
-            else
-            {
-                _coinsText.text = newValue.ToString();
-            }
-        }
+        EventBus.OnPlayerUpdateCoinsValue?.Invoke(_coins, anim);
     }
 
     public void Pay(int value)
     {
-        UpdateUI(_coins - value);
+        EventBus.OnPlayerUpdateCoinsValue?.Invoke(_coins - value, true);
 
         _coins -= value;
 

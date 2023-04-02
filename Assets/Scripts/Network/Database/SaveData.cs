@@ -60,7 +60,7 @@ public class SaveData : MonoBehaviour
         form.AddField("level", player.Level);
         form.AddField("exp", player.Exp);
         form.AddField("wins", player.Wins);
-
+        print(player.Level + " " + player.Exp + " " + player.Wins);
         StringBus stringBus = new();
         using UnityWebRequest www = UnityWebRequest.Post(stringBus.GameDomain + "update_level.php", form);
         yield return www.SendWebRequest();

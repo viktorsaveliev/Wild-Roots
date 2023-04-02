@@ -77,7 +77,7 @@ public class Authorization : MonoBehaviour
             if (isRemember)
             {
                 PlayerPrefs.DeleteKey(stringBus.AccStatus);
-                //Show(_isMobileDevice);
+                //Show();
             }
 
             Notice.ShowDialog(www.error);
@@ -95,7 +95,7 @@ public class Authorization : MonoBehaviour
                 if(isRemember)
                 {
                     PlayerPrefs.DeleteKey(stringBus.AccStatus);
-                    //Show(_isMobileDevice);
+                    //Show();
                 }
                 _emailError.text = "Invalid e-mail or password";
                 EventBus.OnPlayerClickUI?.Invoke(3);

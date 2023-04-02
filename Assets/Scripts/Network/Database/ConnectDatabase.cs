@@ -7,9 +7,12 @@ public class ConnectDatabase : MonoBehaviour
     [SerializeField] private Authorization _authorization;
 
     private bool _isMobileDevice;
+    public static bool IsUserEnter = false;
 
     private void Start()
     {
+        if (IsUserEnter) return;
+
         StringBus stringBus = new();
         CrazySDK.Instance.GetUserInfo(userInfo =>
         {

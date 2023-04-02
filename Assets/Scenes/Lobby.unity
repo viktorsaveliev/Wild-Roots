@@ -3447,7 +3447,7 @@ MonoBehaviour:
   m_ReadOnly: 0
   m_RichText: 1
   m_GlobalFontAsset: {fileID: 11400000, guid: 55048c1fcf8093c46b4765e21006ae6b, type: 2}
-  m_OnFocusSelectAll: 1
+  m_OnFocusSelectAll: 0
   m_ResetOnDeActivation: 1
   m_RestoreOriginalTextOnEscape: 1
   m_isRichTextEditingAllowed: 0
@@ -5064,7 +5064,19 @@ MonoBehaviour:
       m_Calls: []
   m_OnSelect:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 388926809}
+        m_TargetAssemblyTypeName: Nickname, Assembly-CSharp
+        m_MethodName: ShowKeyboard
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_OnDeselect:
     m_PersistentCalls:
       m_Calls: []
@@ -5089,7 +5101,7 @@ MonoBehaviour:
   m_ReadOnly: 0
   m_RichText: 1
   m_GlobalFontAsset: {fileID: 11400000, guid: 55048c1fcf8093c46b4765e21006ae6b, type: 2}
-  m_OnFocusSelectAll: 1
+  m_OnFocusSelectAll: 0
   m_ResetOnDeActivation: 1
   m_RestoreOriginalTextOnEscape: 1
   m_isRichTextEditingAllowed: 0
@@ -5795,7 +5807,7 @@ GameObject:
   - component: {fileID: 429152121}
   - component: {fileID: 429152124}
   m_Layer: 5
-  m_Name: ExpText (1)
+  m_Name: Value
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7031,7 +7043,7 @@ MonoBehaviour:
   m_ReadOnly: 0
   m_RichText: 1
   m_GlobalFontAsset: {fileID: 11400000, guid: 55048c1fcf8093c46b4765e21006ae6b, type: 2}
-  m_OnFocusSelectAll: 1
+  m_OnFocusSelectAll: 0
   m_ResetOnDeActivation: 1
   m_RestoreOriginalTextOnEscape: 1
   m_isRichTextEditingAllowed: 0
@@ -7355,10 +7367,10 @@ RectTransform:
   m_Father: {fileID: 1193169451}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 61.19995, y: -107.25}
-  m_SizeDelta: {x: 234.76, y: 88.48}
+  m_AnchorMin: {x: 0.032520834, y: 0.8163705}
+  m_AnchorMax: {x: 0.15447916, y: 0.901}
+  m_AnchoredPosition: {x: -1.8000488, y: -0.25}
+  m_SizeDelta: {x: 0.7599945, y: -2.5199966}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &520589415
 MonoBehaviour:
@@ -9593,10 +9605,10 @@ RectTransform:
   m_Father: {fileID: 1608861302}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.5}
-  m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 60, y: -40}
-  m_SizeDelta: {x: 1274, y: 770.38513}
+  m_AnchorMin: {x: 0.030437501, y: 0.10385186}
+  m_AnchorMax: {x: 0.69643754, y: 0.8234075}
+  m_AnchoredPosition: {x: 2, y: -0.5}
+  m_SizeDelta: {x: -5, y: -6.614868}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &652857403
 MonoBehaviour:
@@ -12799,7 +12811,7 @@ GameObject:
   - component: {fileID: 922602141}
   - component: {fileID: 922602140}
   m_Layer: 5
-  m_Name: difference
+  m_Name: DifferenceValue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16158,7 +16170,7 @@ MonoBehaviour:
   m_ReadOnly: 0
   m_RichText: 1
   m_GlobalFontAsset: {fileID: 11400000, guid: 55048c1fcf8093c46b4765e21006ae6b, type: 2}
-  m_OnFocusSelectAll: 1
+  m_OnFocusSelectAll: 0
   m_ResetOnDeActivation: 1
   m_RestoreOriginalTextOnEscape: 1
   m_isRichTextEditingAllowed: 0
@@ -16349,7 +16361,7 @@ MonoBehaviour:
   m_ReadOnly: 0
   m_RichText: 1
   m_GlobalFontAsset: {fileID: 11400000, guid: 55048c1fcf8093c46b4765e21006ae6b, type: 2}
-  m_OnFocusSelectAll: 1
+  m_OnFocusSelectAll: 0
   m_ResetOnDeActivation: 1
   m_RestoreOriginalTextOnEscape: 1
   m_isRichTextEditingAllowed: 0
@@ -20450,7 +20462,7 @@ MonoBehaviour:
   m_ReadOnly: 0
   m_RichText: 1
   m_GlobalFontAsset: {fileID: 11400000, guid: 55048c1fcf8093c46b4765e21006ae6b, type: 2}
-  m_OnFocusSelectAll: 1
+  m_OnFocusSelectAll: 0
   m_ResetOnDeActivation: 1
   m_RestoreOriginalTextOnEscape: 1
   m_isRichTextEditingAllowed: 0
@@ -26514,10 +26526,10 @@ RectTransform:
   m_Father: {fileID: 1193169451}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -319.27002, y: -107.25}
-  m_SizeDelta: {x: 234.76001, y: 88.48}
+  m_AnchorMin: {x: 0.712, y: 0.8163705}
+  m_AnchorMax: {x: 0.83400005, y: 0.901}
+  m_AnchoredPosition: {x: 0.72998047, y: -0.25}
+  m_SizeDelta: {x: 0.76000977, y: -2.5199966}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &1737608409
 MonoBehaviour:
@@ -27152,6 +27164,9 @@ MonoBehaviour:
   _level: {fileID: 269457241}
   _levelExp: {fileID: 1608313977}
   _levelExpProgressBar: {fileID: 884846395}
+  _coinsText: {fileID: 429152122}
+  _differenceText: {fileID: 922602141}
+  _animator: {fileID: 1866634672}
   _winsCount: {fileID: 785184823}
   _lobby: {fileID: 1774834607}
   _registrationPanel: {fileID: 1435330215}
@@ -31070,10 +31085,10 @@ RectTransform:
   m_Father: {fileID: 1608861302}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0.5}
-  m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -60, y: -40}
-  m_SizeDelta: {x: 495, y: 770.38513}
+  m_AnchorMin: {x: 0.7105625, y: 0.10385186}
+  m_AnchorMax: {x: 0.96822923, y: 0.8234075}
+  m_AnchoredPosition: {x: 1, y: -0.5}
+  m_SizeDelta: {x: 1, y: -6.614868}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &1959858531
 MonoBehaviour:
@@ -31772,9 +31787,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a011a9e5a7742e640945e77fdcbf2a9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _coinsText: {fileID: 429152122}
-  _differenceText: {fileID: 922602141}
-  _animator: {fileID: 1866634672}
 --- !u!1 &2013237323
 GameObject:
   m_ObjectHideFlags: 0
@@ -31849,7 +31861,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0.000061035156, y: 0}
-  m_SizeDelta: {x: -1134, y: 0}
+  m_SizeDelta: {x: -1133.7202, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2017366063
 MonoBehaviour:

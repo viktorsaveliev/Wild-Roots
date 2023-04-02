@@ -21,7 +21,7 @@ public class LoadData : MonoBehaviour
         StartCoroutine(IELoadUserData(player));
     }
 
-    private IEnumerator IELoadUserData(Character player)
+    public IEnumerator IELoadUserData(Character player)
     {
         StringBus stringBus = new();
 
@@ -50,6 +50,7 @@ public class LoadData : MonoBehaviour
             PhotonNetwork.LocalPlayer.NickName = player.Nickname;
             EventBus.OnPlayerChangeNickname?.Invoke();
 
+            ConnectDatabase.IsUserEnter = true;
             //player.gameObject.SetActive(true);
         }
         else

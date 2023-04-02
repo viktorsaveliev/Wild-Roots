@@ -8,7 +8,7 @@ public class LoadingShower : MonoBehaviour
     [SerializeField] private Text _loadingPercent;
     [SerializeField] private Image _progressBar;
     private int _loadingOpened;
-    private readonly int _timeForCancel = 60;
+    private readonly int _timeForCancel = 10;
 
     private Coroutine _timer;
     public static bool IsCreated = false;

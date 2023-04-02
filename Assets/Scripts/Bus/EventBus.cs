@@ -28,4 +28,5 @@ public static class EventBus
     public static Action OnPlayerGetUserIDFromDB;
     public static Action OnPlayerChangeNickname;
     public static Action<int> OnPlayerChangeSkin;
+    public static Action<int, bool> OnPlayerUpdateCoinsValue;
 }

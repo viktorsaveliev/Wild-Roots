@@ -102,8 +102,6 @@ public class Registration : MonoBehaviour
             yield break;
         }
 
-        print(www.downloadHandler.text);
-
         bool userExists = bool.Parse(www.downloadHandler.text);
         if (userExists)
         {

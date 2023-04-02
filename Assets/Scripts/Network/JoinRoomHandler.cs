@@ -102,6 +102,10 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
     {
         if(button == 0)
         {
+            if (!_connectHandler.IsConnected)
+            {
+                _connectHandler.Connect();
+            }
             SelectMode((int)_selectedGameMode);
         }
         Notice.HideDialog();

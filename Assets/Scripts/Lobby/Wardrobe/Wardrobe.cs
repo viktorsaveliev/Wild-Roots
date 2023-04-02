@@ -32,10 +32,12 @@ public class Wardrobe : MonoBehaviour
         bool isNeedUpdate = PlayerPrefs.GetInt(stringBus.NeedUpdateWardrobe) == 1;
         if(isNeedUpdate)
         {
-            foreach (Transform child in _content.transform)
+            SkinItem[] skinItems = _content.GetComponentsInChildren<SkinItem>();
+            foreach (SkinItem child in skinItems)
             {
                 Destroy(child.gameObject);
             }
+
             _loading.SetActive(true);
             StartCoroutine(LoadMySkins());
             PlayerPrefs.DeleteKey(stringBus.NeedUpdateWardrobe);

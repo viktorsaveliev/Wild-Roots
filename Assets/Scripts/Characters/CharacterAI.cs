@@ -250,7 +250,7 @@ public class CharacterAI : MonoBehaviour
 
         foreach (Character character in _characters)
         {
-            if (character == _currentCharacter || character.gameObject.activeSelf == false) continue;
+            if (character == null || character == _currentCharacter || character.gameObject.activeSelf == false) continue;
 
             float distance = Vector3.Distance(transform.position, character.transform.position);
 
