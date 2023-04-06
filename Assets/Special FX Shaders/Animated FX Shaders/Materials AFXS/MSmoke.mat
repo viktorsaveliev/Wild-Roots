@@ -67,7 +67,7 @@ Material:
     - _BiasMT3: 1
     - _Bri: 0.27
     - _Con: 1.44
-    - _DisTexType: 0
+    - _DisTexType: 1
     - _DstBlend: 10
     - _InvFade: 5
     - _Mode: 3
@@ -75,7 +75,7 @@ Material:
     - _SrcBlend: 5
     - _ac: 0
     - _bright: 0.44230768
-    - _dT: 0
+    - _dT: 1
     - _dTA: 1
     - _dTAE: 0
     - _fT: 0

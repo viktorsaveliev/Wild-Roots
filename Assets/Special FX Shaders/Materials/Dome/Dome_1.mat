@@ -85,9 +85,9 @@ Material:
     - _BiasMT: 1
     - _BiasMT2: 1
     - _BiasMT3: 1
-    - _Bri: 0
+    - _Bri: 0.04
     - _BumpScale: 1
-    - _Con: 1
+    - _Con: 0.91
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DslEA: 0
@@ -97,10 +97,10 @@ Material:
     - _DstBlend: 3
     - _EmissionScaleUI: 0
     - _Glossiness: 0.5
-    - _InterAlpha: 1
-    - _InterEdge: 1
-    - _InterPow: 1
-    - _InvFade: 5
+    - _InterAlpha: 0
+    - _InterEdge: 16.4
+    - _InterPow: 4.8
+    - _InvFade: 4.3
     - _Metallic: 0
     - _Mode: 6
     - _OcclusionStrength: 1
@@ -116,7 +116,7 @@ Material:
     - _dslT: 1
     - _dslTA: 1
     - _dslTAE: 0
-    - _fT: 1
+    - _fT: 0
     - _fTA: 1
     - _fTAE: 0
     - _interT: 1
@@ -128,7 +128,7 @@ Material:
     - _invAlpha3: 0
     - _numberTex: 1
     - _rgbc: 1
-    - _sT: 1
+    - _sT: 0
     - _sTA: 1
     - _sTAE: 1
     - _tT: 1
@@ -158,5 +158,5 @@ Material:
     - _Tile3: {r: 1, g: 1, b: 0, a: 0}
     - _TileDs: {r: 1, g: 1, b: 0, a: 0}
     - _TileDsl: {r: 1, g: 1, b: 0, a: 0}
-    - _TintColor: {r: 0.33991337, g: 0.31318456, b: 0.6655172, a: 0.68235296}
+    - _TintColor: {r: 0, g: 0, b: 0, a: 0.68235296}
   m_BuildTextureStacks: []
