@@ -14,7 +14,8 @@ public class BackButton : MonoBehaviour
         _lobby.SetActive(true);
         _currentScreen.SetActive(false);
 
-        if(_saveSkinID)
+        StringBus stringBus = new();
+        if(_saveSkinID && PlayerPrefs.GetInt(stringBus.IsGuest) == 0)
         {
             SaveData.Instance.Skin();
         }

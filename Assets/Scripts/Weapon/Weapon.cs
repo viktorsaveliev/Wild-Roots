@@ -73,7 +73,12 @@ public abstract class Weapon : MonoBehaviour
     public void AssignToPlayer(IWeaponable character)
     {
         IMoveable characterMove = character.GetPhotonView().gameObject.GetComponent<IMoveable>();
-        if (SpawnAnimation != null && !SpawnAnimation.IsComplete()) SpawnAnimation.Complete();
+        if (SpawnAnimation != null && SpawnAnimation.IsComplete() == false)
+        {
+            SpawnAnimation.Complete();
+            SpawnAnimation = null;
+        }
+
         if (character.GetCurrentWeapon() is Punch && characterMove.IsCanMove())
         {
             if (PhotonNetwork.OfflineMode) character.GiveWeapon(PhotonViewObject.ViewID);

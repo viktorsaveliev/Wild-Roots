@@ -197,7 +197,7 @@ namespace CrazyGames
                     Uri uri = new Uri(domain);
                     whitelistedDevDomains.Add(uri.Host);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     Debug.LogError("[CrazySDK] Failed to parse whitelisted domain: " + settingsDomain);
                 }

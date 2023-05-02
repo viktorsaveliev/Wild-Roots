@@ -8,7 +8,6 @@ public class LobbySlot : MonoBehaviour
     [SerializeField] private Text _nickname;
     [SerializeField] private Text _level;
     [SerializeField] private GameObject _character;
-    [SerializeField] private GameObject _bot;
 
     public bool IsUsed { get; private set; }
 
@@ -25,7 +24,6 @@ public class LobbySlot : MonoBehaviour
         _level.text = level.ToString();
         IsUsed = true;
 
-        _bot.SetActive(false);
         _character.SetActive(true);
     }
 
@@ -41,6 +39,5 @@ public class LobbySlot : MonoBehaviour
 
         IsUsed = false;
         _loading.SetActive(true);
-        _bot.SetActive(true);
     }
 }

@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using DG.Tweening;
 using Photon.Pun;
 using System.Collections;
+using CrazyGames;
 
 public class UIHandler : MonoBehaviour
 {
@@ -30,22 +31,7 @@ public class UIHandler : MonoBehaviour
         _serverHandler = GetComponent<ServerHandler>();
         _photonView = PhotonView.Get(this);
 
-        if(GameSettings.GameMode == GameModeSelector.GameMode.PvP)
-        {
-            _playersCount.text = $"{_serverHandler.Characters.Count}";
-            //_buttonBackToLobby.gameObject.SetActive(false);
-        }
-        else
-        {
-            _playersCount.gameObject.SetActive(false);
-            _playersText.gameObject.SetActive(false);
-            _buttonBackToLobby.gameObject.SetActive(true);
-
-            for(int i = 0; i < _heartsUI.Length; i++)
-            {
-                _heartsUI[i].gameObject.SetActive(false);
-            }
-        }
+        Invoke(nameof(UpdatePlayersCount), 2f);
     }
 
     private void OnEnable()
@@ -60,7 +46,7 @@ public class UIHandler : MonoBehaviour
         EventBus.OnCharacterLose -= MasterUpdatePlayers;
     }
 
-    public void MasterUpdatePlayers()
+    public void MasterUpdatePlayers(int loserViewID)
     {
         if (PhotonNetwork.IsMasterClient)
         {
@@ -74,22 +60,18 @@ public class UIHandler : MonoBehaviour
                     winner = player;
                 }
             }
-            if(GameSettings.GameMode == GameModeSelector.GameMode.PvP)
+            if (playersCount < 2)
             {
-                if (playersCount < 2)
-                {
-                    Invoke(nameof(MatchEnded), 7f);
-                }
-                _photonView.RPC(nameof(UpdatePlayersCount), RpcTarget.All, playersCount,
-                    winner != null ? winner.PhotonView.ViewID : -1);
+                Invoke(nameof(MatchEnded), 7f);
             }
+            _photonView.RPC(nameof(UpdatePlayersCount), RpcTarget.All, playersCount,
+                winner != null ? winner.PhotonView.ViewID : -1);
         }
     }
 
     private void MatchEnded()
     {
         DOTween.Clear();
-        PhotonNetwork.LoadLevel(0);
         _photonView.RPC(nameof(LeaveRoom), RpcTarget.All);
     }
 
@@ -97,6 +79,11 @@ public class UIHandler : MonoBehaviour
     public void LeaveRoom()
     {
         if(PhotonNetwork.IsConnectedAndReady) PhotonNetwork.LeaveRoom();
+    }
+
+    private void UpdatePlayersCount()
+    {
+        _playersCount.text = $"{_serverHandler.Characters.Count}";
     }
 
     [PunRPC]

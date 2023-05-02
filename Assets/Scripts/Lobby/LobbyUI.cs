@@ -16,20 +16,17 @@ public class LobbyUI : MonoBehaviour
 
     [SerializeField] private Text _winsCount;
 
-    [SerializeField] private GameObject _lobby;
-    [SerializeField] private GameObject _registrationPanel;
-
     private int _coins = 0;
 
     private void OnEnable()
     {
-        EventBus.OnPlayerGetUserIDFromDB += ShowLobby;
+        EventBus.OnPlayerLogged += UpdateInfoWithDelay;
         EventBus.OnPlayerUpdateCoinsValue += UpdateCoinsUI;
     }
 
     private void OnDisable()
     {
-        EventBus.OnPlayerGetUserIDFromDB -= ShowLobby;
+        EventBus.OnPlayerLogged -= UpdateInfoWithDelay;
         EventBus.OnPlayerUpdateCoinsValue -= UpdateCoinsUI;
     }
 
@@ -37,14 +34,8 @@ public class LobbyUI : MonoBehaviour
     {
         if(ConnectDatabase.IsUserEnter)
         {
-            _registrationPanel.SetActive(false);
-            _lobby.SetActive(true);
-
-            LoadData.Instance.LoadUserData(_character);
-            Invoke(nameof(UpdateInfo), 1f);
+            UpdateInfoWithDelay();
         }
-
-        LoadingUI.Hide();
     }
 
     private void UpdateCoinsUI(int newValue, bool anim)
@@ -61,7 +52,8 @@ public class LobbyUI : MonoBehaviour
             }
             else
             {
-                _coinsText.text = newValue.ToString();
+                _coinsText.DOCounter(_coins, newValue, 2f);
+                //_coinsText.text = newValue.ToString();
             }
         }
         _coins = newValue;
@@ -72,21 +64,22 @@ public class LobbyUI : MonoBehaviour
         //StringBus stringBus = new();
         //if (PlayerPrefs.GetInt(stringBus.GuestAcc) == 1) return;
 
-        if (_character.Level == 0) _character.Level = 1;
+        if (PlayerData.GetLevel() == 0) PlayerData.Update(string.Empty, 1, 0, 0, 0, 0, 0);
 
-        int maxLevelExp = _character.Level * 3 * 100;
-        _level.text = $"{_character.Level}";
-        _levelExp.text = $"{_character.Exp}/{maxLevelExp}";
+        int maxLevelExp = PlayerData.GetLevel() * 3 * 100;
+        _level.text = $"{PlayerData.GetLevel()}";
+        _levelExp.text = $"{PlayerData.GetExp()}/{maxLevelExp}";
 
-        float exp = _character.Exp + 0.01f;
+        float exp = PlayerData.GetExp() + 0.01f;
         _levelExpProgressBar.fillAmount = exp / maxLevelExp;
 
-        _winsCount.text = $"{_character.Wins}";
+        _winsCount.text = $"{PlayerData.GetWins()}";
+
+        UpdateCoinsUI(Coins.GetValue(), false);
     }
 
-    private void ShowLobby()
+    private void UpdateInfoWithDelay()
     {
-        _lobby.SetActive(true);
-        Invoke(nameof(UpdateInfo), 1f);
+        Invoke(nameof(UpdateInfo), 0.5f);
     }
 }

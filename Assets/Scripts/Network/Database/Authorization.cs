@@ -4,6 +4,10 @@ using System.Collections;
 using TMPro;
 using UnityEngine.UI;
 using DG.Tweening;
+using UnityEngine.SceneManagement;
+using CrazyGames;
+using Photon.Pun;
+using Newtonsoft.Json;
 
 public class Authorization : MonoBehaviour
 {
@@ -15,11 +19,8 @@ public class Authorization : MonoBehaviour
     [SerializeField] private TMP_Text _emailError;
     [SerializeField] private TMP_Text _passwordError;
 
-    private bool _isMobileDevice;
-
     public void ShowKeyboard(int inputIndex)
     {
-        //if (_isMobileDevice == false) return;
         Keyboard.Show(inputIndex == 0 ? _email : _password);
     }
 
@@ -80,19 +81,13 @@ public class Authorization : MonoBehaviour
                 //Show();
             }
 
-            Notice.ShowDialog(www.error);
+            Notice.Dialog(www.error);
         }
         else
         {
-            bool successful = bool.Parse(www.downloadHandler.text);
-            if (successful)
+            if (www.downloadHandler.text == "false")
             {
-                LoadData.Instance.GetUserID(email, password, isRemember || _rememberMe.isOn);
-                Hide();
-            }
-            else
-            {
-                if(isRemember)
+                if (isRemember)
                 {
                     PlayerPrefs.DeleteKey(stringBus.AccStatus);
                     //Show();
@@ -100,24 +95,45 @@ public class Authorization : MonoBehaviour
                 _emailError.text = "Invalid e-mail or password";
                 EventBus.OnPlayerClickUI?.Invoke(3);
             }
+            else
+            {
+                LoadData.Instance.UpdateUser(www.downloadHandler.text);
+
+                SpawnPlayer(email, password, isRemember || _rememberMe.isOn);
+            }
         }
+    }
+
+    private void SpawnPlayer(string email, string password, bool remember)
+    {
+        LoadingUI.Show(LoadingShower.Type.Simple);
+
+        StringBus stringBus = new();
+
+        if (remember)
+        {
+            PlayerPrefs.SetInt(stringBus.AccStatus, 2);
+            PlayerPrefs.SetString(stringBus.Email, email);
+            PlayerPrefs.SetString(stringBus.Password, password);
+        }
+        else
+        {
+            PlayerPrefs.SetInt(stringBus.AccStatus, 1);
+            PlayerPrefs.DeleteKey(stringBus.Email);
+            PlayerPrefs.DeleteKey(stringBus.Password);
+        }
+
+        PlayerPrefs.Save();
+
+        DOTween.Clear();
+        ConnectDatabase.IsUserEnter = true;
+        SceneManager.LoadSceneAsync((int)GameSettings.Scene.Lobby);
     }
 
     private void ResetErrorText()
     {
         _emailError.text = string.Empty;
         _passwordError.text = string.Empty;
-    }
-
-    public void Show(bool isMobileDevice)
-    {
-        _isMobileDevice = isMobileDevice;
-
-        _authPanel.transform.localPosition = new Vector2(-2000f, 0);
-        _authPanel.SetActive(true);
-        _authPanel.transform.DOLocalMoveX(0f, 0.3f);
-
-        EventBus.OnPlayerClickUI?.Invoke(2);
     }
 
     public void Show()

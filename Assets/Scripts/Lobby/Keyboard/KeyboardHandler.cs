@@ -24,6 +24,9 @@ public class KeyboardHandler : MonoBehaviour
 
     public void Show(TMP_InputField targetInputField)
     {
+        StringBus stringBus = new();
+        if (PlayerPrefs.GetInt(stringBus.PlayerDevice) == 1) return;
+
         _currentInputField = targetInputField;
         _keyboardBG.SetActive(true);
         _keyboardObject.SetActive(true);
@@ -75,6 +78,7 @@ public class KeyboardHandler : MonoBehaviour
         switch(type)
         {
             case (int)ButtonType.Delete:
+                if (_currentInputField.text.Length == 0) return;
                 _currentInputField.text = _currentInputField.text.Remove(_currentInputField.text.Length - 1);
                 break;
 

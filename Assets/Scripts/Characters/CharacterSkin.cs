@@ -7,51 +7,83 @@ public class CharacterSkin : MonoBehaviour
 {
     [SerializeField] private GameObject _currentModel;
 
-    private LoadAssets _loader;
     private Animator _animator;
     private PhotonView _photonView;
 
     private int _skinID;
     public int GetSkinID => _skinID;
 
+    //private int _randomSkinID = -1;
+    [HideInInspector] public bool IsABot;
+
     private void Awake()
     {
-        _loader = FindObjectOfType<LoadAssets>();
         _animator = GetComponent<Animator>();
         _photonView = GetComponent<PhotonView>();
     }
 
     private void OnEnable()
     {
-        EventBus.OnPlayerGetUserIDFromDB += SetSkinForGuest;
-        EventBus.OnPlayerStartSearchMatch += UpdateForOthers;
-        EventBus.OnPlayerChangeSkin += Change;
+        EventBus.OnPlayerLogged += SetSkinForGuest;
+        //EventBus.OnPlayerStartSearchMatch += UpdateForOthers;
+        EventBus.OnPlayerNeedChangeSkin += Change;
     }
 
     private void OnDisable()
     {
-        EventBus.OnPlayerGetUserIDFromDB -= SetSkinForGuest;
-        EventBus.OnPlayerStartSearchMatch -= UpdateForOthers;
-        EventBus.OnPlayerChangeSkin -= Change;
+        EventBus.OnPlayerLogged -= SetSkinForGuest;
+        //EventBus.OnPlayerStartSearchMatch -= UpdateForOthers;
+        EventBus.OnPlayerNeedChangeSkin -= Change;
     }
 
     public void UpdateForAll()
     {
-        StringBus stringBus = new();
-        _photonView.RPC(nameof(UpdateMySkinForAllPlayers), RpcTarget.All, PlayerPrefs.GetInt(stringBus.SkinID));
+        if (_photonView == null)
+        {
+            _photonView = GetComponent<PhotonView>();
+        }
+        if (_photonView.IsMine == false) return;
+
+        _photonView.RPC(nameof(UpdateMySkinForPlayers), RpcTarget.All, PlayerData.GetSkinID());
     }
 
     public void UpdateForOthers()
     {
+        if (_photonView == null)
+        {
+            _photonView = GetComponent<PhotonView>();
+        }
+        if (_photonView.IsMine == false) return;
+
         StringBus stringBus = new();
-        _photonView.RPC(nameof(UpdateMySkinForAllPlayers), RpcTarget.Others, PlayerPrefs.GetInt(stringBus.SkinID));
+        _photonView.RPC(nameof(UpdateMySkinForPlayers), RpcTarget.Others, PlayerData.GetSkinID());
     }
 
     [PunRPC]
-    public void UpdateMySkinForAllPlayers(int skinID)
+    public void UpdateMySkinForPlayers(int skinID)
     {
         Change(skinID, true);
     }
+
+    public IEnumerator ChangeToRandom()
+    {
+        //yield return StartCoroutine(Assets.GetRandomSkin(SetValue));
+        int randomSkin = Random.Range(1, 8);
+        //if (_randomSkinID != -1)
+        //{
+            yield return ChangeSkin(randomSkin, true);
+            //_randomSkinID = -1;
+        //}
+        //else
+        //{
+           // Notice.Dialog(NoticeDialog.Message.ConnectionError);
+        //}
+    }
+    
+    /*private void SetValue(int value)
+    {
+        _randomSkinID = value;
+    }*/
 
     private void SetSkinForGuest()
     {
@@ -76,26 +108,26 @@ public class CharacterSkin : MonoBehaviour
         if (www.result == UnityWebRequest.Result.Success)
         {
             string url = www.downloadHandler.text;
-            yield return StartCoroutine(_loader.DownloadSkin(id, url));
+            yield return StartCoroutine(Assets.DownloadSkin(id, url));
         }
         else
         {
-            Notice.ShowDialog(www.error);
+            Notice.Dialog(www.error);
         }
     }
 
     public void Change(int id) => StartCoroutine(ChangeSkin(id));
-    public void Change(int id, bool updateAnim = false) => StartCoroutine(ChangeSkin(id, updateAnim));
+    public void Change(int id, bool updateAnim) => StartCoroutine(ChangeSkin(id, updateAnim));
 
     private IEnumerator ChangeSkin(int id, bool updateAnim = false)
     {
         if (id == 0)
         {
             id = 1;
-            Notice.ShowDialog("Load data error #021");
+            Notice.Dialog("Load data error #021");
         }
 
-        if (_loader.GetLoadedSkin.ContainsKey(id) == false) yield return Load(id);
+        if (Assets.GetLoadedSkin.ContainsKey(id) == false) yield return Load(id);
         
         if (_currentModel != null)
         {
@@ -103,19 +135,24 @@ public class CharacterSkin : MonoBehaviour
         }
 
         _skinID = id;
-        _currentModel = Instantiate(_loader.GetLoadedSkin[id], transform);
+        _currentModel = Instantiate(Assets.GetLoadedSkin[id], transform);
         _currentModel.name = "Model";
 
-        StringBus stringBus = new();
-        PlayerPrefs.SetInt(stringBus.SkinID, _skinID);
-        PlayerPrefs.Save();
+        if (_photonView == null)
+        {
+            _photonView = GetComponent<PhotonView>();
+        }
 
+        if (IsABot == false && _photonView.IsMine)
+        {
+            PlayerData.UpdateSkinID(_skinID);
+        }
+        
         if (updateAnim)
         {
             Invoke(nameof(UpdateAnimation), 0.3f);
             gameObject.SetActive(false);
         }
-
     }
 
     private void UpdateAnimation()

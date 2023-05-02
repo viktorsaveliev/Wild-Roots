@@ -3,7 +3,7 @@ guid: 7f4c41af4240c5d44898d371998188da
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
-  serializedVersion: 12
+  serializedVersion: 11
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -25,7 +25,7 @@ TextureImporter:
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
-  ignoreMipmapLimit: 0
+  ignoreMasterTextureLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -65,7 +65,6 @@ TextureImporter:
   ignorePngGamma: 0
   applyGammaDecoding: 0
   swizzle: 50462976
-  cookieLightType: 0
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -139,7 +138,7 @@ TextureImporter:
         width: 442
         height: 228
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -160,7 +159,7 @@ TextureImporter:
         width: 1104
         height: 1087
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -181,7 +180,7 @@ TextureImporter:
         width: 365
         height: 118
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -202,7 +201,7 @@ TextureImporter:
         width: 290
         height: 48
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -210,6 +209,27 @@ TextureImporter:
       bones: []
       spriteID: 906c9014d34ade94bb7d945ee47fff96
       internalID: -1496219975
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WINSCREEN_1
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1328
+        width: 331
+        height: 231
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 89c690b30016d5b4cb45be70f77997e5
+      internalID: -1488450898
       vertices: []
       indices: 
       edges: []
@@ -231,7 +251,7 @@ TextureImporter:
       WINSCREEN_5: -1683186906
       WINSCREEN_0: -784917844
       WINSCREEN_1: -1488450898
-  mipmapLimitGroupName: 
+  spritePackingTag: 
   pSDRemoveMatte: 0
   userData: 
   assetBundleName: 

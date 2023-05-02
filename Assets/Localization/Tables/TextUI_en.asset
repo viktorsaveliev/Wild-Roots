@@ -201,6 +201,42 @@ MonoBehaviour:
       password
     m_Metadata:
       m_Items: []
+  - m_Id: 27361945409605632
+    m_Localized: Great!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27362113680887808
+    m_Localized: Oops..
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27362211957624832
+    m_Localized: Item added to your wardrobe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27362617207083008
+    m_Localized: Insufficient funds
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27370972227096576
+    m_Localized: You have this skin
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27372125933326336
+    m_Localized: You need to log in to your account
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27373072675819520
+    m_Localized: Copied to clipboard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 32025081207115776
+    m_Localized: Go to login page
+    m_Metadata:
+      m_Items: []
+  - m_Id: 32304637864366080
+    m_Localized: Region
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

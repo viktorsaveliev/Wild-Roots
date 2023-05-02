@@ -7,13 +7,29 @@ using CrazyGames;
 public class ConnectHandler : MonoBehaviourPunCallbacks
 {
     [SerializeField] private Text _textVerison;
+    [SerializeField] private GameObject _guestNote;
 
     public bool IsConnected { get; private set; }
 
-    private void Awake()
+    private void Start()
     {
+        StringBus stringBus = new();
+        bool isGuest = PlayerPrefs.GetInt(stringBus.IsGuest) == 1;
+
+        if (isGuest)
+        {
+            _guestNote.SetActive(true);
+        }
+
         Connect();
+        /*bool isInviteLink = CrazyEvents.Instance.IsInviteLink();
+        if (isInviteLink)
+        {
+            //Connect();
+        }*/
+
         _textVerison.text = BaseGameData.GameVersion;
+        EventBus.OnPlayerLogged?.Invoke();
     }
 
     public void Connect()
@@ -29,6 +45,7 @@ public class ConnectHandler : MonoBehaviourPunCallbacks
     public override void OnConnectedToMaster()
     {
         IsConnected = true;
+
         print($"Connected to region: {PhotonNetwork.CloudRegion}");
         print($"Players online: {PhotonNetwork.CountOfPlayers}");
 
@@ -39,7 +56,7 @@ public class ConnectHandler : MonoBehaviourPunCallbacks
 
             if (roomId == null && roomId == "")
             {
-                Debug.Log("[ERROR]: Inactive link: " + roomId);
+                print("[ERROR]: Inactive invite link");
                 return;
             }
 

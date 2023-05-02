@@ -1,5 +1,4 @@
 using Photon.Pun;
-using System.Collections;
 using UnityEngine;
 
 public class Character : MonoBehaviour
@@ -19,9 +18,6 @@ public class Character : MonoBehaviour
     public bool IsABot => _isABot;
 
     public string Nickname;
-    public int Level;
-    public int Exp;
-    public int Wins;
 
     private bool _isReceivedPrize;
 
@@ -35,79 +31,85 @@ public class Character : MonoBehaviour
         PhotonView = GetComponent<PhotonView>();
         Rigidbody = GetComponent<Rigidbody>();
         Animator = GetComponent<Animator>();
+    }
 
-        if(_isABot == false)
+    private void Start()
+    {
+        if (_isABot == false)
         {
-            StringBus stringBus = new();
-            Nickname = stringBus.NicknameBus[Random.Range(0, stringBus.NicknameBus.Length)];
+            if (PhotonView.IsMine == false) return;
+            Nickname = PlayerData.GetNickname();
+            if (Nickname == string.Empty)
+            {
+                StringBus stringBus = new();
+                Nickname = stringBus.NicknameBus[Random.Range(0, stringBus.NicknameBus.Length)];
+            }
+
+            Skin.Change(PlayerData.GetSkinID(), true);
+        }
+        else
+        {
+            Skin.IsABot = true;
+            StartCoroutine(Skin.ChangeToRandom());
         }
     }
 
     private void OnEnable()
     {
         EventBus.OnMatchEnded += CheckWinner;
-        EventBus.OnPlayerGetUserIDFromDB += UpdateData;
+        EventBus.OnCharacterLose += OnLose;
+        EventBus.OnCharacterFall += AddPointsForKiller;
     }
 
     private void OnDisable()
     {
         EventBus.OnMatchEnded -= CheckWinner;
-        EventBus.OnPlayerGetUserIDFromDB -= UpdateData;
+        EventBus.OnCharacterLose -= OnLose;
+        EventBus.OnCharacterFall -= AddPointsForKiller;
+    }
+
+    private void AddPointsForKiller(Character character, int health)
+    {
+        if (PhotonView.IsMine == false || IsABot || character == this) return;
+        if (character.Health.FromWhomDamage != null && character.Health.FromWhomDamage.CharacterOwner.GetPhotonView().ViewID == PhotonView.ViewID)
+        {
+            PlayerData.AddDroppedPlayersCount();
+        }
     }
 
     private void CheckWinner(int winnerID)
     {
-        if (!PhotonView.IsMine || _isReceivedPrize) return;
+        if (gameObject.activeSelf == false || _isReceivedPrize || IsABot) return;
 
         PhotonView winner = PhotonView.Find(winnerID);
-        if (winner == null || winner.GetComponent<Character>().IsABot) return;
+        if (winner == null || winner.GetComponent<Character>().IsABot || winner.IsMine == false) return;
 
-        if (winner.IsMine)
-        {
-            Wins++;
-            StartCoroutine(GiveExp(100));
-            EventBus.OnPlayerWin?.Invoke();
-        }
-        else
-        {
-            StartCoroutine(GiveExp(30));
-        }
+        PlayerData.GiveWinnerAward();
+        EventBus.OnPlayerWin?.Invoke();
 
         _isReceivedPrize = true;
     }
 
-    private IEnumerator GiveExp(int exp)
+    private void OnLose(int viewID)
     {
-        StringBus stringBus = new();
-        bool isGuest = PlayerPrefs.GetInt(stringBus.IsGuest) == 1;
+        if (_isReceivedPrize || IsABot) return;
 
-        if (isGuest == false)
+        PhotonView loser = PhotonView.Find(viewID);
+        if (loser.IsMine == false || loser.GetComponent<Character>().IsABot) return;
+
+        PlayerData.GiveExp(30);
+
+        if(PlayerData.GetDroppedPlayersCount > 0)
         {
-            yield return StartCoroutine(LoadData.Instance.IELoadUserData(this));
+            Coins.Give(CoinsHandler.GiveReason.ForKiller);
         }
-
-        Exp += exp;
-        if (Exp >= (Level * 3 * 100))
-        {
-            Level++;
-            Exp = 0;
-        }
-
-        int id = PlayerPrefs.GetInt(stringBus.UserID);
-        if (isGuest == false && id > 0)
-        {
-            SaveData.Instance.SaveLevelData(id, this);
-        }
-        print($"gived {exp} exp");
-    }
-
-    private void UpdateData()
-    {
-        StringBus stringBus = new();
-        bool isGuest = PlayerPrefs.GetInt(stringBus.IsGuest) == 1;
-
-        if (!PhotonView.IsMine || isGuest) return;
         
-        LoadData.Instance.LoadUserData(this);
+        _isReceivedPrize = true;
     }
+
+    /*private void UpdateData()
+    {
+        if (IsABot) return;
+        LoadData.Instance.LoadUserData(this);
+    }*/
 }

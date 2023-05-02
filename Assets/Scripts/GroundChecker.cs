@@ -4,7 +4,7 @@ public class GroundChecker : MonoBehaviour
 {
     private void OnTriggerEnter(Collider other)
     {
-        PlayerInfo player = other.gameObject.GetComponent<PlayerInfo>();
+        Character player = other.gameObject.GetComponent<Character>();
         if (player)
         {
             //player.PlayerMove.IsGrounded = true;
@@ -13,7 +13,7 @@ public class GroundChecker : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        PlayerInfo player = other.gameObject.GetComponent<PlayerInfo>();
+        Character player = other.gameObject.GetComponent<Character>();
         if (player)
         {
             player.Move.IsGrounded = false;

@@ -14,19 +14,6 @@ public class Registration : MonoBehaviour
     [SerializeField] private TMP_Text _emailError;
     [SerializeField] private TMP_Text _passwordError;
 
-    private bool _isMobileDevice;
-
-    public void Show(bool isMobileDevice)
-    {
-        _isMobileDevice = isMobileDevice;
-
-        _regPanel.transform.localPosition = new Vector2(-2000f, 0);
-        _regPanel.SetActive(true);
-        _regPanel.transform.DOLocalMoveX(0f, 0.3f);
-
-        EventBus.OnPlayerClickUI?.Invoke(2);
-    }
-
     public void Show()
     {
         _regPanel.transform.localPosition = new Vector2(-2000f, 0);
@@ -47,8 +34,6 @@ public class Registration : MonoBehaviour
 
     public void ShowKeyboard(int inputIndex)
     {
-        //if (_isMobileDevice == false) return;
-
         if(inputIndex == 0) Keyboard.Show(_email);
         else if(inputIndex == 1) Keyboard.Show(_password);
         else Keyboard.Show(_repeatPassword);
@@ -98,7 +83,7 @@ public class Registration : MonoBehaviour
 
         if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
         {
-            Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
+            Notice.Dialog(NoticeDialog.Message.ConnectionError);
             yield break;
         }
 
@@ -128,12 +113,11 @@ public class Registration : MonoBehaviour
         if (www.result == UnityWebRequest.Result.Success)
         {
             LoadData.Instance.GetUserID(email, password, false);
-            Hide();
         }
         else
         {
             EventBus.OnPlayerClickUI?.Invoke(3);
-            Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
+            Notice.Dialog(NoticeDialog.Message.ConnectionError);
         }
     }
 

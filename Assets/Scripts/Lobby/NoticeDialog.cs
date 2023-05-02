@@ -2,9 +2,11 @@
 using UnityEngine.UI;
 using DG.Tweening;
 using UnityEngine.Localization.Components;
+using System.Collections;
 
 public class NoticeDialog : MonoBehaviour
 {
+    [Header("Notice")]
     [SerializeField] private GameObject _notice;
     [SerializeField] private GameObject _noticeBG;
     [SerializeField] private Text _text;
@@ -20,6 +22,17 @@ public class NoticeDialog : MonoBehaviour
     private LocalizeStringEvent _taskTextEvent;
     private LocalizeStringEvent _leftButtonTextEvent;
     private LocalizeStringEvent _rightButtonTextEvent;
+
+    [Header("Simple Notice")]
+    [SerializeField] private GameObject _simpleNotice;
+    [SerializeField] private Text _simpleNoticeStatus;
+    [SerializeField] private Text _simpleNoticeText;
+    [SerializeField] private Image _icon;
+    [SerializeField] private Sprite[] _iconSprite;
+
+    private LocalizeStringEvent _simpleTextEvent;
+    private LocalizeStringEvent _simpleStatusEvent;
+    private Coroutine _timerSimpleNotice;
 
     private bool _isShowed;
 
@@ -44,7 +57,15 @@ public class NoticeDialog : MonoBehaviour
         BackToLobby,
         InvalidNickname,
         PasswordChanged,
-        PincodeSended
+        PincodeSended,
+
+        Simple_Success,
+        Simple_UnSuccess,
+        Simple_Purchase,
+        Simple_NotMoney,
+        Simple_YouHaveThisSkin,
+        Simple_NeedLogin,
+        Simple_CopyToClipboard
     }
 
     public Message CurrentMessage { get; private set; }
@@ -54,6 +75,9 @@ public class NoticeDialog : MonoBehaviour
         _taskTextEvent = _text.GetComponent<LocalizeStringEvent>();
         _leftButtonTextEvent = _buttonText[(int)Buttons.Left].GetComponent<LocalizeStringEvent>();
         _rightButtonTextEvent = _buttonText[(int)Buttons.Right].GetComponent<LocalizeStringEvent>();
+
+        _simpleTextEvent = _simpleNoticeText.GetComponent<LocalizeStringEvent>();
+        _simpleStatusEvent = _simpleNoticeStatus.GetComponent<LocalizeStringEvent>();
     }
 
     private readonly string[] _noticeKey =
@@ -69,10 +93,59 @@ public class NoticeDialog : MonoBehaviour
         "Notice_BackToLobby",
         "Notice_InvalidNickname",
         "Notice_PasswordChanged",
-        "Notice_PincodeSended"
+        "Notice_PincodeSended",
+        
+        "SimpleNotice_Success",
+        "SimpleNotice_UnSuccess",
+        "SimpleNotice_Purchase",
+        "SimpleNotice_NotEnoughtMoney",
+        "SimpleNotice_YouHaveThisSkin",
+        "SimpleNotice_NeedLogin",
+        "SimpleNotice_CopyToClipboard"
     };
 
-    public void ShowDialog(Message message, INoticeAction action = null, string leftButtonTextKey = "Notice_Close", string rightButtonTextKey = null)
+    public void Simple(Message message, bool success)
+    {
+        _simpleNotice.SetActive(true);
+        _simpleNotice.transform.DOMoveY(50f, 0.5f);
+
+        _simpleTextEvent.SetEntry(_noticeKey[(int)message]);
+
+        if(success)
+        {
+            _icon.sprite = _iconSprite[0];
+            _simpleStatusEvent.SetEntry("SimpleNotice_Success");
+        }
+        else
+        {
+            _icon.sprite = _iconSprite[1];
+            _simpleStatusEvent.SetEntry("SimpleNotice_UnSuccess");
+        }
+
+        if(_timerSimpleNotice != null)
+        {
+            StopCoroutine(_timerSimpleNotice);
+            _timerSimpleNotice = null;
+        }
+        _timerSimpleNotice = StartCoroutine(SimpleNoticeTimer());
+    }
+
+    public void HideSimple()
+    {
+        _timerSimpleNotice = null;
+        _simpleNotice.transform.DOMoveY(-200f, 0.5f).OnComplete(() =>
+        {
+            _simpleNotice.SetActive(false);
+        });
+    }
+
+    private IEnumerator SimpleNoticeTimer()
+    {
+        yield return new WaitForSeconds(2f);
+        HideSimple();
+    }
+
+    public void Dialog(Message message, INoticeAction action = null, string leftButtonTextKey = "Notice_Close", string rightButtonTextKey = null)
     {
         if(!_isShowed)
         {
@@ -106,7 +179,7 @@ public class NoticeDialog : MonoBehaviour
         _taskTextEvent.SetEntry(_noticeKey[(int)message]);
     }
 
-    public void ShowDialog(string message, INoticeAction action = null, string leftButtonTextKey = "Notice_Close")
+    public void Dialog(string message, INoticeAction action = null, string leftButtonTextKey = "Notice_Close")
     {
         if (!_isShowed)
         {
@@ -131,6 +204,7 @@ public class NoticeDialog : MonoBehaviour
     {
         if (!_isShowed) return;
         _noticeBG.SetActive(false);
+
         _notice.transform.DOScale(0.1f, 0.1f).OnComplete(() =>
         {
             _action = null;

@@ -24,15 +24,21 @@ public class ServerHandler : MonoBehaviourPunCallbacks
     private HoneycombHandler _honeycombHandler;
 
     public int CurrentRound;
-    private int _timeToNextRound;
+    //private int _timeToNextRound;
 
-    private Coroutine _timer;
+    //private Coroutine _timer;
     [SerializeField] private Text _textTime;
     private WeaponsHandler _weapons;
     public PhotonView ServerPhotonView;
 
     private void Awake()
     {
+        DOTween.SetTweensCapacity(500, 50);
+        /*if(PhotonNetwork.CurrentRoom.PlayerCount < 2)
+        {
+            StartCoroutine(SetOfflineMode());
+        }*/
+
         if (PhotonNetwork.IsMasterClient)
         {
             if(PhotonNetwork.GetPing() > 150 && PhotonNetwork.CurrentRoom.PlayerCount > 1)
@@ -43,6 +49,18 @@ public class ServerHandler : MonoBehaviourPunCallbacks
         }
     }
 
+    /*private IEnumerator SetOfflineMode()
+    {
+        _isOfflineMode = true;
+        PhotonNetwork.Disconnect();
+
+        while (PhotonNetwork.IsConnected)
+        {
+            yield return null;
+        }
+        PhotonNetwork.OfflineMode = true;
+    }*/
+
     private void Start()
     {
         GameObject PlayerCharacter = PhotonNetwork.Instantiate(_playerPrefab.name, new Vector3(0, 5, 0), Quaternion.identity);
@@ -50,7 +68,6 @@ public class ServerHandler : MonoBehaviourPunCallbacks
 
         _joystickMove.Init(player);
         _joystickAttack.Init(player);
-        //Camera.main.GetComponent<CameraMoveToPlayer>().Player = playerControl;
 
         _honeycombHandler = GetComponent<HoneycombHandler>();
         _honeycombHandler.Init();
@@ -58,47 +75,47 @@ public class ServerHandler : MonoBehaviourPunCallbacks
         _weapons = GetComponent<WeaponsHandler>();
         _weapons.IsNeedUpdateHoneycomb = true;
 
-        ServerPhotonView = PhotonView.Get(this);
+        ServerPhotonView = GetComponent<PhotonView>();
         ServerPhotonView.RPC(nameof(AddCharacterInList), RpcTarget.All, player.PhotonView.ViewID);
+
         PhotonNetwork.LocalPlayer.TagObject = gameObject;
         PlayerCharacter.transform.position = _spawnPositions[PhotonNetwork.LocalPlayer.ActorNumber-1].position;
 
         player.Nickname = PhotonNetwork.LocalPlayer.NickName;
         player.Skin.UpdateForAll();
 
-        StringBus stringBus = new();
+        /*StringBus stringBus = new();
         PlayerPrefs.DeleteKey(stringBus.SkinID);
-        PlayerPrefs.Save();
+        PlayerPrefs.Save();*/
 
         ServerPhotonView.RPC(nameof(SetCharacterNickname), RpcTarget.Others, player.PhotonView.ViewID, player.Nickname);
-
+  
         if (PhotonNetwork.IsMasterClient)
         {
             _weapons.CreateWeapons(CurrentRound+1);
-            if (PhotonNetwork.CurrentRoom.PlayerCount < 5)
-            {
-                for (int i = PhotonNetwork.CurrentRoom.PlayerCount; i < MAX_PLAYERS; i++)
-                {
-                    Character character = PhotonNetwork.InstantiateRoomObject(_botPrefab.name, _spawnPositions[i].position, Quaternion.identity).GetComponent<Character>();
-                    character.Nickname = stringBus.NicknameBus[Random.Range(0, stringBus.NicknameBus.Length)];
+            Invoke(nameof(CreateBots), 1f);
+        }
+    }
 
-                    ServerPhotonView.RPC(nameof(AddCharacterInList), RpcTarget.All, character.PhotonView.ViewID);
-                    ServerPhotonView.RPC(nameof(SetCharacterNickname), RpcTarget.Others, character.PhotonView.ViewID, character.Nickname);
-                }
+    private void CreateBots()
+    {
+        if (PhotonNetwork.CurrentRoom.PlayerCount < MAX_PLAYERS)
+        {
+            if (ServerPhotonView == null)
+            {
+                ServerPhotonView = GetComponent<PhotonView>();
+            }
+
+            StringBus stringBus = new();
+            for (int i = PhotonNetwork.CurrentRoom.PlayerCount; i < MAX_PLAYERS; i++)
+            {
+                Character character = PhotonNetwork.InstantiateRoomObject(_botPrefab.name, _spawnPositions[i].position, Quaternion.identity).GetComponent<Character>();
+                ServerPhotonView.RPC(nameof(AddCharacterInList), RpcTarget.All, character.PhotonView.ViewID);
+                character.Nickname = stringBus.NicknameBus[Random.Range(0, stringBus.NicknameBus.Length)];
+
+                ServerPhotonView.RPC(nameof(SetCharacterNickname), RpcTarget.Others, character.PhotonView.ViewID, character.Nickname);
             }
         }
-        /*else
-        {
-            if(GameSettings.GameMode == GameModeSelector.GameMode.Deathmatch)
-            {
-                foreach (Character character in Characters)
-                {
-                    if (character.IsABot == false) continue;
-                    PhotonNetwork.Destroy(character.PhotonView);
-                    break;
-                }
-            }
-        }*/
     }
 
     private void OnApplicationFocus(bool focus)
@@ -122,13 +139,13 @@ public class ServerHandler : MonoBehaviourPunCallbacks
         Characters.Add(player);
     }
 
+    public void AddCharacterInList(Character player)
+    {
+        Characters.Add(player);
+    }
+
     public override void OnMasterClientSwitched(Player newMasterClient)
     {
-        /*if (GameSettings.GameMode == GameModeSelector.GameMode.Deathmatch)
-        {
-            _weapons.UpdateWeaponsPool();
-        }*/
-
         _weapons.IsNeedUpdateHoneycomb = true;
         if (PhotonNetwork.IsMasterClient)
         {
@@ -143,8 +160,6 @@ public class ServerHandler : MonoBehaviourPunCallbacks
                 }
             }
         }
-        //_honeycombHandler = master.GetComponent<HoneycombHandler>();
-        //_honeycombHandler.ReInit(_timeToNextRound);
     }
 
     public override void OnLeftRoom()
@@ -162,9 +177,9 @@ public class ServerHandler : MonoBehaviourPunCallbacks
             Characters.Remove(player);
             Destroy(player.gameObject, 1f);
 
-            if (PhotonNetwork.IsMasterClient && GameSettings.GameMode == GameModeSelector.GameMode.PvP)
+            if (PhotonNetwork.IsMasterClient)
             {
-                EventBus.OnCharacterLose?.Invoke();
+                EventBus.OnCharacterLose?.Invoke(player.PhotonView.ViewID);
             }
         }
     }
@@ -175,6 +190,11 @@ public class ServerHandler : MonoBehaviourPunCallbacks
     public void SetCharacterNickname(int viewID, string nickname)
     {
         Character character = PhotonView.Find(viewID).GetComponent<Character>();
+        character.Nickname = nickname;
+    }
+
+    public void SetCharacterNickname(Character character, string nickname)
+    {
         character.Nickname = nickname;
     }
 

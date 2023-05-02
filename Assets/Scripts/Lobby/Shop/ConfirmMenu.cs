@@ -10,6 +10,7 @@ public class ConfirmMenu : MonoBehaviour
     [SerializeField] private GameObject _skin;
     [SerializeField] private GameObject _dialog;
     [SerializeField] private Image _item2D;
+    [SerializeField] private Image _priceIcon;
 
     [SerializeField] private GameObject[] _buttonType;
 
@@ -30,12 +31,23 @@ public class ConfirmMenu : MonoBehaviour
         _itemData = FindObjectOfType<ItemData>();
     }
 
-    public void Show3D(ShopItem item)
+    public void Show3D(ShopItem item, bool forAds)
     {
         _action = item;
 
         _name.text = item.GetName;
-        _price.text = item.GetPrice.ToString();
+        
+
+        if(forAds)
+        {
+            _priceIcon.sprite = item.GetSpriteForPriceIcon[1];
+            _price.text = item.GetPriceAds.ToString();
+        }
+        else
+        {
+            _priceIcon.sprite = item.GetSpriteForPriceIcon[0];
+            _price.text = item.GetPrice.ToString();
+        }
 
         _rarityKey.enabled = true;
         _rarityKey.SetEntry(_itemData.RarityStringKey[(int)item.GetRarity]);

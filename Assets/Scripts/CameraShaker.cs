@@ -22,7 +22,7 @@ public class CameraShaker : MonoBehaviour
         EventBus.OnWeaponExploded -= CameraShake;
     }
 
-    private void CameraShake(GameObject weapon)
+    public void CameraShake(GameObject weapon)
     {
         if (tween != null) _camera.DOKill();
         tween = _camera.DOShakeRotation(0.3f, 2).OnComplete(() =>

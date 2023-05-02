@@ -9,7 +9,16 @@ public class GameSettings : MonoBehaviour
     [SerializeField] private int _frameRateInScene;
     [SerializeField] private AudioSource _musicSource;
 
-    void Awake()
+    public enum Scene
+    {
+        Login,
+        Lobby,
+        Street,
+        Game,
+        Tutorial
+    }
+
+    private void Awake()
     {
         Application.runInBackground = true;
         Application.targetFrameRate = _frameRateInScene;
@@ -26,10 +35,5 @@ public class GameSettings : MonoBehaviour
     {
         yield return LocalizationSettings.InitializationOperation;
         LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[langID];
-    }
-
-    private void Start()
-    {
-        Notice.HideDialog();
     }
 }

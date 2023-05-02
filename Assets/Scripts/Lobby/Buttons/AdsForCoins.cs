@@ -14,6 +14,7 @@ public class AdsForCoins : MonoBehaviour, IConfirmMenuAction
     public void Action()
     {
         _confirmMenu.Hide();
+        //CrazyAds.Instance.beginAdBreak(GiveReward, ErrorReward, CrazyAdType.rewarded);
         CrazyAds.Instance.beginAdBreakRewarded(GiveReward, ErrorReward);
     }
 
@@ -25,6 +26,6 @@ public class AdsForCoins : MonoBehaviour, IConfirmMenuAction
 
     private void ErrorReward()
     {
-        Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
+        Notice.Dialog(NoticeDialog.Message.ConnectionError);
     }
 }

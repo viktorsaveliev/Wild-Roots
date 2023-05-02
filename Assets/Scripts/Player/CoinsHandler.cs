@@ -10,15 +10,68 @@ public class CoinsHandler : MonoBehaviour
     {
         Ads,
         Winner,
-        NewLevel
+        NewLevel,
+        ForKiller
     }
 
     public void GiveCoins(GiveReason reason)
     {
-        StartCoroutine(IEGiveCoins(reason));
+        switch (reason)
+        {
+            case GiveReason.Ads:
+                PlayerData.ViewedAds();
+                StartCoroutine(GiveCoinsForAds());
+                break;
+
+            case GiveReason.ForKiller:
+                StartCoroutine(GiveCoinsForKiller());
+                break;
+
+            default:
+                break;
+        }
+        
     }
 
-    private IEnumerator IEGiveCoins(GiveReason reason)
+    private IEnumerator GiveCoinsForKiller()
+    {
+        StringBus stringBus = new();
+        bool isGuest = PlayerPrefs.GetInt(stringBus.IsGuest) == 1;
+        if (isGuest)
+        {
+            UpdateValue(_coins + PlayerData.GetDroppedPlayersCount * 15, true);
+            PlayerData.SetDroppedPlayersCount(0);
+            yield break;
+        }
+
+        WWWForm form = new();
+        form.AddField("id", PlayerPrefs.GetInt(stringBus.UserID));
+        form.AddField("kills", PlayerData.GetDroppedPlayersCount);
+
+        using UnityWebRequest www = UnityWebRequest.Post(stringBus.GameDomain + "give_coins_killer.php", form);
+        yield return www.SendWebRequest();
+
+        if (www.result == UnityWebRequest.Result.Success)
+        {
+            bool success = int.TryParse(www.downloadHandler.text, out int value);
+            if (success)
+            {
+                UpdateValue(_coins + PlayerData.GetDroppedPlayersCount * value, true);
+                PlayerData.SetDroppedPlayersCount(0);
+            }
+            else
+            {
+                Notice.Dialog(NoticeDialog.Message.ConnectionError);
+            }
+        }
+        else
+        {
+            print(www.downloadHandler.error);
+            Notice.Dialog(NoticeDialog.Message.ConnectionError);
+        }
+    }
+
+    private IEnumerator GiveCoinsForAds()
     {
         StringBus stringBus = new();
         bool isGuest = PlayerPrefs.GetInt(stringBus.IsGuest) == 1;
@@ -31,19 +84,7 @@ public class CoinsHandler : MonoBehaviour
         WWWForm form = new();
         form.AddField("id", PlayerPrefs.GetInt(stringBus.UserID));
 
-        string scriptName;
-        switch (reason)
-        {
-            case GiveReason.Ads:
-                scriptName = "give_coins_ads.php";
-                break;
-
-            default:
-                scriptName = "give_coins_ads.php";
-                break;
-        }
-
-        using UnityWebRequest www = UnityWebRequest.Post(stringBus.GameDomain + scriptName, form);
+        using UnityWebRequest www = UnityWebRequest.Post(stringBus.GameDomain + "give_coins_ads.php", form);
         yield return www.SendWebRequest();
 
         if (www.result == UnityWebRequest.Result.Success)
@@ -55,13 +96,13 @@ public class CoinsHandler : MonoBehaviour
             }
             else
             {
-                Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
+                Notice.Dialog(NoticeDialog.Message.ConnectionError);
             }
         }
         else
         {
             print(www.downloadHandler.error);
-            Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
+            Notice.Dialog(NoticeDialog.Message.ConnectionError);
         }
     }
 

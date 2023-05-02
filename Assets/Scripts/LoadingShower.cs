@@ -28,7 +28,6 @@ public class LoadingShower : MonoBehaviour
         else
         {
             _loadingOpened = -1;
-            DontDestroyOnLoad(gameObject);
             IsCreated = true;
         }
     }
@@ -72,6 +71,6 @@ public class LoadingShower : MonoBehaviour
     {
         yield return new WaitForSeconds(_timeForCancel);
         Hide();
-        Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
+        Notice.Dialog(NoticeDialog.Message.ConnectionError);
     }
 }

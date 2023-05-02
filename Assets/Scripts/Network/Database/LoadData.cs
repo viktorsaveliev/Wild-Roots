@@ -4,58 +4,84 @@ using UnityEngine.Networking;
 using Newtonsoft.Json;
 using CrazyGames;
 using Photon.Pun;
+using UnityEngine.SceneManagement;
+using DG.Tweening;
 
 public class LoadData : MonoBehaviour
 {
-    [SerializeField] private GameObject _regauthPanel;
-
     public static LoadData Instance;
 
     private void Start()
     {
-        Instance = this;
+        if (!LoadingShower.IsCreated) Instance = this;
     }
 
-    public void LoadUserData(Character player)
+    public void LoadUserData(Character character)
     {
-        StartCoroutine(IELoadUserData(player));
+        StartCoroutine(LoadUserDataAsync(character));
     }
 
-    public IEnumerator IELoadUserData(Character player)
+    public IEnumerator LoadUserDataAsync(Character character)
     {
         StringBus stringBus = new();
+
+        bool isGuest = PlayerPrefs.GetInt(stringBus.IsGuest) == 1;
+        if (isGuest)
+        {
+            yield break;
+        }
 
         WWWForm form = new();
         form.AddField("id", PlayerPrefs.GetInt(stringBus.UserID));
         using UnityWebRequest www = UnityWebRequest.Post(stringBus.GameDomain + "get_data.php", form);
         yield return www.SendWebRequest();
 
-        // Handle JSON response
         if (www.result == UnityWebRequest.Result.Success)
         {
-            LoadingUI.Show(LoadingShower.Type.Simple);
-
-            string jsonString = www.downloadHandler.text;
-            PlayerData playerData = JsonConvert.DeserializeObject<PlayerData>(jsonString);
-
-            player.Level = playerData.level;
-            player.Exp = playerData.exp;
-            player.Wins = playerData.wins;
-            player.Nickname = playerData.nickname;
-
-            player.Skin.Change(playerData.skinID, true);
-
-            Coins.UpdateValue(playerData.coins, false);
-
-            PhotonNetwork.LocalPlayer.NickName = player.Nickname;
-            EventBus.OnPlayerChangeNickname?.Invoke();
-
-            ConnectDatabase.IsUserEnter = true;
-            //player.gameObject.SetActive(true);
+            UpdateUser(www.downloadHandler.text);
         }
         else
         {
-            Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
+            Notice.Dialog(NoticeDialog.Message.ConnectionError);
+        }
+    }
+
+    public void UpdateUser(string json)
+    {
+        string jsonString = json;
+        PlayerInfo playerData = JsonConvert.DeserializeObject<PlayerInfo>(jsonString);
+
+        StringBus stringBus = new();
+
+        PlayerData.Update(playerData.nickname, playerData.level, playerData.exp, playerData.wins, playerData.wins_today, playerData.adsViewed, playerData.skinID);
+        Coins.UpdateValue(playerData.coins, false);
+
+        if (playerData.today_winner > 0)
+        {
+            StartCoroutine(ShowAndResetTodayWinner(playerData.nickname, playerData.today_winner));
+        }
+        PlayerPrefs.SetInt(stringBus.UserID, playerData.ID);
+
+        PhotonNetwork.LocalPlayer.NickName = playerData.nickname;
+        EventBus.OnPlayerChangeNickname?.Invoke();
+    }
+
+    private IEnumerator ShowAndResetTodayWinner(string nickname, int coins)
+    {
+        yield return new WaitForSeconds(1.5f);
+        CrazyEvents.Instance.HappyTime();
+        EventBus.OnPlayerTopTodayWinner?.Invoke(nickname, coins);
+
+        StringBus stringBus = new();
+
+        WWWForm form = new();
+        form.AddField("ID", PlayerPrefs.GetInt(stringBus.UserID));
+        using UnityWebRequest www = UnityWebRequest.Post(stringBus.GameDomain + "reset_today_winner.php", form);
+        yield return www.SendWebRequest();
+
+        if (www.result != UnityWebRequest.Result.Success)
+        {
+            Notice.Dialog(www.downloadHandler.error);
         }
     }
 
@@ -63,12 +89,12 @@ public class LoadData : MonoBehaviour
     {
         StringBus stringBus = new();
         PlayerPrefs.DeleteKey(stringBus.IsGuest);
-        StartCoroutine(IEGetUserID(email, password, remember));
+        StartCoroutine(GetUserIDAsync(email, password, remember));
     }
 
-    private IEnumerator IEGetUserID(string email, string password, bool remember)
+    private IEnumerator GetUserIDAsync(string email, string password, bool remember)
     {
-        _regauthPanel.SetActive(false);
+        LoadingUI.Show(LoadingShower.Type.Simple);
 
         StringBus stringBus = new();
 
@@ -94,10 +120,11 @@ public class LoadData : MonoBehaviour
         {
             int playerID = int.Parse(www.downloadHandler.text);
             PlayerPrefs.SetInt(stringBus.UserID, playerID);
+            PlayerData.Update(string.Empty, 1, 0, 0, 0, 0, 1);
         }
         else
         {
-            Notice.ShowDialog(www.downloadHandler.error);
+            Notice.Dialog(www.downloadHandler.error);
         }
 
         CrazySDK.Instance.GetUserInfo(userInfo =>
@@ -112,17 +139,24 @@ public class LoadData : MonoBehaviour
 
         PlayerPrefs.Save();
 
-        EventBus.OnPlayerGetUserIDFromDB?.Invoke();
+        DOTween.Clear();
+        ConnectDatabase.IsUserEnter = true;
+        SceneManager.LoadSceneAsync((int)GameSettings.Scene.Lobby);
+        //EventBus.OnPlayerGetUserIDFromDB?.Invoke();
     }
 }
 
 [System.Serializable]
-public class PlayerData
+public class PlayerInfo
 {
+    public int ID;
     public int level;
     public int exp;
     public int wins;
+    public int wins_today;
+    public int today_winner;
     public string nickname;
     public int coins;
     public int skinID;
+    public int adsViewed;
 }

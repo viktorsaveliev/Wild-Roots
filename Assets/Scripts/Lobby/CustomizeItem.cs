@@ -48,6 +48,7 @@ public class CustomizeItem : MonoBehaviour
     {
         if (sprite == null) return;
         _itemIcon.sprite = sprite;
+        _itemIcon.SetNativeSize();
     }
 
     public virtual void SetObject(GameObject item)

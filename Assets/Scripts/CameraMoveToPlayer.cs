@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class CameraMoveToPlayer : MonoBehaviour
 {
-    public PlayerInfo Player;
+    public Character Player;
     [SerializeField] private float _damping; // 0.02f && 12
     //private float[] _limitPosX = { -1.8f, 1.8f };
     //private float[] _limitPosZ = { -3.1f, 3.1f };
@@ -21,7 +21,7 @@ public class CameraMoveToPlayer : MonoBehaviour
 
     private void MoveCameraToPlayer()
     {
-        Vector3 target = new Vector3(Player.transform.position.x, 10.83f, Player.transform.position.z - 8.19f); // 9.19f
+        Vector3 target = new(Player.transform.position.x, 10.83f, Player.transform.position.z - 8.19f); // 9.19f
 
         if (transform.position.z > _limitCameraPosZ[1]) target.z = _limitCameraPosZ[1] - 0.01f;
         else if (transform.position.z < _limitCameraPosZ[0]) target.z = _limitCameraPosZ[0] + 0.01f;

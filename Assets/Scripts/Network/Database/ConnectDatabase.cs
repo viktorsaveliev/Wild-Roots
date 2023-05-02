@@ -6,7 +6,6 @@ public class ConnectDatabase : MonoBehaviour
     [SerializeField] private Registration _registration;
     [SerializeField] private Authorization _authorization;
 
-    private bool _isMobileDevice;
     public static bool IsUserEnter = false;
 
     private void Start()
@@ -14,30 +13,16 @@ public class ConnectDatabase : MonoBehaviour
         if (IsUserEnter) return;
 
         StringBus stringBus = new();
-        CrazySDK.Instance.GetUserInfo(userInfo =>
-        {
-            int deviceType = 0;
-            if (userInfo.device.type == "desktop" || userInfo.browser.name == "demo")
-            {
-                deviceType = 1;
-            }
-            else
-            {
-                _isMobileDevice = true;
-            }
-            PlayerPrefs.SetInt(stringBus.PlayerDevice, deviceType);
-        });
-
         int accStatus = PlayerPrefs.GetInt(stringBus.AccStatus);
 
         switch (accStatus)
         {
             case 1:
-                _authorization.Show(_isMobileDevice);
+                _authorization.Show();
                 break;
 
             case 2:
-                _authorization.Show(_isMobileDevice);
+                _authorization.Show();
                 string email = PlayerPrefs.GetString(stringBus.Email);
                 string password = PlayerPrefs.GetString(stringBus.Password);
                 _authorization.AutoInputData(email, password);
@@ -45,8 +30,33 @@ public class ConnectDatabase : MonoBehaviour
                 break;
 
             default:
-                _registration.Show(_isMobileDevice);
+                _registration.Show();
                 break;
         }
+
+        IdentifyUserDevice();
+    }
+
+    private void IdentifyUserDevice()
+    {
+        StringBus stringBus = new();
+        CrazySDK.Instance.GetUserInfo(userInfo =>
+        {
+            int deviceType;
+            if (userInfo.device.type == "desktop" || userInfo.browser.name == "demo")
+            {
+                deviceType = 1;
+            }
+            else
+            {
+                deviceType = 0;
+            }
+
+            PlayerPrefs.SetInt(stringBus.PlayerDevice, deviceType);
+            PlayerPrefs.SetInt(stringBus.IsGuest, 0);
+            PlayerPrefs.Save();
+
+            print($"Device: {deviceType} / {userInfo.device.type}");
+        });
     }
 }

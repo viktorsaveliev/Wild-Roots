@@ -56,6 +56,11 @@ public class ChangePassword : MonoBehaviour
         EventBus.OnPlayerClickUI?.Invoke(2);
     }
 
+    public void ShowKeyboard(int inputID)
+    {
+        Keyboard.Show(inputID == 0 ? _newPassword : _repeatNewPassword);
+    }
+
     public void Hide()
     {
         _changePassPanel.transform.DOScale(0.1f, 0.2f).OnComplete(() =>

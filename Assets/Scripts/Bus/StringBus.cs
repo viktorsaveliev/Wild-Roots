@@ -26,11 +26,17 @@ public class StringBus
         "Sugarplum", "Banana Peel", "Popcorn", "Pumpkin", "Gummy Bear",
         "Cotton Candy", "Bubblegum", "Scooter", "Sunny Side", "Lemon Drop", 
         "Cherry Pie", "Cookie Dough", "Chocolate Chip", "Snickerdoodle", "Tootsie Roll",
-        "Jolly Rancher", "Gummy Worm", "M&M", "Skittles", "Starburst", "Smarties", "Nerds",
+        "Jolly Rancher", "Gummy Worm", "Skittles", "Starburst", "Smarties", "Nerds",
         "Sweet Tart", "Fruit Loop", "Lucky Charm", "Captain Crunch", "Cocoa Puff", "Cheerio",
         "Corn Pop", "Frosted Flake", "Raisin Bran", "Cookie Crisp", "Cinnamon Toast", "Honeycomb",
         "Pop Tart", "Oreo", "Jivchik", "Reese's Pieces", "Twizzler", "Kit Kat", "Snickers", 
-        "Butterfinger", "Milky Way"
+        "Butterfinger", "Milky Way", "MasterBlaster", "Dominator", "Fragger", "BoomHeadshot", "Ninja", 
+        "WreckingBall", "Terminator", "GrimReaper", "Beast Peace", "ChosenOne", "Destroyer", "OneManArmy", "Punisher", 
+        "Assassin", "MadHatter", "MadScientist", "Jester", "Daredevil", "BlackKnight", "WhiteKnight", "King Ping", 
+        "Queen Been", "Ice Ventura", "MightyThor", "GreenHulk", "RedHulk", "IncredibleHulk", "SavageHulk", "Professor", 
+        "Genius", "Sorcerer", "Magician", "Wizard", "Warrior", "Gladiator", "Samurai", "Ronin", "Cowboy", 
+        "Gunslinger", "Sharpshooter", "Outlaw", "Bandit", "Highlander", "Viking", "Barbarian", "Pirate", 
+        "Swashbuckler", "Captain Bob", "Navigator", "Adventurer", "Explorer"
     };
 
     public readonly string AccStatus = "AccStatus";
@@ -38,7 +44,7 @@ public class StringBus
     public readonly string Password = "Password";
     public readonly string UserID = "PlayerID";
     public readonly string IsGuest = "GuestAcc";
-    public readonly string SkinID = "SkinID";
+    //public readonly string SkinID = "SkinID";
 
     public readonly string GameDomain = "https://www.wildroots.fun/public/";
 

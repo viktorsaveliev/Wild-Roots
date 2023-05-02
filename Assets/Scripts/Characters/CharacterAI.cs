@@ -22,6 +22,8 @@ public class CharacterAI : MonoBehaviour
     private Character _currentCharacter;
     private Coroutine _timer;
 
+    private bool _isInit = false;
+
     private enum Tasks
     {
         None,
@@ -30,7 +32,10 @@ public class CharacterAI : MonoBehaviour
 
     private void OnEnable()
     {
-        StartInfinityTimer();
+        if(_isInit)
+        {
+            StartInfinityTimer();
+        }
     }
 
     private void OnDisable()
@@ -45,12 +50,11 @@ public class CharacterAI : MonoBehaviour
     void Start()
     {
         _agent = GetComponent<NavMeshAgent>();
-        _weapons = FindObjectsOfType<Weapon>(true);
-        _characters = FindObjectsOfType<Character>();
-
         _myWeapon = GetComponent<IWeaponable>();
         _movement = GetComponent<IMoveable>();
-        _currentCharacter = GetComponent<Character>();  
+        _currentCharacter = GetComponent<Character>();
+
+        Invoke(nameof(UpdateData), 1f);
     }
 
     private void Update()
@@ -60,6 +64,8 @@ public class CharacterAI : MonoBehaviour
         {
             if (_characterTask == Tasks.AimAtTarget)
             {
+                if (_taskTarget == null) return;
+
                 float singleStep = 5 * Time.deltaTime;
                 Vector3 targetDirection = _taskTarget.position - transform.position;
                 Vector3 newDirection = Vector3.RotateTowards(transform.forward, targetDirection, singleStep, 0.0f);
@@ -79,6 +85,18 @@ public class CharacterAI : MonoBehaviour
         if(_movement.IsCanMove() && _agent.enabled && _checkForStack == null && _isGoToSafeZone == false)
         {
             _checkForStack = StartCoroutine(OnCharacterStoped(collision.transform.position, Random.Range(1, 3)));
+        }
+    }
+
+    private void UpdateData()
+    {
+        _weapons = FindObjectsOfType<Weapon>();
+        _characters = FindObjectsOfType<Character>();
+
+        if(_isInit == false)
+        {
+            StartInfinityTimer();
+            _isInit = true;
         }
     }
 
@@ -110,22 +128,25 @@ public class CharacterAI : MonoBehaviour
             }
 
             bool isWeaponNearby = IsGetWeaponNearby(out Vector3 nearestWeapon);
-            bool isNearNavMeshEdge = IsNearNavMeshEdge(1.5f, out Vector3 nearestEdge);
-            if (isWeaponNearby && isNearNavMeshEdge && _isGoToSafeZone == false)
+            //bool isNearNavMeshEdge = IsNearNavMeshEdge(1.5f, out Vector3 nearestEdge);
+            /*if (isWeaponNearby && _isGoToSafeZone == false) //  && isNearNavMeshEdge
             {
                 _isGoToSafeZone = true;
                 _movement.Move(GetRandomDirectionAwayFrom(nearestWeapon));
-            }
-            else if (isWeaponNearby)
+            }*/
+            if (isWeaponNearby)
             {
+                _isGoToSafeZone = false;
+                _movement.Stop();
+
                 MoveToSafeDistanceFromWeapon(nearestWeapon);
             }
-            else if (isNearNavMeshEdge && _isGoToSafeZone == false)
+            /*else if (isNearNavMeshEdge && _isGoToSafeZone == false)
             {
                 _isGoToSafeZone = true;
                 StartCoroutine(ResetAction(Random.Range(0.5f, 1.5f)));
                 _movement.Move(GetRandomDirectionAwayFrom(nearestEdge));
-            }
+            }*/
             else
             {
                 if (IsHavePath || _isGoToSafeZone)

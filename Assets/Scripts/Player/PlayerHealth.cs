@@ -32,14 +32,14 @@ public class PlayerHealth : MonoBehaviour
     {
         if (--Value <= 0)
         {
-            EventBus.OnCharacterLose?.Invoke();
+            EventBus.OnCharacterLose?.Invoke(_character.PhotonView.ViewID);
         }
 
         if(_character.Weapon) _character.Weapon.DeleteWeapon(true);
         gameObject.SetActive(false);
         EventBus.OnCharacterFall?.Invoke(_character, Value);
     }
-
+    
     public void SetDamageStrength(float plus)
     {
         DamageStrength += plus;

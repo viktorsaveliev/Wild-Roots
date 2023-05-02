@@ -31,9 +31,6 @@ public class Nickname : MonoBehaviour
 
     public void ShowKeyboard()
     {
-        StringBus stringBus = new();
-        bool isMobile = PlayerPrefs.GetInt(stringBus.PlayerDevice) == 0;
-        if (isMobile == false) return;
         Keyboard.Show(_nickname);
     }
 
@@ -49,7 +46,7 @@ public class Nickname : MonoBehaviour
         if(_nickname.text == string.Empty || _nickname.text.Length < 4 || _nickname.text.Length > 24 || AreYouCute(_nickname.text) == false)
         {
             _nickname.text = PhotonNetwork.LocalPlayer.NickName;
-            Notice.ShowDialog(NoticeDialog.Message.InvalidNickname);
+            Notice.Dialog(NoticeDialog.Message.InvalidNickname);
             EventBus.OnPlayerClickUI?.Invoke(3);
             return;
         }
@@ -80,7 +77,7 @@ public class Nickname : MonoBehaviour
         if (www.result != UnityWebRequest.Result.Success)
         {
             _nickname.text = PhotonNetwork.LocalPlayer.NickName;
-            Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
+            Notice.Dialog(NoticeDialog.Message.ConnectionError);
             EventBus.OnPlayerClickUI?.Invoke(3);
         }
         else
@@ -95,7 +92,7 @@ public class Nickname : MonoBehaviour
             else
             {
                 _nickname.text = PhotonNetwork.LocalPlayer.NickName;
-                Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
+                Notice.Dialog(NoticeDialog.Message.ConnectionError);
                 EventBus.OnPlayerClickUI?.Invoke(3);
             }
         }

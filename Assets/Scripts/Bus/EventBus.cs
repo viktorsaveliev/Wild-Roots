@@ -15,7 +15,7 @@ public static class EventBus
     public static Action OnPlayerTakeWeapon;
 
     public static Action OnPlayerWin;
-    public static Action OnCharacterLose;
+    public static Action<int> OnCharacterLose;
     public static Action OnPlayerStartSearchMatch;
 
     public static Action<int> OnMatchEnded;
@@ -25,8 +25,12 @@ public static class EventBus
     public static Action OnSetTutorialTaskForPlayer;
     public static Action OnPlayerEndTutorial;
 
-    public static Action OnPlayerGetUserIDFromDB;
+    public static Action OnPlayerLogged;
     public static Action OnPlayerChangeNickname;
-    public static Action<int> OnPlayerChangeSkin;
+    public static Action<int> OnPlayerNeedChangeSkin;
     public static Action<int, bool> OnPlayerUpdateCoinsValue;
+    public static Action OnPlayerBuyNewSkin;
+    public static Action OnPlayerViewedAds;
+
+    public static Action<string, int> OnPlayerTopTodayWinner;
 }

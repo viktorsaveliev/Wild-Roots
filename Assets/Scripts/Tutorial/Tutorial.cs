@@ -55,13 +55,12 @@ public class Tutorial : MonoBehaviour, INoticeAction
 
         _joystickAttack.Init(_character);
         _joystickMovement.Init(_character);
-
-        _enemy.GetComponent<Character>().Nickname = "Ivan";
     }
 
     private void SetOfflineMode()
     {
         PhotonNetwork.OfflineMode = true;
+        _character.Skin.Change(PlayerData.GetSkinID(), true);
     }
 
     private void SetTask(Task task)
@@ -94,7 +93,7 @@ public class Tutorial : MonoBehaviour, INoticeAction
         else
         {
             PhotonNetwork.OfflineMode = false;
-            Notice.ShowDialog(NoticeDialog.Message.EndTutorial, this, "NoticeButton_Menu");
+            Notice.Dialog(NoticeDialog.Message.EndTutorial, this, "NoticeButton_Menu");
             EventBus.OnPlayerEndTutorial?.Invoke();
         }
     }
@@ -110,7 +109,7 @@ public class Tutorial : MonoBehaviour, INoticeAction
     private IEnumerator LoadingLobby()
     {
         LoadingUI.Show(LoadingShower.Type.Progress);
-        AsyncOperation percentload = SceneManager.LoadSceneAsync(0);
+        AsyncOperation percentload = SceneManager.LoadSceneAsync((int)GameSettings.Scene.Lobby);
         while (!percentload.isDone)
         {
             yield return new WaitForEndOfFrame();
@@ -135,13 +134,21 @@ public class Tutorial : MonoBehaviour, INoticeAction
         rigidbody.isKinematic = true;
 
         _weapon.gameObject.SetActive(true);
-        _weapon.SpawnAnimation = _weapon.transform.DOScale(1, 0.3f).OnComplete(() => _weapon.SpawnAnimation = null);
+        _weapon.SpawnAnimation = _weapon.transform.DOScale(1, 0.3f).OnComplete(() =>
+        {
+            _weapon.SpawnAnimation.Kill();
+            _weapon.SpawnAnimation = null;
+        });
 
         EventBus.OnWeaponSpawned?.Invoke(_weapon.gameObject);
 
         if (CurrentTask == Task.ThrowGrenade)
         {
             _enemy.SetActive(true);
+            Character enemy = _enemy.GetComponent<Character>();
+            enemy.Nickname = "Ivan";
+            enemy.Skin.Change(2, true);
+
             SetTask(Task.ThrowEnemy);
         }
         else if(CurrentTask == Task.ThrowEnemy)

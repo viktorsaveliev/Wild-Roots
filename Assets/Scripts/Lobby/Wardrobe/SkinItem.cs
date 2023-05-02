@@ -17,32 +17,28 @@ public class SkinItem : CustomizeItem
 
     private void Start()
     {
-        StringBus stringBus = new();
-        bool isSelectedSkin = PlayerPrefs.GetInt(stringBus.SkinID) == GetItemID;
+        bool isSelectedSkin = PlayerData.GetSkinID() == GetItemID;
         UpdateSelectUI(isSelectedSkin);
     }
 
     private void OnEnable()
     {
-        StringBus stringBus = new();
-        bool isSelectedSkin = PlayerPrefs.GetInt(stringBus.SkinID) == GetItemID;
+        bool isSelectedSkin = PlayerData.GetSkinID() == GetItemID;
         UpdateSelectUI(isSelectedSkin);
 
-        EventBus.OnPlayerChangeSkin += UnSelect;
+        EventBus.OnPlayerNeedChangeSkin += UnSelect;
     }
 
     private void OnDisable()
     {
-        EventBus.OnPlayerChangeSkin -= UnSelect;
+        EventBus.OnPlayerNeedChangeSkin -= UnSelect;
     }
 
     public override void Select()
     {
         base.Select();
 
-        StringBus stringBus = new();
-        int currentSkin = PlayerPrefs.GetInt(stringBus.SkinID);
-        if (currentSkin == GetItemID)
+        if (PlayerData.GetSkinID() == GetItemID)
         {
             EventBus.OnPlayerClickUI?.Invoke(1);
             return;
@@ -50,7 +46,7 @@ public class SkinItem : CustomizeItem
 
         UpdateSelectUI(true);
 
-        EventBus.OnPlayerChangeSkin?.Invoke(GetItemID);
+        EventBus.OnPlayerNeedChangeSkin?.Invoke(GetItemID);
         EventBus.OnPlayerClickUI?.Invoke(1);
     }
 

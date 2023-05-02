@@ -23,7 +23,7 @@ public class ShopHandler : MonoBehaviour
         StartCoroutine(LoadSkinsDataFromServer());
     }
 
-    public IEnumerator BuyNewSkin(int userID, int skinID, int price)
+    public IEnumerator BuyNewSkin(int userID, int skinID, int price, bool forAds)
     {
         WWWForm form = new();
         form.AddField("userID", userID);
@@ -36,24 +36,23 @@ public class ShopHandler : MonoBehaviour
 
         if (request.result != UnityWebRequest.Result.Success)
         {
-            Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
+            Notice.Dialog(NoticeDialog.Message.ConnectionError);
         }
         else
         {
             bool isHave = bool.Parse(request.downloadHandler.text);
             if (isHave)
             {
-                print("you have this skin");
-                Notice.ShowDialog(NoticeDialog.Message.BackToLobby);
+                Notice.Simple(NoticeDialog.Message.Simple_YouHaveThisSkin, false);
             }
             else
             {
-                StartCoroutine(SavePurchasedSkin(userID, skinID, price));
+                StartCoroutine(SavePurchasedSkin(userID, skinID, price, forAds));
             }
         }
     }
 
-    public IEnumerator SavePurchasedSkin(int userID, int skinID, int price)
+    public IEnumerator SavePurchasedSkin(int userID, int skinID, int price, bool forAds)
     {
         WWWForm form = new();
         form.AddField("userID", userID);
@@ -66,21 +65,29 @@ public class ShopHandler : MonoBehaviour
 
         if (request.result != UnityWebRequest.Result.Success)
         {
-            Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
+            Notice.Dialog(NoticeDialog.Message.ConnectionError);
         }
         else
         {
             bool success = bool.Parse(request.downloadHandler.text);
             if(success)
             {
-                Coins.Pay(price);
+                if (forAds)
+                {
+                    PlayerData.PayAds(price);
+                }
+                else
+                {
+                    Coins.Pay(price);
+                }
                 PlayerPrefs.SetInt(stringBus.NeedUpdateWardrobe, 1);
                 EventBus.OnPlayerClickUI?.Invoke(4);
+                EventBus.OnPlayerBuyNewSkin?.Invoke();
+                Notice.Simple(NoticeDialog.Message.Simple_Purchase, true);
             }
             else
             {
-                Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
-                print(request.downloadHandler.text);
+                Notice.Dialog(NoticeDialog.Message.ConnectionError);
             }
         }
     }
@@ -94,24 +101,38 @@ public class ShopHandler : MonoBehaviour
 
         if (request.result != UnityWebRequest.Result.Success)
         {
-            Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
+            Notice.Dialog(NoticeDialog.Message.ConnectionError);
         }
         else
         {
             string jsonString = request.downloadHandler.text;
             List<SkinData> skins = JsonConvert.DeserializeObject<List<SkinData>>(jsonString);
+            skins.Sort((a, b) => a.rarity.CompareTo(b.rarity));
 
             foreach (SkinData skin in skins)
             {
                 ShopItem shopItem = Instantiate(_itemPrefab, _content).GetComponent<ShopItem>();
                 shopItem.SetLinks(this, _confirmMenu);
                 shopItem.SetInfo(skin.id, skin.name, (ItemData.Rarity)skin.rarity);
-                shopItem.SetPrice(skin.price);
+
+                if(skin.price_ads > 0)
+                {
+                    shopItem.SetPrice(skin.price_ads, true);
+                }
+                else
+                {
+                    shopItem.SetPrice(skin.price, false);
+                }
 
                 yield return _loadAssets.DownloadSkin(skin.id, skin.url_fbx);
 
                 GameObject prefab = _loadAssets.GetLoadedSkin[skin.id];
                 shopItem.SetObject(prefab);
+
+                if (Assets.GetLoadedSkinIcon.ContainsKey(skin.id))
+                {
+                    shopItem.SetIcon(Assets.GetLoadedSkinIcon[skin.id]);
+                }
             }
         }
         _loading.SetActive(false);

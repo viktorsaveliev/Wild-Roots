@@ -10,10 +10,12 @@ public class Wardrobe : MonoBehaviour
     [SerializeField] private GameObject _loading;
     [SerializeField] private Transform _content;
 
-    private LoadAssets _loadAssets;
+    private Coroutine _loadSkins;
 
     private void Start()
     {
+        if (_loadSkins != null) return;
+
         StringBus stringBus = new();
         bool isNeedUpdate = PlayerPrefs.GetInt(stringBus.NeedUpdateWardrobe) == 1;
         if (isNeedUpdate)
@@ -22,36 +24,38 @@ public class Wardrobe : MonoBehaviour
         }
 
         _loading.SetActive(true);
-        _loadAssets = FindObjectOfType<LoadAssets>();
-        StartCoroutine(LoadMySkins());
+        _loadSkins = StartCoroutine(LoadMySkins());
     }
 
     private void OnEnable()
     {
+        if (_loadSkins != null) return;
+
         StringBus stringBus = new();
         bool isNeedUpdate = PlayerPrefs.GetInt(stringBus.NeedUpdateWardrobe) == 1;
         if(isNeedUpdate)
         {
-            SkinItem[] skinItems = _content.GetComponentsInChildren<SkinItem>();
+            SkinItem[] skinItems = _content.GetComponentsInChildren<SkinItem>(); // FindObjectsOfType<SkinItem>();
             foreach (SkinItem child in skinItems)
             {
                 Destroy(child.gameObject);
             }
 
             _loading.SetActive(true);
-            StartCoroutine(LoadMySkins());
+            _loadSkins = StartCoroutine(LoadMySkins());
             PlayerPrefs.DeleteKey(stringBus.NeedUpdateWardrobe);
         }
     }
 
     private IEnumerator LoadMySkins()
     {
-        StartCoroutine(AddStandartSkin());
+        yield return StartCoroutine(AddStandartSkin());
 
         StringBus stringBus = new();
         if(PlayerPrefs.GetInt(stringBus.IsGuest) == 1)
         {
-            print("Войдите в аккаунт, чтобы увидеть свои скины");
+            _loading.SetActive(false);
+            Notice.Simple(NoticeDialog.Message.Simple_NeedLogin, false);
             yield break;
         }
 
@@ -63,7 +67,7 @@ public class Wardrobe : MonoBehaviour
 
         if (request.result != UnityWebRequest.Result.Success)
         {
-            Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
+            Notice.Dialog(NoticeDialog.Message.ConnectionError);
         }
         else
         {
@@ -78,6 +82,7 @@ public class Wardrobe : MonoBehaviour
                 }
             }
         }
+        _loadSkins = null;
         _loading.SetActive(false);
     }
 
@@ -93,7 +98,7 @@ public class Wardrobe : MonoBehaviour
 
         if (request.result != UnityWebRequest.Result.Success)
         {
-            Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
+            Notice.Dialog(NoticeDialog.Message.ConnectionError);
         }
         else
         {
@@ -105,10 +110,15 @@ public class Wardrobe : MonoBehaviour
                 SkinItem skinItem = Instantiate(_skinItemPrefab, _content).GetComponent<SkinItem>();
                 skinItem.SetInfo(skin.id, skin.name, (ItemData.Rarity)skin.rarity);
                 skinItem.UpdateUI();
-                yield return _loadAssets.DownloadSkin(skin.id, skin.url_fbx);
+                yield return Assets.DownloadSkin(skin.id, skin.url_fbx);
 
-                GameObject prefab = _loadAssets.GetLoadedSkin[skin.id];
+                GameObject prefab = Assets.GetLoadedSkin[skin.id];
                 skinItem.SetObject(prefab);
+
+                if (Assets.GetLoadedSkinIcon.ContainsKey(skin.id))
+                {
+                    skinItem.SetIcon(Assets.GetLoadedSkinIcon[skin.id]);
+                }
             }
         }
     }
@@ -117,15 +127,20 @@ public class Wardrobe : MonoBehaviour
     {
         int skinID = 1;
         string skinName = "Loafer";
-        string url = "https://www.wildroots.fun/public/skins/firstskin.unity3d";
+        string url = "https://www.wildroots.fun/public/skins/loafer";
 
         SkinItem skinItem = Instantiate(_skinItemPrefab, _content).GetComponent<SkinItem>();
         skinItem.SetInfo(skinID, skinName, ItemData.Rarity.Regular);
         skinItem.UpdateUI();
 
-        yield return StartCoroutine(_loadAssets.DownloadSkin(skinID, url));
+        yield return StartCoroutine(Assets.DownloadSkin(skinID, url));
 
-        GameObject prefab = _loadAssets.GetLoadedSkin[skinID];
+        if (Assets.GetLoadedSkinIcon.ContainsKey(skinID))
+        {
+            skinItem.SetIcon(Assets.GetLoadedSkinIcon[skinID]);
+        }
+
+        GameObject prefab = Assets.GetLoadedSkin[skinID];
         skinItem.SetObject(prefab);
     }
 }

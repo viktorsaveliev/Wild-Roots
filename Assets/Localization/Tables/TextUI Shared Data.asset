@@ -187,6 +187,42 @@ MonoBehaviour:
     m_Key: Notice_PincodeSended
     m_Metadata:
       m_Items: []
+  - m_Id: 27361945409605632
+    m_Key: SimpleNotice_Success
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27362113680887808
+    m_Key: SimpleNotice_UnSuccess
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27362211957624832
+    m_Key: SimpleNotice_Purchase
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27362617207083008
+    m_Key: SimpleNotice_NotEnoughtMoney
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27370972227096576
+    m_Key: SimpleNotice_YouHaveThisSkin
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27372125933326336
+    m_Key: SimpleNotice_NeedLogin
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27373072675819520
+    m_Key: SimpleNotice_CopyToClipboard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 32025081207115776
+    m_Key: GoToLogin
+    m_Metadata:
+      m_Items: []
+  - m_Id: 32304637864366080
+    m_Key: Region
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

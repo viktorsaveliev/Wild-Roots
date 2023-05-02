@@ -1,3 +1,4 @@
+using CrazyGames;
 using DG.Tweening;
 using System.Collections;
 using TMPro;
@@ -73,7 +74,7 @@ public class RestorePassword : MonoBehaviour
         }
         else
         {
-            Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
+            Notice.Dialog(NoticeDialog.Message.ConnectionError);
         }
     }
 
@@ -100,22 +101,27 @@ public class RestorePassword : MonoBehaviour
                 _headEmail.text = "PIN-code:";
 
                 _pincodeSended = true;
-                Notice.ShowDialog(NoticeDialog.Message.PincodeSended);
+                Notice.Dialog(NoticeDialog.Message.PincodeSended);
             }
             else
             {
-                Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
+                Notice.Dialog(NoticeDialog.Message.ConnectionError);
             }
         }
         else
         {
-            Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
+            Notice.Dialog(NoticeDialog.Message.ConnectionError);
         }
     }
 
     private void ResetErrorText()
     {
         _errorText.text = string.Empty;
+    }
+
+    public void ShowKeyboard()
+    {
+        Keyboard.Show(_inputField);
     }
 
     public void Show()

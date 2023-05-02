@@ -38,11 +38,11 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
     private void CreateRoom()
     {
         string roomName = GenerateRoomName(6);
-#if (!UNITY_EDITOR)
+//#if (!UNITY_EDITOR)
         PhotonNetwork.CreateRoom(roomName, new RoomOptions { MaxPlayers = 5, CleanupCacheOnLeave = false, IsOpen = true, IsVisible = true });
-#else
-        PhotonNetwork.CreateRoom(roomName, new RoomOptions { MaxPlayers = 5, CleanupCacheOnLeave = false, IsOpen = false, IsVisible = true });
-#endif
+//#else
+        //PhotonNetwork.CreateRoom(roomName, new RoomOptions { MaxPlayers = 5, CleanupCacheOnLeave = false, IsOpen = false, IsVisible = true });
+//#endif
         //_currentSecToFindPlayers = _secToFindPlayers;
 
         //if (_secTimer != null) StopCoroutine(_secTimer);
@@ -53,34 +53,19 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
 
     private void Play(GameModeSelector.GameMode gamemode)
     {
-        if(gamemode == GameModeSelector.GameMode.PvP)
+        if (_isJoiningRoom)
         {
-            if (_isJoiningRoom)
+            if (PhotonNetwork.IsMasterClient)
             {
-                if (PhotonNetwork.IsMasterClient)
-                {
-                    DOTween.Clear();
-                    StartGame(GameModeSelector.GameMode.PvP);
-                }
-                return;
+                DOTween.Clear();
+                StartGame(GameModeSelector.GameMode.PvP);
             }
-            LoadingUI.Show(LoadingShower.Type.Simple);
-#if (!UNITY_EDITOR)
-            PhotonNetwork.JoinRandomRoom();
-#else
-            CreateRoom();
-#endif
-            _isJoiningRoom = true;
+            return;
         }
-        else if(gamemode == GameModeSelector.GameMode.Deathmatch)
-        {
-            if (_isJoiningRoom) return;
+        LoadingUI.Show(LoadingShower.Type.Simple);
+        PhotonNetwork.JoinRandomRoom();
 
-            LoadingUI.Show(LoadingShower.Type.Simple);
-            PhotonNetwork.JoinRoom("Deathmatch");
-
-            _isJoiningRoom = true;
-        }
+        _isJoiningRoom = true;
     }
 
     public void SelectMode(int modeID)
@@ -90,7 +75,9 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
         _selectedGameMode = (GameModeSelector.GameMode)modeID;
         if (!_connectHandler.IsConnected)
         {
-            Notice.ShowDialog(NoticeDialog.Message.ConnectionError, this, "Notice_Retry", "Notice_Close");
+            _connectHandler.Connect();
+            //Notice.ShowDialog(NoticeDialog.Message.ConnectionError, this, "Notice_Retry", "Notice_Close");
+            StartCoroutine(WaitingForConnection(5));
             return;
         }
 
@@ -142,12 +129,30 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
         else */if (returnCode == 32757) // MaxCCU
         {
             LoadingUI.Hide();
-            Notice.ShowDialog(NoticeDialog.Message.ServerFull);
+            Notice.Dialog(NoticeDialog.Message.ServerFull);
         }
         else
         {
             LoadingUI.Hide();
-            Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
+            Notice.Dialog(NoticeDialog.Message.ConnectionError);
+        }
+    }
+
+    private IEnumerator WaitingForConnection(int time)
+    {
+        LoadingUI.Show(LoadingShower.Type.Simple);
+
+        int currentTimer = 0;
+        while(currentTimer < time)
+        {
+            if(_connectHandler.IsConnected)
+            {
+                GameSettings.GameMode = _selectedGameMode;
+                Play(GameSettings.GameMode);
+                yield break;
+            }
+            currentTimer++;
+            yield return new WaitForSeconds(1f);
         }
     }
 
@@ -159,12 +164,12 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
         }
         else if(returnCode == 32757) // MaxCCU
         {
-            Notice.ShowDialog(NoticeDialog.Message.ServerFull);
+            Notice.Dialog(NoticeDialog.Message.ServerFull);
         }
         else
         {
             LoadingUI.Hide();
-            Notice.ShowDialog(NoticeDialog.Message.ConnectionError);
+            Notice.Dialog(NoticeDialog.Message.ConnectionError);
         }
     }
 
@@ -172,28 +177,23 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
     {
         LoadingUI.Hide();
 
-        if(GameSettings.GameMode == GameModeSelector.GameMode.PvP)
+        //Invoke(nameof(ActivateSearchScreen), 1f);
+        ActivateSearchScreen();
+
+        EventBus.OnPlayerStartSearchMatch?.Invoke();
+
+        //_photonView.RPC(nameof(TakeFreeSlot), RpcTarget.OthersBuffered);
+        _character.transform.DOScale(4.5f, 1f);
+        _character.transform.DOMoveY(0.14f, 1f);
+
+        if (PhotonNetwork.IsMasterClient)
         {
-            Invoke(nameof(ActivateSearchScreen), 1f);
-            EventBus.OnPlayerStartSearchMatch?.Invoke();
-
-            _photonView.RPC(nameof(TakeFreeSlot), RpcTarget.OthersBuffered);
-            _character.transform.DOScale(4.5f, 1f);
-            _character.transform.DOMoveY(0.14f, 1f);
-
-            if (PhotonNetwork.IsMasterClient)
-            {
-                _startButton.SetActive(true);
-            }
-
-            _currentSecToFindPlayers = _secToFindPlayers;
-            if (_secTimer != null) StopCoroutine(_secTimer);
-            _secTimer = StartCoroutine(SecTimer());
+            _startButton.SetActive(true);
         }
-        /*else if (GameSettings.GameMode == GameModeSelector.GameMode.Deathmatch)
-        {
-            StartGame(GameModeSelector.GameMode.Deathmatch);
-        }*/
+
+        _currentSecToFindPlayers = _secToFindPlayers;
+        if (_secTimer != null) StopCoroutine(_secTimer);
+        _secTimer = StartCoroutine(SecTimer());
     }
 
     private void ActivateSearchScreen() => _searchScreen.SetActive(true);
@@ -207,17 +207,6 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
             {
                 if (_currentSecToFindPlayers <= 0)
                 {
-                    /*if (PhotonNetwork.CurrentRoom.PlayerCount < 2)
-                    {
-                        /*_character.transform.DOScale(5f, 1f);
-                        _character.transform.DOMoveY(0.84f, 1f);
-                        _mainLobby.SetActive(true);
-                        _searchScreen.SetActive(false);
-                        PhotonNetwork.LeaveRoom();
-                        Notice.ShowDialog(NoticeDialog.Message.EmptyQueue);
-                    }
-                    else
-                    {*/
                     StartGame(GameModeSelector.GameMode.PvP);
                     break;
                 }
@@ -229,7 +218,7 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
     public override void OnLeftRoom()
     {
         base.OnLeftRoom();
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene((int)GameSettings.Scene.Lobby);
     }
 
     public void StartGame(GameModeSelector.GameMode gamemode)
@@ -239,11 +228,6 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
             _photonView.RPC(nameof(LoadLevelProgressForAll), RpcTarget.All);
             PhotonNetwork.CurrentRoom.IsOpen = false;
             StopCoroutine(_secTimer);
-        }
-        else
-        {
-            LoadingUI.Show(LoadingShower.Type.Progress);
-            SceneManager.LoadScene(1); // game
         }
     }
 
@@ -255,7 +239,7 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
 
     private IEnumerator LoadLevelAsync()
     {
-        if(PhotonNetwork.IsMasterClient) PhotonNetwork.LoadLevel(1); // game
+        if(PhotonNetwork.IsMasterClient) PhotonNetwork.LoadLevel((int)GameSettings.Scene.Street); // game
         LoadingUI.Show(LoadingShower.Type.Progress);
 
         while (PhotonNetwork.LevelLoadingProgress < 1f)
@@ -282,7 +266,7 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
 
     private const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
-    public string GenerateRoomName(int length)
+    private string GenerateRoomName(int length)
     {
         char[] password = new char[length];
         System.Random random = new();

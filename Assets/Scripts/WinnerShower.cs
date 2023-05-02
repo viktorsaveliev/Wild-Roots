@@ -23,6 +23,8 @@ public class WinnerShower : MonoBehaviour
     {
         _winnerScreen.SetActive(true);
         _charOnScreen.SetActive(true);
+        _charOnScreen.GetComponent<CharacterSkin>().Change(PlayerData.GetSkinID(), true);
+
         _buttonMenu.SetActive(true);
 
         _interface.SetActive(false);

@@ -25,8 +25,6 @@ public class ItemData : MonoBehaviour
         new Color(0, 0.79f, 1f),
         new Color(1f, 0.83f, 0f)
     };
-
-
 }
 
 [System.Serializable]
@@ -37,5 +35,6 @@ public class SkinData
     public string url_fbx;
     public string url_icon;
     public int price;
+    public int price_ads;
     public int rarity;
 }

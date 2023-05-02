@@ -6,7 +6,7 @@ public class Coins : MonoBehaviour
 
     private void Start()
     {
-        _coinsHandler = GetComponent<CoinsHandler>();
+        if (!LoadingShower.IsCreated) _coinsHandler = GetComponent<CoinsHandler>();
     }
 
     public static void Give(CoinsHandler.GiveReason reason) => _coinsHandler.GiveCoins(reason);

@@ -9,18 +9,28 @@ public class Notice : MonoBehaviour
         if(!LoadingShower.IsCreated) _notice = GetComponent<NoticeDialog>();
     }
 
-    public static void ShowDialog(NoticeDialog.Message message, INoticeAction action = null, string leftButtonTextKey = "Notice_Close", string rightButtonTextKey = null)
+    public static void Dialog(NoticeDialog.Message message, INoticeAction action = null, string leftButtonTextKey = "Notice_Close", string rightButtonTextKey = null)
     {
-        _notice.ShowDialog(message, action, leftButtonTextKey, rightButtonTextKey);
+        _notice.Dialog(message, action, leftButtonTextKey, rightButtonTextKey);
     }
 
-    public static void ShowDialog(string message, INoticeAction action = null, string leftButtonTextKey = "Notice_Close")
+    public static void Dialog(string message, INoticeAction action = null, string leftButtonTextKey = "Notice_Close")
     {
-        _notice.ShowDialog(message, action, leftButtonTextKey);
+        _notice.Dialog(message, action, leftButtonTextKey);
     }
 
     public static void HideDialog()
     {
         _notice.HideDialog();
+    }
+
+    public static void HideSimple()
+    {
+        _notice.HideSimple();
+    }
+
+    public static void Simple(NoticeDialog.Message message, bool success)
+    {
+        _notice.Simple(message, success);
     }
 }
