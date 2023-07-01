@@ -1,5 +1,4 @@
 using System.Collections;
-using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -9,7 +8,7 @@ public class SaveData : MonoBehaviour
 
     public static SaveData Instance;
 
-    private void Start()
+    private void Awake()
     {
         if (!LoadingShower.IsCreated) Instance = this;
     }
@@ -163,6 +162,42 @@ public class SaveData : MonoBehaviour
         else
         {
             Notice.Dialog(www.downloadHandler.text);
+        }
+    }
+
+    public enum Statistics
+    {
+        Enter,
+        Registration,
+        Login,
+        PlayAsGuest,
+        MatchStart,
+        MatchEnd,
+        MidgameAds,
+        RewardAds,
+        LeftTheMatch,
+        Desktop,
+        Mobile,
+        SearchMatch,
+        BuyNewSkin
+    }
+
+    public void Stats(Statistics stats)
+    {
+        StartCoroutine(SaveStats(stats));
+    }
+
+    private IEnumerator SaveStats(Statistics stats)
+    {
+        StringBus stringBus = new();
+
+        WWWForm form = new();
+        form.AddField("id", (int)stats);
+        using UnityWebRequest www = UnityWebRequest.Post(stringBus.GameDomain + "update_stats.php", form);
+        yield return www.SendWebRequest();
+        if (www.result != UnityWebRequest.Result.Success)
+        {
+            Notice.Dialog(NoticeDialog.Message.ConnectionError);
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using DG.Tweening;
 
 public class ShopHandler : MonoBehaviour
 {
@@ -84,6 +85,7 @@ public class ShopHandler : MonoBehaviour
                 EventBus.OnPlayerClickUI?.Invoke(4);
                 EventBus.OnPlayerBuyNewSkin?.Invoke();
                 Notice.Simple(NoticeDialog.Message.Simple_Purchase, true);
+                SaveData.Instance.Stats(SaveData.Statistics.BuyNewSkin);
             }
             else
             {
@@ -133,6 +135,8 @@ public class ShopHandler : MonoBehaviour
                 {
                     shopItem.SetIcon(Assets.GetLoadedSkinIcon[skin.id]);
                 }
+
+                shopItem.transform.DOScale(1, 0.5f);
             }
         }
         _loading.SetActive(false);

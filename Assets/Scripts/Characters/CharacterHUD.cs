@@ -14,7 +14,8 @@ public class CharacterHUD : MonoBehaviour
     [SerializeField] private Text _nickname;
     [SerializeField] private Image _damageIndicator;
     [SerializeField] private Image _iconForMinePlayer;
-    [SerializeField] private Gradient _damageGradient;
+    [SerializeField] private Gradient _mineDamageGradient;
+    [SerializeField] private Gradient _enemyDamageGradient;
 
     [SerializeField] private Image _aimIndicator;
     private Tweener _aimIndicatorAnimation;
@@ -41,6 +42,11 @@ public class CharacterHUD : MonoBehaviour
         _target = camera.transform;
 
         _photonView = PhotonView.Get(_character);
+        Invoke(nameof(Init), 0.5f);
+    }
+
+    private void Init()
+    {
         if (_photonView.IsMine && _character.IsABot == false)
         {
             _minePlayer.SetActive(true);
@@ -66,11 +72,11 @@ public class CharacterHUD : MonoBehaviour
         {
             if (!_photonView.IsMine || character.IsABot)
             {
-                if(_damageIndicator != null) _damageIndicator.color = _damageGradient.Evaluate(_character.Health.DamageStrength);
+                if(_damageIndicator != null) _damageIndicator.color = _enemyDamageGradient.Evaluate(_character.Health.DamageStrength);
             }
             else
             {
-                if(_iconForMinePlayer != null) _iconForMinePlayer.color = _damageGradient.Evaluate(_character.Health.DamageStrength);
+                if(_iconForMinePlayer != null) _iconForMinePlayer.color = _mineDamageGradient.Evaluate(_character.Health.DamageStrength);
             }
         }
     }
@@ -80,8 +86,8 @@ public class CharacterHUD : MonoBehaviour
         if (character != _character || _aimIndicator == null) return;
         _aimIndicator.enabled = true;
 
-        if (_aimIndicatorAnimation != null) DOTween.Kill(_aimIndicatorAnimation);
-        _aimIndicatorAnimation = _aimIndicator.transform.DOShakePosition(0.5f).SetLoops(-1);
+        if (_aimIndicatorAnimation != null) _aimIndicatorAnimation.Kill();
+        _aimIndicatorAnimation = _aimIndicator.transform.DOShakePosition(1f).SetLoops(3);
     }
 
     public void HideAimIndicator()
@@ -90,7 +96,7 @@ public class CharacterHUD : MonoBehaviour
         _aimIndicator.enabled = false;
         if (_aimIndicatorAnimation != null)
         {
-            DOTween.Kill(_aimIndicatorAnimation);
+            _aimIndicatorAnimation.Kill();
             _aimIndicatorAnimation = null;
         }
     }

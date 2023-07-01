@@ -21,6 +21,8 @@ public class PlayAsGuest : MonoBehaviour
 
         PlayerData.Update(string.Empty, 1, 0, 0, 0, 0, 1);
 
+        SaveData.Instance.Stats(SaveData.Statistics.PlayAsGuest);
+
         ConnectDatabase.IsUserEnter = true;
         DOTween.Clear();
         SceneManager.LoadSceneAsync((int)GameSettings.Scene.Lobby);

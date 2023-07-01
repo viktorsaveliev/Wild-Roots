@@ -4,13 +4,12 @@ public class PlayerData : MonoBehaviour
 {
     private static PlayerDataHandler _playerProgress;
 
-    
-
     private void Start()
     {
         if (!LoadingShower.IsCreated) _playerProgress = GetComponent<PlayerDataHandler>();
     }
 
+    public static float GetStartTimeInMatch => _playerProgress.TimeInMatch;
     public static int GetExp() => _playerProgress.Exp;
     public static int GetLevel() => _playerProgress.Level;
     public static int GetWins() => _playerProgress.Wins;
@@ -29,8 +28,14 @@ public class PlayerData : MonoBehaviour
         _playerProgress.DroppedPlayersCount++;
     }
 
+    public static void SaveRoundStartTime(float time)
+    {
+        _playerProgress.TimeInMatch = time;
+    }
+
     public static void UpdateSkinID(int id) => _playerProgress.UpdateSkinID(id);
-    public static void PayAds(int value) => _playerProgress.PayAds(value);
+    public static void SetNickname(string nickname) => _playerProgress.UpdateNickname(nickname);
+    public static void PayAds(int value) => _playerProgress.SpendAds(value);
     public static void ViewedAds() => _playerProgress.ViewedAds();
     public static void GiveExp(int exp) => _playerProgress.GiveExp(exp);
     public static void GiveWinnerAward() => _playerProgress.GiveWinnerAward();

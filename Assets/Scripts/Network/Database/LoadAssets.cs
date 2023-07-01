@@ -13,13 +13,13 @@ public class LoadAssets : MonoBehaviour
     public Dictionary<int, GameObject> GetLoadedSkin => _loadedSkins;
     public Dictionary<int, Sprite> GetLoadedSkinIcon => _loadedSkinsIcon;
 
-    private Shader _shaderForChar; // Universal Render Pipeline/Lit
+    private Shader _shaderForChar;
 
     private void Awake()
     {
         if (!LoadingShower.IsCreated)
         {
-            _shaderForChar = Shader.Find("Supyrb/Unlit/Texture");
+            _shaderForChar = Shader.Find("Supyrb/Unlit/Texture"); // Universal Render Pipeline/Lit // Supyrb/Unlit/Texture
             DontDestroyOnLoad(this);
         }
     }
@@ -84,7 +84,7 @@ public class LoadAssets : MonoBehaviour
             {
                 Material material = materials[i];
                 material.shader = _shaderForChar;
-                material.SetFloat("_Smoothness", 0f);
+                //material.SetFloat("_Smoothness", 0f);
             }
         }
     }

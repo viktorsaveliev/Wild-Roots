@@ -3,55 +3,55 @@ using UnityEngine;
 
 public class HatchHandler : MonoBehaviour
 {
-    [SerializeField] private Rigidbody[] _hatches;
+    [SerializeField] private Rigidbody _hatches; // []
     [SerializeField] private ParticleSystem _explode;
     [SerializeField] private AudioClip _explodeSound;
 
-    private BoxCollider[] _hatchColliders = new BoxCollider[4];
+    private BoxCollider _hatchColliders = new();
 
-    private bool[] _hatchIsBroken = new bool[4];
-    private int _brokenHatchCount = 0;
+    private bool _hatchIsBroken; // []
+    //private int _brokenHatchCount = 0;
     private CameraShaker _shaker;
 
     private void Start()
     {
-        for(int i = 0; i < _hatches.Length; i++)
-        {
-            _hatchColliders[i] = _hatches[i].GetComponent<BoxCollider>();
-        }
+        //for(int i = 0; i < _hatches.Length; i++)
+        //{
+            _hatchColliders = _hatches.GetComponent<BoxCollider>();
+        //}
         _shaker = Camera.main.GetComponent<CameraShaker>();
         StartCoroutine(BreakHatch());
     }
 
     private IEnumerator BreakHatch()
     {
-        yield return new WaitForSeconds(30f);
-        if(_brokenHatchCount >= _hatches.Length || _hatchIsBroken[_brokenHatchCount])
+        yield return new WaitForSeconds(120f);
+        if(_hatchIsBroken)
         {
             yield break;
         }
 
-        _hatches[_brokenHatchCount].isKinematic = false;
-        _hatches[_brokenHatchCount].useGravity = true;
-        _hatchIsBroken[_brokenHatchCount] = true;
+        _hatches.isKinematic = false;
+        _hatches.useGravity = true;
+        _hatchIsBroken = true;
 
-        Vector3 explosionPos = new(_hatches[_brokenHatchCount].transform.position.x - 0.2f, _hatches[_brokenHatchCount].transform.position.y - 0.5f, _hatches[_brokenHatchCount].transform.position.z);
-        _hatches[_brokenHatchCount].AddExplosionForce(600f, explosionPos, 3);
-        _hatchColliders[_brokenHatchCount].isTrigger = true;
-        StartCoroutine(DeleteHatch(_brokenHatchCount));
+        Vector3 explosionPos = new(_hatches.transform.position.x - 0.2f, _hatches.transform.position.y - 0.5f, _hatches.transform.position.z);
+        _hatches.AddExplosionForce(600f, explosionPos, 3);
+        _hatchColliders.isTrigger = true;
+        StartCoroutine(DeleteHatch());
 
         _explode.transform.position = explosionPos;
         _explode.Play();
         _shaker.CameraShake(null);
         AudioSource.PlayClipAtPoint(_explodeSound, explosionPos);
 
-        _brokenHatchCount++;
+        //_brokenHatchCount++;
         StartCoroutine(BreakHatch());
     }
 
-    private IEnumerator DeleteHatch(int hatchID)
+    private IEnumerator DeleteHatch()
     {
         yield return new WaitForSeconds(5f);
-        Destroy(_hatches[hatchID].gameObject);
+        Destroy(_hatches.gameObject);
     }
 }

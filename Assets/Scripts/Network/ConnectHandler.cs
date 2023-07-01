@@ -13,6 +13,11 @@ public class ConnectHandler : MonoBehaviourPunCallbacks
 
     private void Start()
     {
+        PhotonNetwork.OfflineMode = false;
+
+        Notice.HideDialog();
+        Notice.HideSimple();
+
         StringBus stringBus = new();
         bool isGuest = PlayerPrefs.GetInt(stringBus.IsGuest) == 1;
 
@@ -22,13 +27,9 @@ public class ConnectHandler : MonoBehaviourPunCallbacks
         }
 
         Connect();
-        /*bool isInviteLink = CrazyEvents.Instance.IsInviteLink();
-        if (isInviteLink)
-        {
-            //Connect();
-        }*/
 
-        _textVerison.text = BaseGameData.GameVersion;
+        GameData gameData = new();
+        _textVerison.text = gameData.GameVersion;
         EventBus.OnPlayerLogged?.Invoke();
     }
 
@@ -37,7 +38,9 @@ public class ConnectHandler : MonoBehaviourPunCallbacks
         if (!PhotonNetwork.IsConnected)
         {
             PhotonNetwork.AutomaticallySyncScene = true;
-            PhotonNetwork.GameVersion = BaseGameData.GameVersion;
+
+            GameData gameData = new();
+            PhotonNetwork.GameVersion = gameData.GameVersion;
             PhotonNetwork.ConnectUsingSettings();
         }
     }

@@ -3,7 +3,6 @@ using UnityEngine.UI;
 using DG.Tweening;
 using Photon.Pun;
 using System.Collections;
-using CrazyGames;
 
 public class UIHandler : MonoBehaviour
 {
@@ -19,12 +18,14 @@ public class UIHandler : MonoBehaviour
     [SerializeField] private Sprite _fallIcon;
 
     [SerializeField] private Button _buttonBackToLobby;
+    [SerializeField] private RoundEndUI _roundEnd;
 
     private bool _killLogIsActive;
     private Coroutine _lifetimeKillLog;
 
     private PhotonView _photonView;
     private ServerHandler _serverHandler;
+    private string _winnerNickname;
 
     private void Start()
     {
@@ -46,7 +47,7 @@ public class UIHandler : MonoBehaviour
         EventBus.OnCharacterLose -= MasterUpdatePlayers;
     }
 
-    public void MasterUpdatePlayers(int loserViewID)
+    private void MasterUpdatePlayers(int loserViewID)
     {
         if (PhotonNetwork.IsMasterClient)
         {
@@ -62,23 +63,24 @@ public class UIHandler : MonoBehaviour
             }
             if (playersCount < 2)
             {
-                Invoke(nameof(MatchEnded), 7f);
+                if (winner != null) _winnerNickname = winner.Nickname;
+                _photonView.RPC(nameof(GoToNextRound), RpcTarget.All);
+                Invoke(nameof(RoundEnded), 3f);
             }
             _photonView.RPC(nameof(UpdatePlayersCount), RpcTarget.All, playersCount,
                 winner != null ? winner.PhotonView.ViewID : -1);
         }
     }
 
-    private void MatchEnded()
+    private void RoundEnded()
     {
-        DOTween.Clear();
-        _photonView.RPC(nameof(LeaveRoom), RpcTarget.All);
+        PhotonNetwork.LoadLevel((int)GameSettings.Scene.MatchInformer);
     }
 
     [PunRPC]
-    public void LeaveRoom()
+    private void GoToNextRound()
     {
-        if(PhotonNetwork.IsConnectedAndReady) PhotonNetwork.LeaveRoom();
+        if (_winnerNickname != string.Empty) _roundEnd.Show(_winnerNickname);
     }
 
     private void UpdatePlayersCount()
@@ -87,18 +89,18 @@ public class UIHandler : MonoBehaviour
     }
 
     [PunRPC]
-    public void UpdatePlayersCount(int count, int winnerID = -1)
+    private void UpdatePlayersCount(int count, int winnerID = -1)
     {
         if(_playersCount != null) _playersCount.text = $"{count}";
         if (count < 2 && winnerID != -1)
         {
-            EventBus.OnMatchEnded?.Invoke(winnerID);
+            EventBus.OnRoundEnded?.Invoke(winnerID);
         }
     }
 
     private void UpdateHealthUI(Character character, int health)
     {
-        if (GameSettings.GameMode == GameModeSelector.GameMode.PvP && character.IsABot == false)
+        if (character.IsABot == false)
         {
             if (character.PhotonView.IsMine && _heartsUI[health] != null)
             {
@@ -112,13 +114,13 @@ public class UIHandler : MonoBehaviour
         if(PhotonNetwork.IsMasterClient)
         {
             int killerViewID = -1;
-            if(character.Health.FromWhomDamage != null) killerViewID = character.Health.FromWhomDamage.CharacterOwner.GetPhotonView().ViewID;
+            if(character.Health.FromWhomDamage != -1) killerViewID = character.Health.FromWhomDamage;
             _photonView.RPC(nameof(EnableKillLogUI), RpcTarget.All, character.PhotonView.ViewID, killerViewID, health);
         }
     }
 
     [PunRPC]
-    public void EnableKillLogUI(int ViewID, int killerViewID, int health)
+    private void EnableKillLogUI(int ViewID, int killerViewID, int health)
     {
         if (_killer == null || _killed == null || _killLog == null || _weaponIcon == null || _fallIcon == null) return;
 
@@ -133,7 +135,7 @@ public class UIHandler : MonoBehaviour
             {
                 _killer.text = $"{killer.Nickname}";
                 _killed.text = $"{killed.Nickname}";
-                _weaponIcon.sprite = killed.Health.FromWhomDamage.GetSpriteIcon;
+                //_weaponIcon.sprite = killed.Health.FromWhomDamage.GetSpriteIcon;
             }
             else
             {
@@ -163,7 +165,7 @@ public class UIHandler : MonoBehaviour
             if (restart)
             {
                 int killerViewID = -1;
-                if(character.Health.FromWhomDamage != null) killerViewID = character.Health.FromWhomDamage.CharacterOwner.GetPhotonView().ViewID;
+                if(character.Health.FromWhomDamage != -1) killerViewID = character.Health.FromWhomDamage;
                 EnableKillLogUI(character.GetComponent<PhotonView>().ViewID, killerViewID, health);
             }
         });

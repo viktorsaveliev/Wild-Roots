@@ -1,3 +1,4 @@
+using DG.Tweening;
 using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
@@ -119,6 +120,8 @@ public class Wardrobe : MonoBehaviour
                 {
                     skinItem.SetIcon(Assets.GetLoadedSkinIcon[skin.id]);
                 }
+
+                skinItem.transform.DOScale(1, 0.3f);
             }
         }
     }
@@ -142,5 +145,7 @@ public class Wardrobe : MonoBehaviour
 
         GameObject prefab = Assets.GetLoadedSkin[skinID];
         skinItem.SetObject(prefab);
+
+        skinItem.transform.DOScale(1, 0.5f);
     }
 }

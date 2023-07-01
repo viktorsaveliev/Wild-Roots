@@ -120,7 +120,16 @@ public class LoadData : MonoBehaviour
         {
             int playerID = int.Parse(www.downloadHandler.text);
             PlayerPrefs.SetInt(stringBus.UserID, playerID);
-            PlayerData.Update(string.Empty, 1, 0, 0, 0, 0, 1);
+
+            if(PlayerData.GetExp() > 0 || Coins.GetValue() > 0)
+            {
+                SaveData.Instance.SaveProgress(playerID);
+                Coins.Save();
+            }
+            else
+            {
+                PlayerData.Update(string.Empty, 1, 0, 0, 0, 0, 1);
+            }
         }
         else
         {

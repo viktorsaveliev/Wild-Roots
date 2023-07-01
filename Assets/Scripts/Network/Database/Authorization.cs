@@ -5,9 +5,6 @@ using TMPro;
 using UnityEngine.UI;
 using DG.Tweening;
 using UnityEngine.SceneManagement;
-using CrazyGames;
-using Photon.Pun;
-using Newtonsoft.Json;
 
 public class Authorization : MonoBehaviour
 {
@@ -18,6 +15,13 @@ public class Authorization : MonoBehaviour
 
     [SerializeField] private TMP_Text _emailError;
     [SerializeField] private TMP_Text _passwordError;
+
+    private bool _isLoginButtonPressed;
+
+    private void Start()
+    {
+        _isLoginButtonPressed = false;
+    }
 
     public void ShowKeyboard(int inputIndex)
     {
@@ -33,6 +37,7 @@ public class Authorization : MonoBehaviour
 
     public void CheckLogin()
     {
+        if (_isLoginButtonPressed) return;
         ResetErrorText();
 
         if (_email.text == string.Empty || _password.text == string.Empty)
@@ -56,6 +61,7 @@ public class Authorization : MonoBehaviour
             return;
         }
 
+        _isLoginButtonPressed = true;
         StartCoroutine(GetPlayerLogin(_email.text, _password.text));
         EventBus.OnPlayerClickUI?.Invoke(0);
     }
@@ -80,7 +86,7 @@ public class Authorization : MonoBehaviour
                 PlayerPrefs.DeleteKey(stringBus.AccStatus);
                 //Show();
             }
-
+            _isLoginButtonPressed = false;
             Notice.Dialog(www.error);
         }
         else
@@ -92,6 +98,7 @@ public class Authorization : MonoBehaviour
                     PlayerPrefs.DeleteKey(stringBus.AccStatus);
                     //Show();
                 }
+                _isLoginButtonPressed = false;
                 _emailError.text = "Invalid e-mail or password";
                 EventBus.OnPlayerClickUI?.Invoke(3);
             }
@@ -124,6 +131,7 @@ public class Authorization : MonoBehaviour
         }
 
         PlayerPrefs.Save();
+        SaveData.Instance.Stats(SaveData.Statistics.Login);
 
         DOTween.Clear();
         ConnectDatabase.IsUserEnter = true;

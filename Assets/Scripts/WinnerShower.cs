@@ -22,10 +22,10 @@ public class WinnerShower : MonoBehaviour
     private void ShowWinnerScreen()
     {
         _winnerScreen.SetActive(true);
-        _charOnScreen.SetActive(true);
-        _charOnScreen.GetComponent<CharacterSkin>().Change(PlayerData.GetSkinID(), true);
+        //_charOnScreen.SetActive(true);
+        //_charOnScreen.GetComponent<CharacterSkin>().Change(PlayerData.GetSkinID(), true);
 
-        _buttonMenu.SetActive(true);
+        //_buttonMenu.SetActive(true);
 
         _interface.SetActive(false);
         _defeatScreen.SetActive(false);

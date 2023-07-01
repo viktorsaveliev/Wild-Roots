@@ -87,7 +87,7 @@ PrefabInstance:
     - target: {fileID: -4683669308469848369, guid: be51de35ab852a64fadd0970cc082c5b, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 2179a330e48550e4f8c4100fd202fa9f, type: 2}
+      objectReference: {fileID: -116452603413246746, guid: 0bc37b081e6ddc34ca5b238ab12b2053, type: 3}
     - target: {fileID: -2923474813251503155, guid: be51de35ab852a64fadd0970cc082c5b, type: 3}
       propertyPath: m_CastShadows
       value: 0
@@ -240,9 +240,7 @@ MonoBehaviour:
   AudioFX:
   - {fileID: 8300000, guid: 5cd4754c77d16c549906bbce0eeaa75a, type: 3}
   - {fileID: 8300000, guid: a69491b9468dbb84b931a1ce96514fdf, type: 3}
-  SpriteIcon: {fileID: 0}
-  CurrentLayerWhereImStay: -1
-  CurrentHoneycombWhereImStay: {fileID: 0}
+  CurrentSpawnPoint: {fileID: 0}
   WeaponType: 1
 --- !u!114 &1024983665009822778
 MonoBehaviour:

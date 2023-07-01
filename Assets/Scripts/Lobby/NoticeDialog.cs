@@ -49,7 +49,7 @@ public class NoticeDialog : MonoBehaviour
         ConnectionError,
         ItShop,
         Wardrobe,
-        Rating,
+        SelectRoomDo,
         StartTutorial,
         EndTutorial,
         ServerFull,
@@ -85,7 +85,7 @@ public class NoticeDialog : MonoBehaviour
         "Notice_WaitingForNetwork",
         "Notice_Shop",
         "Notice_Wardrobe",
-        "Notice_Rating",
+        "Notice_SelectRoomDo",
         "Notice_StartTutorial",
         "Notice_EndTutorial",
         "Notice_ServerFull",
@@ -179,7 +179,7 @@ public class NoticeDialog : MonoBehaviour
         _taskTextEvent.SetEntry(_noticeKey[(int)message]);
     }
 
-    public void Dialog(string message, INoticeAction action = null, string leftButtonTextKey = "Notice_Close")
+    public void Dialog(string message, INoticeAction action = null, string leftButtonTextKey = "Notice_Close", string rightButtonTextKey = null)
     {
         if (!_isShowed)
         {
@@ -191,9 +191,23 @@ public class NoticeDialog : MonoBehaviour
 
         _leftButtonTextEvent.SetEntry(leftButtonTextKey);
 
-        
-        _buttons[(int)Buttons.Right].gameObject.SetActive(false);
-        _buttons[(int)Buttons.Left].rectTransform.anchoredPosition = new Vector2(0, -151.52f);
+        if (rightButtonTextKey != null)
+        {
+            _buttons[(int)Buttons.Right].gameObject.SetActive(true);
+
+            _buttons[(int)Buttons.Left].rectTransform.anchoredPosition =
+                new Vector2(_buttonPosX[(int)Buttons.Left], -151.52f);
+
+            _buttons[(int)Buttons.Right].rectTransform.anchoredPosition =
+                new Vector2(_buttonPosX[(int)Buttons.Right], -151.52f);
+
+            _rightButtonTextEvent.SetEntry(rightButtonTextKey);
+        }
+        else
+        {
+            _buttons[(int)Buttons.Right].gameObject.SetActive(false);
+            _buttons[(int)Buttons.Left].rectTransform.anchoredPosition = new Vector2(0, -151.52f);
+        }
 
         SetAction(action);
 

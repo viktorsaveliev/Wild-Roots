@@ -9,9 +9,11 @@ public class AnimateObject : MonoBehaviour
     private Tweener _tween;
     private bool _isStop;
     private Image _image;
+    private Vector3 _startPos;
 
     private void Start()
     {
+        _startPos = transform.position;
         _image = GetComponent<Image>();
         _isStop = false;
         TweenAnimate();
@@ -41,7 +43,7 @@ public class AnimateObject : MonoBehaviour
 
         if (_freezePosition == false)
         {
-            _tween = transform.DOMoveY(onUp ? 0.95f : 0.8f, 1f).SetEase(Ease.Linear).OnComplete(() => TweenAnimate(!onUp));
+            _tween = transform.DOMoveY(onUp ? _startPos.y + 0.15f : _startPos.y, 1f).SetEase(Ease.Linear).OnComplete(() => TweenAnimate(!onUp));
         } 
         else
         {
@@ -53,6 +55,8 @@ public class AnimateObject : MonoBehaviour
 
     public void StopTweenAnimate()
     {
+        if (_tween == null) return;
+
         _tween.Kill();
         _tween = null;
         _isStop = true;
@@ -61,7 +65,7 @@ public class AnimateObject : MonoBehaviour
     private void AnimateWeaponWithTimer(Transform weapon, float lifetime)
     {
         if (lifetime == -1) return;
-        weapon.DOScale(1.5f, lifetime-0.1f).SetEase(Ease.Linear);
-        weapon.DOShakeRotation(lifetime-0.1f, 15, 15, 50, false);
+        weapon.DOScale(6f, lifetime-0.1f).SetEase(Ease.Linear);
+        //weapon.DOShakeRotation(lifetime-0.1f, 15, 15, 50, false);
     }
 }

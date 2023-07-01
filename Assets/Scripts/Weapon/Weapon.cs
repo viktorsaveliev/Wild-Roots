@@ -1,9 +1,7 @@
 using UnityEngine;
 using Photon.Pun;
-using DG.Tweening;
 using System.Collections;
 
-[RequireComponent(typeof(AnimateObject))]
 public abstract class Weapon : MonoBehaviour
 {
     [SerializeField] protected ParticleSystem PrefabAttackFX;
@@ -15,9 +13,6 @@ public abstract class Weapon : MonoBehaviour
         Explode
     }
 
-    [SerializeField] private Sprite SpriteIcon;
-    public Sprite GetSpriteIcon => SpriteIcon;
-
     public bool IsActive { get; protected set; }
     protected string Label;
     
@@ -27,25 +22,26 @@ public abstract class Weapon : MonoBehaviour
     protected float LifetimeSeconds;
     protected float Radius;
 
-    protected LayerMask LayerEnemy;
-    protected LayerMask LayerCells;
+    //protected LayerMask CharacterLayer;
 
     public CharacterWeapon CharacterOwner { get; protected set; }
-    public int CurrentLayerWhereImStay = -1;
-    public Honeycomb CurrentHoneycombWhereImStay;
-    public WeaponsHandler.WeaponType WeaponType;
+    public SpawnPoint CurrentSpawnPoint;
+    public WeaponSpawner.WeaponType WeaponType;
 
-    public Tween SpawnAnimation;
-
-    public PhotonView PhotonViewObject { get; private set; }
+    public PhotonView PhotonView { get; private set; }
     public int Owner { get; private set; }
 
-    private Collider[] _charactersClosed = new Collider[5];
+    private Collider[] _targetsClosed = new Collider[15];
+    private AnimateObject _animation;
+    private Rigidbody _rigidbody;
 
     #region MonoBehavior
     private void Awake()
     {
-        PhotonViewObject = PhotonView.Get(this);
+        _animation = GetComponent<AnimateObject>();
+        _rigidbody = GetComponent<Rigidbody>();
+        PhotonView = PhotonView.Get(this);
+
         SetOwnerLocal(-1);
     }
 
@@ -54,16 +50,16 @@ public abstract class Weapon : MonoBehaviour
         IWeaponable character = other.GetComponent<IWeaponable>();
         if (character != null && character.GetCurrentWeapon() is Punch && Owner == -1)
         {
-            StringBus stringBus = new();
             if (PhotonNetwork.IsMasterClient)
             {
                 AssignToPlayer(character);
             }
             else
             {
-                if(character.GetPhotonView().IsMine)
+                if(character.GetPhotonView().IsMine && PhotonNetwork.OfflineMode == false)
                 {
-                    character.GetPhotonView().RPC(stringBus.AskForAWeapon, RpcTarget.MasterClient, character.GetPhotonView().ViewID, PhotonViewObject.ViewID);
+                    StringBus stringBus = new();
+                    character.GetPhotonView().RPC(stringBus.AskForAWeapon, RpcTarget.MasterClient, character.GetPhotonView().ViewID, PhotonView.ViewID);
                 }
             }
         }
@@ -73,25 +69,19 @@ public abstract class Weapon : MonoBehaviour
     public void AssignToPlayer(IWeaponable character)
     {
         IMoveable characterMove = character.GetPhotonView().gameObject.GetComponent<IMoveable>();
-        if (SpawnAnimation != null && SpawnAnimation.IsComplete() == false)
-        {
-            SpawnAnimation.Complete();
-            SpawnAnimation = null;
-        }
-
         if (character.GetCurrentWeapon() is Punch && characterMove.IsCanMove())
         {
-            if (PhotonNetwork.OfflineMode) character.GiveWeapon(PhotonViewObject.ViewID);
+            if (PhotonNetwork.OfflineMode) character.GiveWeapon(this);
             else
             {
                 StringBus stringBus = new();
-                character.GetPhotonView().RPC(stringBus.GiveWeapon, RpcTarget.All, PhotonViewObject.ViewID);
+                character.GetPhotonView().RPC(stringBus.GiveWeapon, RpcTarget.All, PhotonView.ViewID);
             }
+            AudioSource.PlayClipAtPoint(AudioFX[(int)AudioType.Pickup], transform.position);
         }
-        AudioSource.PlayClipAtPoint(AudioFX[(int)AudioType.Pickup], transform.position);
     }
 
-    private IEnumerator LifeTimer(float seconds)
+    protected virtual IEnumerator LifeTimer(float seconds)
     {
         yield return new WaitForSeconds(seconds);
         OnLifeTimeEnded();
@@ -104,43 +94,49 @@ public abstract class Weapon : MonoBehaviour
     {
         UpdatePositionForWeapon(currentPos, currentRotate);
 
-        if (LifetimeSeconds != -1) StartCoroutine(LifeTimer(LifetimeSeconds));
+        if (LifetimeSeconds != -1 && gameObject.activeSelf)
+        {
+            StartCoroutine(LifeTimer(LifetimeSeconds));
+        }
         IsActive = true;
         CharacterOwner.EnableAttackAnimation(WeaponType);
     }
 
     protected void Throw(Vector3 target, bool isABot)
     {
-        Rigidbody rigidbody = gameObject.GetComponent<Rigidbody>();
         transform.parent = null;
-        rigidbody.useGravity = true;
-        rigidbody.mass = 2;
-        rigidbody.drag = 1;
-        rigidbody.isKinematic = false;
-
-        rigidbody.AddForce(new Vector3(target.x, 0.5f, isABot ? target.z : target.y) * 1000);
+        _rigidbody.useGravity = true;
+        _rigidbody.isKinematic = false;
+        _rigidbody.AddForce(new Vector3(target.x, 0.5f, isABot ? target.z : target.y) * 2000);
     }
 
-    public int[] GetPlayersInRadius(Vector3 position, float radius)
+    public int[] GetTargetsInRadius(Vector3 position, float radius)
     {
-        int collidersCount = Physics.OverlapSphereNonAlloc(position, radius, _charactersClosed, LayerEnemy);
-        int[] playersPhotonViewID = new int[collidersCount];
+        int collidersCount = Physics.OverlapSphereNonAlloc(position, radius, _targetsClosed); // CharacterLayer
+        int[] targetsPhotonViewID = new int[collidersCount];
 
         for(int i = 0; i < collidersCount; i++)
         {
-            if(_charactersClosed[i].TryGetComponent<PhotonView>(out var view)) playersPhotonViewID[i] = view.ViewID;
+            if (_targetsClosed[i].TryGetComponent<PhotonView>(out var view))
+            {
+                targetsPhotonViewID[i] = view.ViewID;
+            }
+            else
+            {
+                targetsPhotonViewID[i] = -1;
+            }
         }
 
-        return playersPhotonViewID;
+        return targetsPhotonViewID;
     }
 
     public virtual void Init(CharacterWeapon character)
     {
         CharacterOwner = character;
-        LayerEnemy = LayerMask.GetMask("Player");
-        LayerCells = LayerMask.GetMask("Honeycomb");
+        //CharacterLayer = LayerMask.GetMask("Player");
         SetOwnerLocal(CharacterOwner.GetPhotonView().ViewID);
-        GetComponent<AnimateObject>().StopTweenAnimate();
+
+        if(_animation != null) _animation.StopTweenAnimate();
     }
 
     protected void SetLocalPosAndRotate(Vector3 pos, Quaternion rotate)
@@ -161,28 +157,19 @@ public abstract class Weapon : MonoBehaviour
 
     public void DisableWeapon()
     {
-        gameObject.SetActive(false);
-        CurrentLayerWhereImStay = -1;
-        CurrentHoneycombWhereImStay = null;
-        IsActive = false;
+        for(int i = 0; i < _targetsClosed.Length; i++)
+        {
+            _targetsClosed[i] = null;
+        }
+
         SetOwnerLocal(-1);
+        CurrentSpawnPoint = null;
+        IsActive = false;
+        gameObject.SetActive(false);
     }
 
     private void UpdatePositionForWeapon(Vector3 currentPos, Quaternion currentRotate)
     {
         CharacterOwner.transform.SetPositionAndRotation(currentPos, currentRotate);
     }
-
-    /*public Honeycomb[] GetCellsInRadius(Vector3 position, float radius)
-    {
-        Collider[] cellClosed = Physics.OverlapSphere(position, radius, LayerCells);
-        
-        Honeycomb[] cells = new Honeycomb[cellClosed.Length];
-        for(int i = 0; i < cellClosed.Length; i++)
-        {
-            cells[i] = cellClosed[i].GetComponent<Honeycomb>();
-        }
-
-        return cells;
-    }*/
 }

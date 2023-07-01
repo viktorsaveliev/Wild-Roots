@@ -112,15 +112,15 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 4334909677928448
-    m_Key: Notice_Shop
+    m_Key: Copy_RoomButton
     m_Metadata:
       m_Items: []
   - m_Id: 4335025574936576
-    m_Key: Notice_Wardrobe
+    m_Key: Join_RoomButton
     m_Metadata:
       m_Items: []
   - m_Id: 4335162644791296
-    m_Key: Notice_Rating
+    m_Key: Notice_SelectRoomDo
     m_Metadata:
       m_Items: []
   - m_Id: 4390376240349184

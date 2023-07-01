@@ -10,5 +10,5 @@ public class Keyboard : MonoBehaviour
         _keyboard = GetComponent<KeyboardHandler>();
     }
 
-    public static void Show(TMP_InputField targetInputField) => _keyboard.Show(targetInputField);
+    public static void Show(TMP_InputField targetInputField, bool actionAfterHide = false) => _keyboard.Show(targetInputField, actionAfterHide);
 }

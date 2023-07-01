@@ -2,22 +2,22 @@ using System.Collections;
 using UnityEngine;
 using DG.Tweening;
 
-[RequireComponent(typeof(Character), typeof(Rigidbody))]
+[RequireComponent(typeof(Rigidbody))]
 public class TakeImpulse : MonoBehaviour
 {
     [SerializeField] private GameObject _shieldSphere;
     [SerializeField] private AudioClip _shieldSound;
 
+    private float _immunity = 0;
     private Character _character;
-    private float _immunity;
+    private Rigidbody _rigidbody;
 
     private void Start()
     {
-        _character = GetComponent<Character>();
-        _immunity = 0;
+        _rigidbody = GetComponent<Rigidbody>();
     }
 
-    public void SetImpulse(float force, Vector3 impulsePosition, Weapon fromWhom, float knockoutTime = 2)
+    public void SetImpulse(float force, Vector3 impulsePosition, float upwardsModifier, int fromWhom, float knockoutTime = 0)
     {
         if (_immunity >= Time.time)
         {
@@ -29,17 +29,33 @@ public class TakeImpulse : MonoBehaviour
             return;
         }
 
-        _character.Rigidbody.velocity = Vector3.zero;
-        _character.Health.FromWhomDamage = fromWhom;
-        _character.Rigidbody.AddExplosionForce(force + _character.Health.GetDamageMultiplie(), impulsePosition, 10f);
-
-        if(knockoutTime != 0)
+        float increase = 0;
+        if(gameObject.layer == 6)
         {
-            _character.Health.SetDamageStrength(0.1f);
-            _character.Move.SetMoveActive(false, knockoutTime);
+            if(_character == null)
+            {
+                _character = GetComponent<Character>();
+            }
+
+            if (knockoutTime != 0)
+            {
+                _character.Health.SetDamageStrength(0.1f);
+                _character.Move.SetMoveActive(false, knockoutTime);
+            }
+            _character.Health.FromWhomDamage = fromWhom;
+            transform.DOPunchScale(new Vector3(0.5f, 0.5f), 0.3f).OnComplete(() => _character.transform.localScale = new Vector3(2, 2, 2));
+
+            increase = _character.Health.GetDamageMultiplie();
+
+            EventBus.OnCharacterTakeDamage?.Invoke(_character);
         }
 
-        EventBus.OnCharacterTakeDamage?.Invoke(_character);
+        _rigidbody.velocity = Vector3.zero;
+        _rigidbody.AddExplosionForce(force + increase, impulsePosition, 10f, upwardsModifier);
+        if (_rigidbody.angularVelocity == Vector3.zero)
+        {
+            _rigidbody.AddTorque(Random.insideUnitSphere * 100f);
+        }
     }
 
     public void SetImmunity(float time)

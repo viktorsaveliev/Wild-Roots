@@ -3,8 +3,6 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.UI;
 using System.Collections;
-using DG.Tweening;
-using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(ConnectHandler), typeof(PhotonView))]
 public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
@@ -18,71 +16,78 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
 
     [SerializeField] private LobbySlot[] _lobbySlots;
     [SerializeField] private GameObject _character;
+    [SerializeField] private GameObject _matchHandler;
 
-    private bool _isJoiningRoom = false;
     private ConnectHandler _connectHandler;
     private PhotonView _photonView;
 
-    private Coroutine _secTimer;
-    private readonly int _secToFindPlayers = 60;
-    private int _currentSecToFindPlayers;
+    //private Coroutine _secTimer;
+    private Coroutine _waitingTimer;
 
-    private GameModeSelector.GameMode _selectedGameMode;
+    private bool _startMatch;
+
+    //private readonly int _secToFindPlayers = 60;
+    //private int _currentSecToFindPlayers;
 
     private void Start()
     {
+        _startMatch = false;
+
         _connectHandler = GetComponent<ConnectHandler>();
         _photonView = GetComponent<PhotonView>();
     }
 
-    private void CreateRoom()
+    public void CreateRoom(bool open)
     {
+        if (PhotonNetwork.InRoom) return;
         string roomName = GenerateRoomName(6);
-//#if (!UNITY_EDITOR)
-        PhotonNetwork.CreateRoom(roomName, new RoomOptions { MaxPlayers = 5, CleanupCacheOnLeave = false, IsOpen = true, IsVisible = true });
-//#else
-        //PhotonNetwork.CreateRoom(roomName, new RoomOptions { MaxPlayers = 5, CleanupCacheOnLeave = false, IsOpen = false, IsVisible = true });
-//#endif
-        //_currentSecToFindPlayers = _secToFindPlayers;
-
-        //if (_secTimer != null) StopCoroutine(_secTimer);
-        //_secTimer = StartCoroutine(SecTimer());
-
-        //_connectHandler.Log("Created new room..");
+        PhotonNetwork.CreateRoom(roomName, new RoomOptions { MaxPlayers = 3, CleanupCacheOnLeave = false, IsOpen = open, IsVisible = true });
     }
 
-    private void Play(GameModeSelector.GameMode gamemode)
+    private void Play()
     {
-        if (_isJoiningRoom)
+        /*if (_isJoiningRoom)
         {
             if (PhotonNetwork.IsMasterClient)
             {
                 DOTween.Clear();
-                StartGame(GameModeSelector.GameMode.PvP);
+                StartGame();
             }
             return;
         }
-        LoadingUI.Show(LoadingShower.Type.Simple);
-        PhotonNetwork.JoinRandomRoom();
+        _isJoiningRoom = true;*/
+        //PhotonNetwork.JoinRandomRoom();
 
-        _isJoiningRoom = true;
+        LoadingUI.Show(LoadingShower.Type.Simple);
+        _startMatch = true;
+
+        if (PhotonNetwork.InRoom == false)
+        {
+            CreateRoom(false);
+        }
+        else
+        {
+            StartGame();
+        }
     }
 
-    public void SelectMode(int modeID)
+    public void ConnectToMatch()
     {
         EventBus.OnPlayerClickUI?.Invoke(0);
 
-        _selectedGameMode = (GameModeSelector.GameMode)modeID;
         if (!_connectHandler.IsConnected)
         {
             _connectHandler.Connect();
             //Notice.ShowDialog(NoticeDialog.Message.ConnectionError, this, "Notice_Retry", "Notice_Close");
-            StartCoroutine(WaitingForConnection(5));
+            if(_waitingTimer != null)
+            {
+                StopCoroutine(_waitingTimer);
+                LoadingUI.Hide();
+            }
+            _waitingTimer = StartCoroutine(WaitingForConnection(5));
             return;
         }
-
-        GameSettings.GameMode = _selectedGameMode;
-        Play(GameSettings.GameMode);
+        Play();
     }
 
     public void ActionOnClickNotice(int button)
@@ -93,13 +98,13 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
             {
                 _connectHandler.Connect();
             }
-            SelectMode((int)_selectedGameMode);
+            ConnectToMatch();
         }
         Notice.HideDialog();
     }
 
     [PunRPC]
-    public void TakeFreeSlot()
+    public void TakeFreeSlot(string nickname, int skinID)
     {
         if (_lobbySlots.Length > 0)
         {
@@ -108,7 +113,7 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
             {
                 if (lobbySlot.IsUsed) continue;
 
-                lobbySlot.TakeSlot("Player", 0);
+                lobbySlot.TakeSlot(nickname, skinID);
 
                 full = true;
                 break;
@@ -147,8 +152,7 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
         {
             if(_connectHandler.IsConnected)
             {
-                GameSettings.GameMode = _selectedGameMode;
-                Play(GameSettings.GameMode);
+                Play();
                 yield break;
             }
             currentTimer++;
@@ -160,7 +164,7 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
     {
         if (returnCode == 32760) // No available rooms found!
         {
-            CreateRoom();
+            CreateRoom(true);
         }
         else if(returnCode == 32757) // MaxCCU
         {
@@ -176,8 +180,13 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
     public override void OnJoinedRoom()
     {
         LoadingUI.Hide();
+        if (_startMatch) StartGame();
+        else
+        {
+            _photonView.RPC(nameof(TakeFreeSlot), RpcTarget.OthersBuffered, PlayerData.GetNickname(), PlayerData.GetSkinID());
+        }
 
-        //Invoke(nameof(ActivateSearchScreen), 1f);
+        /*//Invoke(nameof(ActivateSearchScreen), 1f);
         ActivateSearchScreen();
 
         EventBus.OnPlayerStartSearchMatch?.Invoke();
@@ -193,11 +202,16 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
 
         _currentSecToFindPlayers = _secToFindPlayers;
         if (_secTimer != null) StopCoroutine(_secTimer);
-        _secTimer = StartCoroutine(SecTimer());
+        _secTimer = StartCoroutine(SecTimer());*/
     }
 
-    private void ActivateSearchScreen() => _searchScreen.SetActive(true);
-    private IEnumerator SecTimer()
+    private void ActivateSearchScreen()
+    {
+        _searchScreen.SetActive(true);
+        SaveData.Instance.Stats(SaveData.Statistics.SearchMatch);
+    }
+    
+    /*private IEnumerator SecTimer()
     {
         while (_currentSecToFindPlayers > 0)
         {
@@ -207,40 +221,41 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
             {
                 if (_currentSecToFindPlayers <= 0)
                 {
-                    StartGame(GameModeSelector.GameMode.PvP);
+                    StartGame();
                     break;
                 }
                 else _photonView.RPC(nameof(UpdateWaitingUI), RpcTarget.All, _currentSecToFindPlayers);
             }
         }
-    }
+    }*/
 
-    public override void OnLeftRoom()
+    /*public override void OnLeftRoom()
     {
         base.OnLeftRoom();
         SceneManager.LoadScene((int)GameSettings.Scene.Lobby);
-    }
+    }*/
 
-    public void StartGame(GameModeSelector.GameMode gamemode)
+    public void StartGame()
     {
-        if (gamemode == GameModeSelector.GameMode.PvP)
-        {
-            _photonView.RPC(nameof(LoadLevelProgressForAll), RpcTarget.All);
-            PhotonNetwork.CurrentRoom.IsOpen = false;
-            StopCoroutine(_secTimer);
-        }
+        _photonView.RPC(nameof(LoadLevelForAll), RpcTarget.All);
+        PhotonNetwork.CurrentRoom.IsOpen = false;
     }
 
     [PunRPC]
-    public void LoadLevelProgressForAll()
+    public void LoadLevelForAll()
     {
         StartCoroutine(LoadLevelAsync());
     }
 
     private IEnumerator LoadLevelAsync()
     {
-        if(PhotonNetwork.IsMasterClient) PhotonNetwork.LoadLevel((int)GameSettings.Scene.Street); // game
         LoadingUI.Show(LoadingShower.Type.Progress);
+        if (PhotonNetwork.IsMasterClient)
+        {
+            PhotonNetwork.LoadLevel((int)GameSettings.Scene.MatchInformer);
+            yield return PhotonNetwork.InstantiateRoomObject(_matchHandler.name, Vector3.zero, Quaternion.identity);
+        }
+        Match.Init();
 
         while (PhotonNetwork.LevelLoadingProgress < 1f)
         {
@@ -249,7 +264,7 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
         }
     }
     
-    [PunRPC]
+    /*[PunRPC]
     public void UpdateWaitingUI(int time)
     {
         _currentSecToFindPlayers = time;
@@ -262,7 +277,7 @@ public class JoinRoomHandler : MonoBehaviourPunCallbacks, INoticeAction
         {
             _currentSecToFindPlayers = 3;
         }
-    }
+    }*/
 
     private const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 

@@ -1,10 +1,9 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.Localization.Settings;
 
 public class GameSettings : MonoBehaviour
 {
-    public static GameModeSelector.GameMode GameMode;
+    public static bool OfflineMode;
 
     [SerializeField] private int _frameRateInScene;
     [SerializeField] private AudioSource _musicSource;
@@ -13,9 +12,11 @@ public class GameSettings : MonoBehaviour
     {
         Login,
         Lobby,
+        MatchInformer,
+        Tutorial,
         Street,
-        Game,
-        Tutorial
+        Roof,
+        Fallground
     }
 
     private void Awake()
@@ -25,15 +26,16 @@ public class GameSettings : MonoBehaviour
 
         StringBus stringBus = new();
         int language = PlayerPrefs.GetInt(stringBus.Language);
-        StartCoroutine(SetLanguage(language));
+        SetLanguage(language);
 
         int musicSettings = PlayerPrefs.GetInt(stringBus.SettingsMusic);
         if (musicSettings == 0 && _musicSource != null) _musicSource.Play();
     }
 
-    private IEnumerator SetLanguage(int langID)
+    private void SetLanguage(int langID)
     {
-        yield return LocalizationSettings.InitializationOperation;
+        //yield return LocalizationSettings.InitializationOperation;
+        LocalizationSettings.InitializationOperation.WaitForCompletion();
         LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[langID];
     }
 }

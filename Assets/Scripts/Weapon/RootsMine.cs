@@ -65,7 +65,7 @@ public class RootsMine : Weapon, IExplodable
         {
             if (collision.gameObject.TryGetComponent<TakeImpulse>(out var target))
             {
-                PhotonViewObject.RPC(nameof(Explode), RpcTarget.All, GetPlayersInRadius(transform.position, Radius), transform.position, Force);
+                PhotonView.RPC(nameof(Explode), RpcTarget.All, GetTargetsInRadius(transform.position, Radius), transform.position, Force);
             }
         }
     }

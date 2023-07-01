@@ -85,6 +85,17 @@ MonoBehaviour:
   - UpdateMySkinForAllPlayers
   - UpdateMySkinForPlayers
   - StartCarWithDelay
+  - CountdownUpdate
+  - StartMatch
+  - EnableFan
+  - FallGround
+  - StartFallGround
+  - OnPlayerConnect
+  - CreateBots
+  - GiveCoup
+  - GoToNextRound
+  - LoadLevelForAll
+  - CreateBotForAll
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

@@ -12,14 +12,20 @@ EditorBuildSettings:
     path: Assets/Scenes/Lobby.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   - enabled: 1
-    path: Assets/Scenes/Street.unity
-    guid: c5076ecc163d97045aadbea75d5ddcd4
-  - enabled: 1
-    path: Assets/Scenes/Game.unity
-    guid: 2d7202cf2fa2bf44ea597d23c39ce091
+    path: Assets/Scenes/MatchInformer.unity
+    guid: ffd38a42e2a83244284e14339869fa64
   - enabled: 1
     path: Assets/Scenes/Tutorial.unity
     guid: f66ab9fe5064c734ca05fae886ff6c89
+  - enabled: 1
+    path: Assets/Scenes/Street.unity
+    guid: c5076ecc163d97045aadbea75d5ddcd4
+  - enabled: 1
+    path: Assets/Scenes/Roof.unity
+    guid: 2d7202cf2fa2bf44ea597d23c39ce091
+  - enabled: 1
+    path: Assets/Scenes/Fallground.unity
+    guid: 9dc81196b9d284741850061a77b89912
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 24027728ea1361545acda5b5b62dfd6e, type: 2}
     com.unity.localization.settings: {fileID: 11400000, guid: 1b2bdc2881eeab3428bbe51ecf2cb153, type: 2}

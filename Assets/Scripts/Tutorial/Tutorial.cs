@@ -27,7 +27,7 @@ public class Tutorial : MonoBehaviour, INoticeAction
 
     private void OnEnable()
     {
-        EventBus.OnPlayerTakeWeapon += OnPlayerGetWeapon;
+        EventBus.OnCharacterGetWeapon += OnPlayerGetWeapon;
         EventBus.OnCharacterFall += OnCharacterFall;
 
         EventBus.OnWeaponExploded += WeaponSpawner;
@@ -35,7 +35,7 @@ public class Tutorial : MonoBehaviour, INoticeAction
 
     private void OnDisable()
     {
-        EventBus.OnPlayerTakeWeapon -= OnPlayerGetWeapon;
+        EventBus.OnCharacterGetWeapon -= OnPlayerGetWeapon;
         EventBus.OnCharacterFall -= OnCharacterFall;
 
         EventBus.OnWeaponExploded -= WeaponSpawner;
@@ -52,15 +52,16 @@ public class Tutorial : MonoBehaviour, INoticeAction
 
         _character = _characterPrefab.GetComponent<Character>();
         SetTask(Task.TakeGrenade);
-
-        _joystickAttack.Init(_character);
-        _joystickMovement.Init(_character);
     }
 
     private void SetOfflineMode()
     {
         PhotonNetwork.OfflineMode = true;
-        _character.Skin.Change(PlayerData.GetSkinID(), true);
+
+        _character.Rigidbody.freezeRotation = true;
+        _character.Move.SetMoveActive(true);
+        _joystickAttack.Init(_character);
+        _joystickMovement.Init(_character);
     }
 
     private void SetTask(Task task)
@@ -69,7 +70,7 @@ public class Tutorial : MonoBehaviour, INoticeAction
         EventBus.OnSetTutorialTaskForPlayer?.Invoke();
     }
 
-    private void OnPlayerGetWeapon()
+    private void OnPlayerGetWeapon(Weapon weapon)
     {
         if (CurrentTask != Task.TakeGrenade) return;
         SetTask(Task.ThrowGrenade);
@@ -79,7 +80,7 @@ public class Tutorial : MonoBehaviour, INoticeAction
     {
         if(character.PhotonView.ViewID == 2)
         {
-            _character.transform.position = new Vector3(0, 1f, -4.82f);
+            _character.transform.position = new Vector3(0, 0f, -4.82f);
             _character.gameObject.SetActive(true);
 
             if (_character.Weapon.GetCurrentWeapon() is Punch)
@@ -125,7 +126,7 @@ public class Tutorial : MonoBehaviour, INoticeAction
     private IEnumerator RespawnWeapon()
     {
         yield return new WaitForSeconds(2);
-        _weapon.transform.position = new Vector3(0.14f, 0.26f, 0);
+        _weapon.transform.position = new Vector3(0.21f, 1.98f, 0.64f);
 
         _weapon.GetComponent<Collider>().isTrigger = true;
 
@@ -134,11 +135,7 @@ public class Tutorial : MonoBehaviour, INoticeAction
         rigidbody.isKinematic = true;
 
         _weapon.gameObject.SetActive(true);
-        _weapon.SpawnAnimation = _weapon.transform.DOScale(1, 0.3f).OnComplete(() =>
-        {
-            _weapon.SpawnAnimation.Kill();
-            _weapon.SpawnAnimation = null;
-        });
+        _weapon.transform.DOScale(4, 0.3f);
 
         EventBus.OnWeaponSpawned?.Invoke(_weapon.gameObject);
 
@@ -147,7 +144,9 @@ public class Tutorial : MonoBehaviour, INoticeAction
             _enemy.SetActive(true);
             Character enemy = _enemy.GetComponent<Character>();
             enemy.Nickname = "Ivan";
-            enemy.Skin.Change(2, true);
+            yield return new WaitForSeconds(0.7f);
+            enemy.Move.SetMoveActive(true);
+
 
             SetTask(Task.ThrowEnemy);
         }

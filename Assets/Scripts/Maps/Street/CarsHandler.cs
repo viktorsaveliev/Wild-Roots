@@ -4,56 +4,42 @@ using Photon.Pun;
 
 public class CarsHandler : MonoBehaviour
 {
-    private const int MAX_ROADS = 2;
-
-    [SerializeField] private GameObject[] _carPrefabs;
-    [SerializeField] private Transform[] _startPos = new Transform[MAX_ROADS];
-    [SerializeField] private Transform[] _endPos = new Transform[MAX_ROADS];
-    [SerializeField] private Transform _parent;
-
-    private bool[] _isRoadUsed = new bool[MAX_ROADS];
-    private Car[] _cars = new Car[MAX_ROADS];
+    [SerializeField] private Car _car;
     private PhotonView _photonView;
 
     private void Start()
     {
         _photonView = GetComponent<PhotonView>();
 
-        for (int i = 0; i < MAX_ROADS; i++)
+        if (PhotonNetwork.IsMasterClient)
         {
-            GameObject car = Instantiate(_carPrefabs[Random.Range(0, _carPrefabs.Length)], _parent);
-            _cars[i] = car.GetComponent<Car>();
-
-            if (PhotonNetwork.IsMasterClient)
+            if(GameSettings.OfflineMode)
             {
-                _photonView.RPC(nameof(StartCarWithDelay), RpcTarget.All, Random.Range(3f, 15f), i, 3f);
+                StartCarWithDelay(60);
+            }
+            else
+            {
+                _photonView.RPC(nameof(StartCarWithDelay), RpcTarget.All, 60f);
             }
         }
     }
 
     [PunRPC]
-    private void StartCarWithDelay(float delay, int carID, float speed)
+    private void StartCarWithDelay(float delay)
     {
-        StartCoroutine(StartCarWithDelayAsync(delay, carID, speed));
+        StartCoroutine(StartCarWithDelayAsync(delay));
     }
 
-    private IEnumerator StartCar(int carID, float speed)
-    {
-        _cars[carID].gameObject.SetActive(true);
-        _cars[carID].Go(_startPos[carID].position, _endPos[carID].position, speed);
-        _isRoadUsed[carID] = true;
-        yield return new WaitForSeconds(speed);
-        _isRoadUsed[carID] = false;
-
-        if (PhotonNetwork.IsMasterClient)
-        {
-            _photonView.RPC(nameof(StartCarWithDelay), RpcTarget.All, Random.Range(3f, 15f), carID, 3f);
-        }
-    }
-
-    private IEnumerator StartCarWithDelayAsync(float delay, int carID, float speed)
+    private IEnumerator StartCarWithDelayAsync(float delay)
     {
         yield return new WaitForSeconds(delay);
-        StartCoroutine(StartCar(carID, speed));
+        StartCar();
+    }
+
+    private void StartCar()
+    {
+        _car.transform.localScale = Vector3.zero;
+        _car.gameObject.SetActive(true);
+        _car.Go();
     }
 }

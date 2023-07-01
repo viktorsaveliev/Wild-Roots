@@ -14,6 +14,13 @@ public class Registration : MonoBehaviour
     [SerializeField] private TMP_Text _emailError;
     [SerializeField] private TMP_Text _passwordError;
 
+    private bool _isRegButtonPressed;
+
+    private void Start()
+    {
+        _isRegButtonPressed = false;
+    }
+
     public void Show()
     {
         _regPanel.transform.localPosition = new Vector2(-2000f, 0);
@@ -27,6 +34,7 @@ public class Registration : MonoBehaviour
     {
         _regPanel.transform.DOScale(0.1f, 0.2f).OnComplete(() =>
         {
+            _isRegButtonPressed = false;
             _regPanel.SetActive(false);
             _regPanel.transform.localScale = new Vector2(0.8f, 0.8f);
         });
@@ -41,6 +49,7 @@ public class Registration : MonoBehaviour
 
     public void RegisterButton()
     {
+        if (_isRegButtonPressed) return;
         ResetErrorText();
 
         if (_email.text == string.Empty || _password.text == string.Empty || _repeatPassword.text == string.Empty)
@@ -70,6 +79,7 @@ public class Registration : MonoBehaviour
             EventBus.OnPlayerClickUI?.Invoke(3);
             return;
         }
+        _isRegButtonPressed = true;
         StartCoroutine(CheckIfUserExists(_email.text));
         EventBus.OnPlayerClickUI?.Invoke(0);
     }
@@ -83,6 +93,7 @@ public class Registration : MonoBehaviour
 
         if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
         {
+            _isRegButtonPressed = false;
             Notice.Dialog(NoticeDialog.Message.ConnectionError);
             yield break;
         }
@@ -90,6 +101,7 @@ public class Registration : MonoBehaviour
         bool userExists = bool.Parse(www.downloadHandler.text);
         if (userExists)
         {
+            _isRegButtonPressed = false;
             _emailError.text = "This account is already registered";
             EventBus.OnPlayerClickUI?.Invoke(3);
         }
@@ -112,10 +124,12 @@ public class Registration : MonoBehaviour
 
         if (www.result == UnityWebRequest.Result.Success)
         {
+            SaveData.Instance.Stats(SaveData.Statistics.Registration);
             LoadData.Instance.GetUserID(email, password, false);
         }
         else
         {
+            _isRegButtonPressed = false;
             EventBus.OnPlayerClickUI?.Invoke(3);
             Notice.Dialog(NoticeDialog.Message.ConnectionError);
         }

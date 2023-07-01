@@ -4,50 +4,48 @@ using Photon.Pun;
 
 public class Grenade : Weapon, IExplodable
 {
+    [SerializeField] private RadiusIndicator _radiusIndicator;
+    [SerializeField] private ParticleSystem _activeFX;
+
     public override void Init(CharacterWeapon character)
     {
         base.Init(character);
 
-        Force = 2000f;
+        Force = 1000f;
         Strength = 1;
-        Radius = 3f;
+        Radius = 2f;
 
         Label = "Grenade";
         LifetimeSeconds = 1.5f;       
-        SetLocalPosAndRotate(new Vector3(-0.051f, 0.055f, 0.08f), Quaternion.Euler(-80.3f, 90, -40f));
+        SetLocalPosAndRotate(new Vector3(0.106f, 0.055f, 0.03f), Quaternion.Euler(89.68f, 185.1f, -137.61f));
     }
 
     [PunRPC]
     public override void Shoot(Vector3 target, Vector3 currentPos, Quaternion currentRotate, bool isABot = false)
     {
         base.Shoot(target, currentPos, currentRotate);
-        GetComponent<CapsuleCollider>().isTrigger = false;
+        GetComponent<Collider>().isTrigger = false;
 
         Throw(target, isABot);
+        _radiusIndicator.Show(Radius, LifetimeSeconds/2);
+
         CharacterOwner.DeleteWeapon(false);
+        _activeFX.Play();
+
         EventBus.OnPlayerShoot?.Invoke(transform, LifetimeSeconds);
     }
 
     [PunRPC]
     public void Explode(int[] viewID, Vector3 position, float force)
     {
-        TakeImpulse[] players = new TakeImpulse[viewID.Length];
-        int length = viewID.Length;
-        for (int i = 0; i < length; i++)
+        for (int i = 0; i < viewID.Length; i++)
         {
-            players[i] = PhotonView.Find(viewID[i]).GetComponent<TakeImpulse>();
+            if (viewID[i] == -1) continue;
+            if(PhotonView.Find(viewID[i]).TryGetComponent<TakeImpulse>(out var takeImpulse))
+            {
+                takeImpulse.SetImpulse(force, position, 1, Owner, -1);
+            }
         }
-
-        foreach (TakeImpulse player in players)
-        {
-            player.SetImpulse(force, position, this);
-        }
-
-        /*Honeycomb[] honeycombs = GetCellsInRadius(transform.position, Radius / 2);
-        foreach (Honeycomb honeycomb in honeycombs)
-        {
-            honeycomb.TakeDamage(1);
-        }*/
     }
 
     protected override void OnLifeTimeEnded()
@@ -57,21 +55,26 @@ public class Grenade : Weapon, IExplodable
 
         if (PhotonNetwork.IsMasterClient)
         {
-            if(!PhotonNetwork.OfflineMode)
+            GameData gameData = new();
+            gameData.CallMethod<Grenade>(nameof(Explode), PhotonView, RpcTarget.All, GetTargetsInRadius(transform.position, Radius), transform.position, Force);
+        }
+
+        _activeFX.Stop();
+        PlayAttackFX();
+        _radiusIndicator.Hide();
+
+        AudioSource.PlayClipAtPoint(AudioFX[(int)AudioType.Explode], transform.position, 2f);
+
+        transform.DOScale(0.2f, 0.2f).OnComplete(() => 
+            Invoke(nameof(DisableWeapon), 1f));
+    }
+
+    /*            if (PhotonNetwork.OfflineMode == false)
             {
-                PhotonViewObject.RPC(nameof(Explode), RpcTarget.All, GetPlayersInRadius(transform.position, Radius), transform.position, Force);
+                PhotonView.RPC(nameof(Explode), RpcTarget.All, GetTargetsInRadius(transform.position, Radius), transform.position, Force);
             }
             else
             {
-                Explode(GetPlayersInRadius(transform.position, Radius), transform.position, Force);
-            }
-        }
-
-        PlayAttackFX();
-
-        AudioSource.PlayClipAtPoint(AudioFX[(int)AudioType.Explode], transform.position, 1f);
-
-        transform.DOScale(0.1f, 0.2f).OnComplete(() => 
-            Invoke(nameof(DisableWeapon), 1f));
-    }
+                Explode(GetTargetsInRadius(transform.position, Radius), transform.position, Force);
+            }*/
 }

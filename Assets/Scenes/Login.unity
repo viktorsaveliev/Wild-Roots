@@ -15707,6 +15707,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DroppedPlayersCount: 0
+  TimeInMatch: 0
+  WinsInMatch: 0
 --- !u!114 &5433182737308948568
 MonoBehaviour:
   m_ObjectHideFlags: 0

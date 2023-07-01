@@ -13,7 +13,6 @@ public class CharacterSkin : MonoBehaviour
     private int _skinID;
     public int GetSkinID => _skinID;
 
-    //private int _randomSkinID = -1;
     [HideInInspector] public bool IsABot;
 
     private void Awake()
@@ -25,14 +24,12 @@ public class CharacterSkin : MonoBehaviour
     private void OnEnable()
     {
         EventBus.OnPlayerLogged += SetSkinForGuest;
-        //EventBus.OnPlayerStartSearchMatch += UpdateForOthers;
         EventBus.OnPlayerNeedChangeSkin += Change;
     }
 
     private void OnDisable()
     {
         EventBus.OnPlayerLogged -= SetSkinForGuest;
-        //EventBus.OnPlayerStartSearchMatch -= UpdateForOthers;
         EventBus.OnPlayerNeedChangeSkin -= Change;
     }
 
@@ -67,23 +64,9 @@ public class CharacterSkin : MonoBehaviour
 
     public IEnumerator ChangeToRandom()
     {
-        //yield return StartCoroutine(Assets.GetRandomSkin(SetValue));
         int randomSkin = Random.Range(1, 8);
-        //if (_randomSkinID != -1)
-        //{
-            yield return ChangeSkin(randomSkin, true);
-            //_randomSkinID = -1;
-        //}
-        //else
-        //{
-           // Notice.Dialog(NoticeDialog.Message.ConnectionError);
-        //}
+        yield return ChangeSkin(randomSkin, true);
     }
-    
-    /*private void SetValue(int value)
-    {
-        _randomSkinID = value;
-    }*/
 
     private void SetSkinForGuest()
     {

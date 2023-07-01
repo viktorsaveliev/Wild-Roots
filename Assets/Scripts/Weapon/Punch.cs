@@ -3,14 +3,14 @@ using Photon.Pun;
 
 public class Punch : Weapon
 {
-    private const int MAX_CHARACTERS_PUSHING = 3;
-    private int[] _closedCharactersViewID = new int[MAX_CHARACTERS_PUSHING] { -1, -1, -1 };
+    private const int MAX_CHARACTERS_PUSHING = 2;
+    private int[] _closedCharactersViewID = new int[MAX_CHARACTERS_PUSHING] { -1, -1 };
     private float _antiflood;
 
     public override void Init(CharacterWeapon character)
     {
         base.Init(character);
-        Force = 1500;
+        Force = 800;
         Label = "Punch";
         LifetimeSeconds = -1;
         Radius = 1f;
@@ -63,7 +63,7 @@ public class Punch : Weapon
 
         if (!PhotonNetwork.OfflineMode)
         {
-            PhotonViewObject.RPC(nameof(Punches), RpcTarget.All, _closedCharactersViewID, CharacterOwner.transform.position, Force);
+            PhotonView.RPC(nameof(Punches), RpcTarget.All, _closedCharactersViewID, CharacterOwner.transform.position, Force);
         }
         else
         {
@@ -87,11 +87,9 @@ public class Punch : Weapon
         foreach (TakeImpulse player in players)
         {
             if (player == null) continue; //  || (character.Weapon == CharacterOwner && !character.IsABot)
-            if(!player.TryGetComponent<Character>(out var character)) continue;
+            if(player.TryGetComponent<Character>(out var _) == false) continue;
             
-            player.SetImpulse(force, position, this, character.IsABot ? 1 : 0);
-            //var direction = (player.transform.position - CharacterOwner.transform.position).normalized;
-            //if (Vector3.Angle(CharacterOwner.transform.forward, direction) < 60f / 2f) // ViewAngle
+            player.SetImpulse(force, position, 0, Owner, 1);
         }
         _antiflood = Time.time + 1f;
     }

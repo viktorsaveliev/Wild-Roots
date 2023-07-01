@@ -17,7 +17,7 @@ public class TrajectoryRenderer : MonoBehaviour
         for(int i = 0; i < _points.Length; i++)
         {
             float time = i * 0.1f;
-            _points[i] = origin + speed * time + time * time * Physics.gravity / 2f;
+            _points[i] = origin + speed * time + time * time * Physics.gravity / 1.8f; // was / 2f
 
             if (_points[i].y < 0)
             {

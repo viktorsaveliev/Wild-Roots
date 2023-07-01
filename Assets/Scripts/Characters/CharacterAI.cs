@@ -24,6 +24,8 @@ public class CharacterAI : MonoBehaviour
 
     private bool _isInit = false;
 
+    private int _stuckPositionCount;
+
     private enum Tasks
     {
         None,
@@ -47,7 +49,7 @@ public class CharacterAI : MonoBehaviour
         }
     }
 
-    void Start()
+    private void Start()
     {
         _agent = GetComponent<NavMeshAgent>();
         _myWeapon = GetComponent<IWeaponable>();
@@ -78,16 +80,6 @@ public class CharacterAI : MonoBehaviour
         }
     }
 
-    private Coroutine _checkForStack;
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (_agent == null || _movement == null || PhotonNetwork.IsMasterClient == false) return;
-        if(_movement.IsCanMove() && _agent.enabled && _checkForStack == null && _isGoToSafeZone == false)
-        {
-            _checkForStack = StartCoroutine(OnCharacterStoped(collision.transform.position, Random.Range(1, 3)));
-        }
-    }
-
     private void UpdateData()
     {
         _weapons = FindObjectsOfType<Weapon>();
@@ -100,19 +92,6 @@ public class CharacterAI : MonoBehaviour
         }
     }
 
-    private IEnumerator OnCharacterStoped(Vector3 position, float seconds)
-    {
-        yield return new WaitForSeconds(seconds);
-        if(Vector3.Distance(transform.position, position) < 1f)
-        {
-            if (_movement.IsCanMove() && _agent.enabled)
-            {
-                Vector3 collisionPos = GetRandomDirectionAwayFrom(position);
-                _movement.Move(collisionPos);
-            }
-        }
-        _checkForStack = null;
-    }
     private IEnumerator InfinityTimer()
     {
         if (PhotonNetwork.IsMasterClient == false) yield break;
@@ -127,8 +106,8 @@ public class CharacterAI : MonoBehaviour
                 yield return new WaitForSeconds(timeToRepeat);
             }
 
-            bool isWeaponNearby = IsGetWeaponNearby(out Vector3 nearestWeapon);
-            //bool isNearNavMeshEdge = IsNearNavMeshEdge(1.5f, out Vector3 nearestEdge);
+            bool isWeaponNearby = TryGetDangerWeaponNearby(out Vector3 nearestWeapon);
+            bool isNearNavMeshEdge = IsNearNavMeshEdge(0.2f, out Vector3 nearestEdge);
             /*if (isWeaponNearby && _isGoToSafeZone == false) //  && isNearNavMeshEdge
             {
                 _isGoToSafeZone = true;
@@ -141,20 +120,32 @@ public class CharacterAI : MonoBehaviour
 
                 MoveToSafeDistanceFromWeapon(nearestWeapon);
             }
-            /*else if (isNearNavMeshEdge && _isGoToSafeZone == false)
+            else if (isNearNavMeshEdge && _isGoToSafeZone == false)
             {
                 _isGoToSafeZone = true;
-                StartCoroutine(ResetAction(Random.Range(0.5f, 1.5f)));
+                StartCoroutine(ResetAction(Random.Range(0.3f, 1f)));
                 _movement.Move(GetRandomDirectionAwayFrom(nearestEdge));
-            }*/
+            }
             else
             {
                 if (IsHavePath || _isGoToSafeZone)
                 {
-                    if (_agent.enabled && _agent.remainingDistance < 0.2f) //if ((_agent.pathEndPosition - _agent.transform.position).magnitude == 0)
+                    if (_agent.enabled && _agent.remainingDistance < 0.2f)
                     {
                         _isGoToSafeZone = false;
                         _movement.Stop();
+                    }
+                    else
+                    {
+                        float currentSpeed = _agent.velocity.magnitude;
+                        if (currentSpeed < 1f)
+                        {
+                            if(++_stuckPositionCount > 5)
+                            {
+                                ResetAction();
+                                GetRandomDirectionAwayFrom(transform.position);
+                            }
+                        }
                     }
                 }
                 else if (_characterTask != Tasks.None)
@@ -172,7 +163,7 @@ public class CharacterAI : MonoBehaviour
                             else
                             {
                                 StringBus stringBus = new();
-                                _myWeapon.GetCurrentWeapon().PhotonViewObject.RPC(stringBus.Shoot, RpcTarget.All, direction, transform.position, transform.rotation, true);
+                                _myWeapon.GetCurrentWeapon().PhotonView.RPC(stringBus.Shoot, RpcTarget.All, direction, transform.position, transform.rotation, true);
                             }
                         }
                         SetTask(Tasks.None);
@@ -194,7 +185,7 @@ public class CharacterAI : MonoBehaviour
         }
     }
 
-    private bool IsGetWeaponNearby(out Vector3 nearestWeapon)
+    private bool TryGetDangerWeaponNearby(out Vector3 nearestWeapon)
     {
         nearestWeapon = Vector3.zero;
         float minDistance = float.MaxValue;
@@ -235,7 +226,7 @@ public class CharacterAI : MonoBehaviour
         }
 
         Vector3 destination = transform.position + directionToMove * _safeDistance;
-        _movement.Move(destination);
+        Move(destination);
     }
     
     private void FindNearestFreeWeapon()
@@ -256,7 +247,7 @@ public class CharacterAI : MonoBehaviour
 
         if (nearestWeapon != null)
         {
-            _movement.Move(nearestWeapon.transform.position);
+            Move(nearestWeapon.transform.position);
         }
         else
         {
@@ -333,7 +324,7 @@ public class CharacterAI : MonoBehaviour
             randomDirection += hit.position;
             NavMesh.SamplePosition(randomDirection, out hit, 10f, NavMesh.AllAreas);
 
-            _movement.Move(hit.position);
+            Move(hit.position);
         }
     }
 
@@ -383,5 +374,17 @@ public class CharacterAI : MonoBehaviour
         yield return new WaitForSeconds(time);
         _isGoToSafeZone = false;
         _movement.Stop();
+    }
+
+    private void ResetAction()
+    {
+        _isGoToSafeZone = false;
+        _movement.Stop();
+    }
+
+    private void Move(Vector3 position)
+    {
+        _movement.Move(position);
+        _stuckPositionCount = 0;
     }
 }

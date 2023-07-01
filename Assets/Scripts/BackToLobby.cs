@@ -7,7 +7,7 @@ public class BackToLobby : MonoBehaviourPunCallbacks, INoticeAction
 {
     public void ActionOnClickNotice(int button)
     {
-        if (button == 0) LoadLobby();
+        if (button == 0) OnClick();
         Notice.HideDialog();
     }
 
@@ -15,7 +15,7 @@ public class BackToLobby : MonoBehaviourPunCallbacks, INoticeAction
     {
         if (buttonID == 0)
         {
-            LoadLobby();
+            OnClick();
         }
         else
         {
@@ -23,17 +23,23 @@ public class BackToLobby : MonoBehaviourPunCallbacks, INoticeAction
         }
     }
 
-    private void LoadLobby()
+    private void OnClick()
     {
-        if (PhotonNetwork.OfflineMode == false) PhotonNetwork.DestroyPlayerObjects(PhotonNetwork.LocalPlayer);
-
         LoadingUI.Show(LoadingShower.Type.Progress);
-        PhotonNetwork.LeaveRoom();
+        if (PhotonNetwork.OfflineMode == false)
+        {
+            PhotonNetwork.DestroyPlayerObjects(PhotonNetwork.LocalPlayer);
+            PhotonNetwork.LeaveRoom();
+        }
+        else
+        {
+            LoadLobbby();
+        }
     }
 
-    public override void OnLeftRoom()
+    private void LoadLobbby()
     {
-        base.OnLeftRoom();
+        SaveData.Instance.Stats(SaveData.Statistics.LeftTheMatch);
 
         DOTween.Clear();
         CrazyAds.Instance.beginAdBreak(AdsSucces, AdsError);
@@ -42,10 +48,19 @@ public class BackToLobby : MonoBehaviourPunCallbacks, INoticeAction
         SceneManager.LoadScene((int)GameSettings.Scene.Lobby);
     }
 
+    public override void OnLeftRoom()
+    {
+        if (GameSettings.OfflineMode) return;
+        base.OnLeftRoom();
+        LoadLobbby();
+    }
+
     private void AdsSucces()
     {
         PlayerData.ViewedAds();
+        SaveData.Instance.Stats(SaveData.Statistics.MidgameAds);
     }
+
     private void AdsError()
     {
         print("[Ads error] Some problem #036");

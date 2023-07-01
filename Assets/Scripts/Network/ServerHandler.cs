@@ -6,11 +6,11 @@ using DG.Tweening;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Linq;
+using System.Collections;
 
-[RequireComponent(typeof(WeaponsHandler), typeof(HoneycombHandler))]
+[RequireComponent(typeof(WeaponSpawner))]
 public class ServerHandler : MonoBehaviourPunCallbacks
 {
-    private const int MAX_PLAYERS = 5;
     public List<Character> Characters { get; private set; } = new();
 
     [SerializeField] private GameObject _playerPrefab;
@@ -21,85 +21,130 @@ public class ServerHandler : MonoBehaviourPunCallbacks
     [SerializeField] private JoystickAttack _joystickAttack;
     [SerializeField] private Text _roundText;
 
-    private HoneycombHandler _honeycombHandler;
-
     public int CurrentRound;
-    //private int _timeToNextRound;
-
-    //private Coroutine _timer;
-    [SerializeField] private Text _textTime;
-    private WeaponsHandler _weapons;
+    private WeaponSpawner _weapons;
     public PhotonView ServerPhotonView;
 
     private void Awake()
     {
-        DOTween.SetTweensCapacity(500, 50);
-        /*if(PhotonNetwork.CurrentRoom.PlayerCount < 2)
-        {
-            StartCoroutine(SetOfflineMode());
-        }*/
+        Notice.HideDialog();
+        Notice.HideSimple();
 
-        if (PhotonNetwork.IsMasterClient)
-        {
-            if(PhotonNetwork.GetPing() > 150 && PhotonNetwork.CurrentRoom.PlayerCount > 1)
-            {
-                PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer.GetNext());
-                print("[WRS]: Changed Master Client. Reason: high ping");
-            }
-        }
+        DOTween.SetTweensCapacity(100, 10);
     }
 
     /*private IEnumerator SetOfflineMode()
     {
-        _isOfflineMode = true;
         PhotonNetwork.Disconnect();
 
         while (PhotonNetwork.IsConnected)
         {
             yield return null;
         }
+
         PhotonNetwork.OfflineMode = true;
     }*/
 
     private void Start()
     {
-        GameObject PlayerCharacter = PhotonNetwork.Instantiate(_playerPrefab.name, new Vector3(0, 5, 0), Quaternion.identity);
+        ServerPhotonView = GetComponent<PhotonView>();
+        _weapons = GetComponent<WeaponSpawner>();
+
+        /*if (PhotonNetwork.CurrentRoom.PlayerCount < 2)
+        {
+            GameSettings.OfflineMode = true;
+            yield return StartCoroutine(SetOfflineMode());
+        }*/
+
+        if (PhotonNetwork.OfflineMode == false && PhotonNetwork.IsMasterClient)
+        {
+            if (PhotonNetwork.GetPing() > 150 && PhotonNetwork.CurrentRoom.PlayerCount > 1)
+            {
+                PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer.GetNext());
+                print("[WRS]: Changed Master Client. Reason: high ping");
+            }
+        }
+
+        SpawnPlayer();
+
+        if (PhotonNetwork.IsMasterClient || PhotonNetwork.OfflineMode)
+        {
+            _weapons.CreateWeapons();
+            StartCoroutine(CreateBots());
+        }
+
+        SaveData.Instance.Stats(SaveData.Statistics.MatchStart);
+    }
+
+    private void SpawnPlayer()
+    {
+        GameObject PlayerCharacter;
+        if (PhotonNetwork.OfflineMode)
+        {
+            PlayerCharacter = Instantiate(_playerPrefab, new Vector3(0, 5, 0), Quaternion.identity);
+        }
+        else
+        {
+            PlayerCharacter = PhotonNetwork.Instantiate(_playerPrefab.name, new Vector3(0, 5, 0), Quaternion.identity);
+        }
+
         Character player = PlayerCharacter.GetComponent<Character>();
 
         _joystickMove.Init(player);
         _joystickAttack.Init(player);
 
-        _honeycombHandler = GetComponent<HoneycombHandler>();
-        _honeycombHandler.Init();
-
-        _weapons = GetComponent<WeaponsHandler>();
-        _weapons.IsNeedUpdateHoneycomb = true;
-
-        ServerPhotonView = GetComponent<PhotonView>();
-        ServerPhotonView.RPC(nameof(AddCharacterInList), RpcTarget.All, player.PhotonView.ViewID);
+        if (PhotonNetwork.OfflineMode)
+        {
+            AddCharacterInList(player);
+        }
+        else
+        {
+            ServerPhotonView.RPC(nameof(AddCharacterInList), RpcTarget.All, player.PhotonView.ViewID);
+        }
 
         PhotonNetwork.LocalPlayer.TagObject = gameObject;
-        PlayerCharacter.transform.position = _spawnPositions[PhotonNetwork.LocalPlayer.ActorNumber-1].position;
 
-        player.Nickname = PhotonNetwork.LocalPlayer.NickName;
-        player.Skin.UpdateForAll();
-
-        /*StringBus stringBus = new();
-        PlayerPrefs.DeleteKey(stringBus.SkinID);
-        PlayerPrefs.Save();*/
-
-        ServerPhotonView.RPC(nameof(SetCharacterNickname), RpcTarget.Others, player.PhotonView.ViewID, player.Nickname);
-  
-        if (PhotonNetwork.IsMasterClient)
+        int spawnPoint = PhotonNetwork.OfflineMode ? 0 : PhotonNetwork.LocalPlayer.ActorNumber - 1;
+        PlayerCharacter.transform.position = _spawnPositions[spawnPoint].position;
+        
+        player.Nickname = PlayerData.GetNickname();
+        if (player.Nickname == string.Empty)
         {
-            _weapons.CreateWeapons(CurrentRound+1);
-            Invoke(nameof(CreateBots), 1f);
+            StringBus stringBus = new();
+            string nickname = stringBus.NicknameBus[Random.Range(0, stringBus.NicknameBus.Length)];
+            player.Nickname = nickname;
+            PlayerData.SetNickname(nickname);
         }
+
+        if(Match.CurrentRound == 0)
+        {
+            Match.SetIDForCharacter(player);
+        }
+        else
+        {
+            player.SetPlayerID(Characters.Count-1);
+        }
+       
+        if (PhotonNetwork.OfflineMode)
+        {
+            player.Skin.Change(PlayerData.GetSkinID());
+            SetCharacterNickname(player, player.Nickname);
+        }
+        else
+        {
+            player.Skin.UpdateForAll();
+            ServerPhotonView.RPC(nameof(SetCharacterNickname), RpcTarget.Others, player.PhotonView.ViewID, player.Nickname);
+        }
+
+        PlayerData.SaveRoundStartTime(Time.time);
     }
 
-    private void CreateBots()
+    private IEnumerator CreateBots()
     {
-        if (PhotonNetwork.CurrentRoom.PlayerCount < MAX_PLAYERS)
+        int playerCount = PhotonNetwork.OfflineMode ? 1 : PhotonNetwork.CurrentRoom.PlayerCount;
+        int MaxPlayers = PhotonNetwork.OfflineMode ? 3 : PhotonNetwork.CurrentRoom.MaxPlayers;
+
+        if (playerCount < MaxPlayers)
         {
             if (ServerPhotonView == null)
             {
@@ -107,20 +152,68 @@ public class ServerHandler : MonoBehaviourPunCallbacks
             }
 
             StringBus stringBus = new();
-            for (int i = PhotonNetwork.CurrentRoom.PlayerCount; i < MAX_PLAYERS; i++)
+            for (int i = playerCount; i < MaxPlayers; i++)
             {
-                Character character = PhotonNetwork.InstantiateRoomObject(_botPrefab.name, _spawnPositions[i].position, Quaternion.identity).GetComponent<Character>();
-                ServerPhotonView.RPC(nameof(AddCharacterInList), RpcTarget.All, character.PhotonView.ViewID);
-                character.Nickname = stringBus.NicknameBus[Random.Range(0, stringBus.NicknameBus.Length)];
+                GameObject charObject;
+                if (PhotonNetwork.OfflineMode)
+                {
+                    yield return charObject = Instantiate(_botPrefab, _spawnPositions[i].position, Quaternion.identity);
+                }
+                else
+                {
+                    yield return charObject = PhotonNetwork.InstantiateRoomObject(_botPrefab.name, _spawnPositions[i].position, Quaternion.identity);
+                }
 
-                ServerPhotonView.RPC(nameof(SetCharacterNickname), RpcTarget.Others, character.PhotonView.ViewID, character.Nickname);
+                Character character = charObject.GetComponent<Character>();
+
+                if(Match.CurrentRound == 0)
+                {
+                    Match.SetIDForCharacter(character);
+
+                    GameData game = new();
+                    int nicknameID = Random.Range(0, stringBus.NicknameBus.Length);
+                    int skinID = Random.Range(1, game.SkinsCount);
+
+                    Match.CreateBotData(character.PlayerID, nicknameID, skinID);
+                }
+                else
+                {
+                    character.SetPlayerID(i);
+                }
+
+                character.Nickname = Match.GetPlayerNickname(character.PlayerID);
+                character.Skin.Change(Match.GetPlayersSkinID(character.PlayerID), true);
+
+                if(PhotonNetwork.OfflineMode)
+                {
+                    AddCharacterInList(character);
+                    SetCharacterNickname(character, character.Nickname);
+                }
+                else
+                {
+                    ServerPhotonView.RPC(nameof(AddCharacterInList), RpcTarget.All, character.PhotonView.ViewID);
+                    ServerPhotonView.RPC(nameof(SetCharacterNickname), RpcTarget.Others, character.PhotonView.ViewID, character.Nickname);
+                }
             }
         }
     }
 
+    private IEnumerator CreateBot(string nickname, int skinID, Vector3 position)
+    {
+        GameObject charObject;
+        yield return charObject = PhotonNetwork.InstantiateRoomObject(_botPrefab.name, position, Quaternion.identity);
+
+        Character character = charObject.GetComponent<Character>();
+        ServerPhotonView.RPC(nameof(AddCharacterInList), RpcTarget.All, character.PhotonView.ViewID);
+        character.Nickname = nickname;
+
+        character.Skin.Change(skinID);
+        ServerPhotonView.RPC(nameof(SetCharacterNickname), RpcTarget.Others, character.PhotonView.ViewID, character.Nickname);
+    }
+
     private void OnApplicationFocus(bool focus)
     {
-        if (focus == false)
+        if (focus == false && PhotonNetwork.OfflineMode == false)
         {
             if (PhotonNetwork.IsMasterClient && PhotonNetwork.CurrentRoom.PlayerCount > 1)
             {
@@ -146,7 +239,6 @@ public class ServerHandler : MonoBehaviourPunCallbacks
 
     public override void OnMasterClientSwitched(Player newMasterClient)
     {
-        _weapons.IsNeedUpdateHoneycomb = true;
         if (PhotonNetwork.IsMasterClient)
         {
             _weapons.StartTimerForWeaponSpawn();
@@ -164,23 +256,29 @@ public class ServerHandler : MonoBehaviourPunCallbacks
 
     public override void OnLeftRoom()
     {
+        if (GameSettings.OfflineMode) return;
+
         ResetPlayerData();
-        SceneManager.LoadScene(0); // lobby
+        SceneManager.LoadScene((int)GameSettings.Scene.Lobby);
     }
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
+        if (GameSettings.OfflineMode) return;
+
         Character player = Characters.FirstOrDefault(p => p.PhotonView.CreatorActorNr == otherPlayer.ActorNumber);
         if(player != null)
         {
             player.Weapon.DeleteWeapon(true);
             Characters.Remove(player);
-            Destroy(player.gameObject, 1f);
 
             if (PhotonNetwork.IsMasterClient)
             {
-                EventBus.OnCharacterLose?.Invoke(player.PhotonView.ViewID);
+                StartCoroutine(CreateBot(player.Nickname, player.Skin.GetSkinID, player.transform.position));
+                //EventBus.OnCharacterLose?.Invoke(player.PhotonView.ViewID);
             }
+
+            Destroy(player.gameObject);
         }
     }
 
@@ -206,48 +304,6 @@ public class ServerHandler : MonoBehaviourPunCallbacks
     private void OnApplicationQuit()
     {
         ResetPlayerData();
+        SaveData.Instance.Stats(SaveData.Statistics.LeftTheMatch);
     }
-
-    /*public void SetTimeToNextRound(int sec)
-    {
-        if (_timer != null) StopCoroutine(_timer);
-        _timeToNextRound = sec;
-        _textTime.text = _timeToNextRound.ToString();
-        _timer = StartCoroutine(SecTimer());
-    }
-
-    private IEnumerator SecTimer()
-    {
-        while (_timeToNextRound > 0)
-        {
-            yield return new WaitForSeconds(1f);
-            if (--_timeToNextRound == 5)
-            {
-                _textTime.enabled = true;
-                if (PhotonNetwork.IsMasterClient)
-                {
-                    ServerPhotonView.RPC("DestroyHoneycombs", RpcTarget.All, CurrentRound);
-                }
-            }
-            _textTime.text = $"{_timeToNextRound}"; //_timeToNextRound > 9 ? ($"00:{_timeToNextRound}") : ($"00:0{_timeToNextRound}");
-        }
-        if (_timeToNextRound <= 0)
-        {
-            _textTime.enabled = false;
-            if (CurrentRound < 3)
-            {
-                if (PhotonNetwork.IsMasterClient)
-                {
-                    _weaponSpawner.DeleteWeaponInRoundLayer(CurrentRound);
-                }
-                CurrentRound++;
-                SetTimeToNextRound(30);
-                _roundText.text = $"Round: {CurrentRound+1}/4";
-            }
-            else
-            {
-                _roundText.text = "Final Round";
-            }
-        }
-    }*/
 }

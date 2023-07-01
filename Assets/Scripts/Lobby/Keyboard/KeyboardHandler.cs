@@ -11,6 +11,7 @@ public class KeyboardHandler : MonoBehaviour
 
     private TMP_InputField _currentInputField;
     private bool _uppercasePressed = false;
+    private bool _actionAfterHide = false;
     private Image _upperImageButton;
 
     private void Start()
@@ -22,11 +23,12 @@ public class KeyboardHandler : MonoBehaviour
         Screen.autorotateToPortraitUpsideDown = false;
     }
 
-    public void Show(TMP_InputField targetInputField)
+    public void Show(TMP_InputField targetInputField, bool actionAfterHide = false)
     {
         StringBus stringBus = new();
         if (PlayerPrefs.GetInt(stringBus.PlayerDevice) == 1) return;
 
+        _actionAfterHide = actionAfterHide;
         _currentInputField = targetInputField;
         _keyboardBG.SetActive(true);
         _keyboardObject.SetActive(true);
@@ -34,6 +36,12 @@ public class KeyboardHandler : MonoBehaviour
 
     public void Hide()
     {
+        if(_actionAfterHide)
+        {
+            EventBus.OnPlayerTryChangeNickname?.Invoke(_currentInputField.text);
+        }
+
+        _actionAfterHide = false;
         _keyboardBG.SetActive(false);
         _keyboardObject.SetActive(false);
     }

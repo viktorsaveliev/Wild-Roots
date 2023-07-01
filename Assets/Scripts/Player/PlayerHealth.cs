@@ -7,8 +7,9 @@ public class PlayerHealth : MonoBehaviour
     public int Value { get; private set; }
     public float DamageStrength { get; private set; }
     public float DamageMultiplier { get; private set; }
-    public Weapon FromWhomDamage;
+    [HideInInspector] public int FromWhomDamage;
     private Character _character;
+    private Coroutine _resetInfoTimer;
 
     private void OnEnable()
     {
@@ -22,6 +23,7 @@ public class PlayerHealth : MonoBehaviour
 
     private void Start()
     {
+        FromWhomDamage = -1;
         Value = 3;
         DamageStrength = 0;
         DamageMultiplier = 1000f;
@@ -46,34 +48,22 @@ public class PlayerHealth : MonoBehaviour
         if (DamageStrength > 1f) DamageStrength = 1f;
     }
 
-    public void StartTimerForResetDamageInfo(Character character)
+    private void StartTimerForResetDamageInfo(Character character)
     {
-        StartCoroutine(TimerForResetDamageInfo(character));
-    }
+        if (character != _character) return;
 
-    public IEnumerator TimerForResetDamageInfo(Character character)
-    {
-        if (character == _character)
+        if (_resetInfoTimer != null)
         {
-            yield return new WaitForSeconds(10f);
-            FromWhomDamage = null;
+            StopCoroutine(_resetInfoTimer);
         }
+        _resetInfoTimer = StartCoroutine(TimerForResetDamageInfo());
     }
 
-    public float GetDamageMultiplie() => (DamageStrength * DamageMultiplier);
-
-    /*[PunRPC]
-    public void SetImpulseFromBullet(float force, Vector3 impulsePosition, int fromWhom, int viewID)
+    private IEnumerator TimerForResetDamageInfo()
     {
-        PlayerInfo playerControl = PhotonView.Find(viewID).GetComponent<PlayerInfo>();
-        Weapon weapon = PhotonView.Find(fromWhom).GetComponent<Weapon>();
+        yield return new WaitForSeconds(6f);
+        FromWhomDamage = -1;
+    }
 
-        playerControl.Health.SetDamageStrength(0.05f);
-        playerControl.Health.FromWhomDamage = weapon;
-
-        playerControl.Rigidbody.AddForce(impulsePosition * (force + playerControl.Health.GetDamageDamageMultiplie()));
-        //playerControl.PlayerMove.SetMoveActive(false);
-
-        EventBus.OnPlayerTakeDamage?.Invoke(playerControl);
-    }*/
+    public float GetDamageMultiplie() => DamageStrength * DamageMultiplier;
 }

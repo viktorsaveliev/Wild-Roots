@@ -1,3 +1,4 @@
+using Photon.Pun;
 using UnityEngine;
 
 public class PlayerDataHandler : MonoBehaviour
@@ -11,6 +12,8 @@ public class PlayerDataHandler : MonoBehaviour
     public int SkinID { get; private set; }
 
     public int DroppedPlayersCount;
+    public float TimeInMatch;
+    public int WinsInMatch;
 
     public void UpdateData(string nickname, int level, int exp, int wins, int winsToday, int watchedAds, int skinID)
     {
@@ -23,6 +26,13 @@ public class PlayerDataHandler : MonoBehaviour
         SkinID = skinID;
 
         DroppedPlayersCount = 0;
+        WinsInMatch = 0;
+    }
+
+    public void UpdateNickname(string nickname)
+    {
+        PhotonNetwork.LocalPlayer.NickName = nickname;
+        Nickname = nickname;
     }
 
     public void UpdateSkinID(int id)
@@ -38,7 +48,7 @@ public class PlayerDataHandler : MonoBehaviour
         EventBus.OnPlayerViewedAds?.Invoke();
     }
 
-    public void PayAds(int value)
+    public void SpendAds(int value)
     {
         WatchedAds -= value;
         if(WatchedAds < 0)
@@ -76,38 +86,7 @@ public class PlayerDataHandler : MonoBehaviour
         {
             SaveData.Instance.SaveProgress(id);
         }
-
-        //StartCoroutine(GiveExpAsync(exp, winner));
     }
-
-    /*private IEnumerator GiveExpAsync(int exp, bool winner = false)
-    {
-        StringBus stringBus = new();
-
-        //LoadData.Instance.LoadUserData(this);
-        //yield return new WaitForSeconds(0.5f);
-        yield return StartCoroutine(LoadData.Instance.UpdateUserDataAsync(_currentCharacter));
-
-        Exp += exp;
-        if (Exp >= (Level * 3 * 100))
-        {
-            Level++;
-            Exp = 0;
-        }
-        if(winner)
-        {
-            Wins++;
-            WinsToday++;
-        }
-
-        print($"gived {exp} exp");
-
-        int id = PlayerPrefs.GetInt(stringBus.UserID);
-        if (id > 0)
-        {
-            SaveData.Instance.SaveLevelData(id);
-        }
-    }*/
 
     public void GiveWinnerAward()
     {

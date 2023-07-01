@@ -21,6 +21,7 @@ public class AdsForCoins : MonoBehaviour, IConfirmMenuAction
     private void GiveReward()
     {
         Coins.Give(CoinsHandler.GiveReason.Ads);
+        SaveData.Instance.Stats(SaveData.Statistics.RewardAds);
         EventBus.OnPlayerClickUI?.Invoke(4);
     }
 

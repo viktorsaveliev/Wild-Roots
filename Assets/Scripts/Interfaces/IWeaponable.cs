@@ -5,6 +5,8 @@ public interface IWeaponable
     [PunRPC]
     public void GiveWeapon(int id);
 
+    public void GiveWeapon(Weapon weapon);
+
     [PunRPC]
     public void DeleteWeapon(bool destroyObject);
 

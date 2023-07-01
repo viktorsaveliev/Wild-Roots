@@ -1,3 +1,4 @@
+using DG.Tweening;
 using Photon.Pun;
 using System.Collections;
 using UnityEngine;
@@ -14,10 +15,10 @@ public class CharacterMovement : MonoBehaviour, IPunObservable, IMoveable
     public bool IsTakesAim;
     private bool _isMoveActive;
     private bool _isRootsActive;
-    private float _moveInactiveTime;
+    private float _freezeTime;
+    public float GetFreezeTime => _freezeTime;
 
     public bool IsCanRotate { get; private set; }
-    public bool IsGrounded;
 
     private Coroutine _freezeTimer;
     private Character _character;
@@ -28,6 +29,8 @@ public class CharacterMovement : MonoBehaviour, IPunObservable, IMoveable
 
     private Coroutine _rotateDelayCoroutine;
     private int _playerDevice;
+    private bool _isOnGround;
+    private bool _needGetsOnFeet;
 
     private void OnEnable()
     {
@@ -49,8 +52,6 @@ public class CharacterMovement : MonoBehaviour, IPunObservable, IMoveable
 
             StringBus stringBus = new();
             _playerDevice = PlayerPrefs.GetInt(stringBus.PlayerDevice);
-
-            SetMoveActive(true);
         }
         else
         {
@@ -58,11 +59,12 @@ public class CharacterMovement : MonoBehaviour, IPunObservable, IMoveable
             _behaviour = GetComponent<CharacterAI>();
 
             _agent.speed = _moveSpeed;
-            _isMoveActive = true;
+            //_isMoveActive = true;
         }
+        SetMoveActive(false, 3, false, true);
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (_character.PhotonView.IsMine == false && PhotonNetwork.OfflineMode == false)
         {
@@ -86,27 +88,66 @@ public class CharacterMovement : MonoBehaviour, IPunObservable, IMoveable
                 else
                 {
                     Move(new Vector3(moveHorizontal, 0, moveVertical));
-                    if (!IsTakesAim && IsCanRotate) Rotate(new Vector3(moveHorizontal, 0, moveVertical));
+                    if (IsTakesAim == false && IsCanRotate && _needGetsOnFeet == false) Rotate(new Vector3(moveHorizontal, 0, moveVertical));
                 }
+            }
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.layer == 7 && _freezeTime == -1)
+        {
+            if (_isMoveActive == false && _isOnGround == false)
+            {
+                _character.transform.DOPunchScale(new Vector3(0.2f, 0.2f), 0.5f).OnComplete(() => _character.transform.localScale = new Vector3(2, 2, 2));
+                SetMoveActive(false, 1f);
+                _isOnGround = true;
             }
         }
     }
 
     public void Move(Vector3 direction)
     {
-        if(_character.IsABot)
+        if (_needGetsOnFeet)
         {
-            if (_agent.isOnNavMesh == false) return;
-            _behaviour.IsHavePath = true;
-            _agent.SetDestination(direction);
+            StandUpOnFeet();
         }
         else
         {
-            Vector3 offset = _moveSpeed * Time.deltaTime * direction;
-            _character.Rigidbody.MovePosition(_character.Rigidbody.position + offset);
+            if (_character.IsABot)
+            {
+                if (_agent.isOnNavMesh == false) return;
+                _behaviour.IsHavePath = true;
+                _agent.SetDestination(direction);
+            }
+            else
+            {
+                Vector3 offset = _moveSpeed * Time.deltaTime * direction;
+                _character.Rigidbody.MovePosition(_character.Rigidbody.position + offset);
+            }
+            StringBus stringBus = new();
+            _character.Animator.SetFloat(stringBus.AnimationSpeed, _moveSpeed * Time.deltaTime);
         }
-        StringBus stringBus = new();
-        _character.Animator.SetFloat(stringBus.AnimationSpeed, _moveSpeed * Time.deltaTime);
+    }
+
+    private bool _getsOnFeet;
+    private void StandUpOnFeet()
+    {
+        if (_needGetsOnFeet == false && _getsOnFeet) return;
+        _getsOnFeet = true;
+
+        transform.DORotate(new Vector3(transform.rotation.x, 0, transform.rotation.z), 0.3f).SetEase(Ease.Linear).OnComplete(() =>
+        {
+            _needGetsOnFeet = false;
+            _getsOnFeet = false;
+
+            if (_character.IsABot && transform.position.y > 0)
+            {
+                _character.Rigidbody.freezeRotation = true;
+                _agent.enabled = true;
+            }
+        });
     }
 
     private void DisableMovement()
@@ -154,17 +195,27 @@ public class CharacterMovement : MonoBehaviour, IPunObservable, IMoveable
         IsCanRotate = true;
     }
 
-    public void SetMoveActive(bool active, float time = 2, bool activateRoots = false)
+    public void SetMoveActive(bool active, float time = 2, bool activateRoots = false, bool freezeRotate = false)
     {
         StringBus stringBus = new();
         if (active)
         {
             if (transform.position.y < -0.5f) return;
-            if(_character.IsABot) _agent.enabled = true;
-            
+
             _isMoveActive = true;
-            _moveInactiveTime = 0;
-            if (!_character.PhotonView.IsMine || _character.IsABot) _character.Rigidbody.freezeRotation = true;
+            _freezeTime = 0;
+
+            if (transform.rotation.y != 0)
+            {
+                _needGetsOnFeet = true;
+                if (_character.IsABot) StandUpOnFeet();
+            }
+            else
+            {
+                if (_character.IsABot) _agent.enabled = true;
+            }
+
+            if (!_character.PhotonView.IsMine) _character.Rigidbody.freezeRotation = true;
 
             Stop();
             _character.Animator.SetBool(stringBus.AnimationFall, false);
@@ -174,18 +225,22 @@ public class CharacterMovement : MonoBehaviour, IPunObservable, IMoveable
                 _rootsTroop.SetActive(false);
                 _isRootsActive = false;
             }
+            _isOnGround = false;
         }
         else
         {
             if (_character.IsABot) _agent.enabled = false;
 
             _isMoveActive = false;
-            _moveInactiveTime = time;
-            _character.Rigidbody.freezeRotation = false;
+            _freezeTime = time;
+            _character.Rigidbody.freezeRotation = freezeRotate;
 
-            if (_freezeTimer != null) StopCoroutine(_freezeTimer);
-            if(gameObject.activeSelf) _freezeTimer = StartCoroutine(FreezeTimer());
-
+            if(gameObject.activeSelf && _freezeTime > 0)
+            {
+                if (_freezeTimer != null) StopCoroutine(_freezeTimer);
+                _freezeTimer = StartCoroutine(FreezeTimer());
+            }
+            
             if (activateRoots)
             {
                 _rootsTroop.SetActive(true);
@@ -198,7 +253,7 @@ public class CharacterMovement : MonoBehaviour, IPunObservable, IMoveable
 
     private IEnumerator FreezeTimer()
     {
-        yield return new WaitForSeconds(_moveInactiveTime);
+        yield return new WaitForSeconds(_freezeTime);
         SetMoveActive(true);
     }
 

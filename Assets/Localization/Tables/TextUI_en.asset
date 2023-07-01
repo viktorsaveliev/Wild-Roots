@@ -76,7 +76,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 11519047815168
-    m_Localized: GUIDE
+    m_Localized: TUTORIAL
     m_Metadata:
       m_Items: []
   - m_Id: 12041196720128
@@ -117,15 +117,15 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 4334909677928448
-    m_Localized: It will be Shop, but little bit later :)
+    m_Localized: Copy invite link
     m_Metadata:
       m_Items: []
   - m_Id: 4335025574936576
-    m_Localized: Here you will can change clothes for your character :)
+    m_Localized: Join room
     m_Metadata:
       m_Items: []
   - m_Id: 4335162644791296
-    m_Localized: It's global rating. You are number one, anyway :)
+    m_Localized: Select an action
     m_Metadata:
       m_Items: []
   - m_Id: 4390376240349184

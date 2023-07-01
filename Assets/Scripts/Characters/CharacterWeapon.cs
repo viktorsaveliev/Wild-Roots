@@ -34,9 +34,22 @@ public class CharacterWeapon : MonoBehaviour, IWeaponable
 
         StringBus stringBus = new();
         Animator.SetBool(stringBus.AnimationWithWeapon, true);
-        if (PhotonNetwork.IsMasterClient) ResetWeaponHoneycombData(_currentWeapon);
 
-        EventBus.OnPlayerTakeWeapon?.Invoke();
+        EventBus.OnCharacterGetWeapon?.Invoke(_currentWeapon);
+    }
+
+    public void GiveWeapon(Weapon weapon)
+    {
+        if (_currentWeapon != null && _currentWeapon != _punch) DeleteWeapon(true);
+
+        _currentWeapon = weapon;
+        _currentWeapon.transform.SetParent(WeaponPosition);
+        _currentWeapon.Init(this);
+
+        StringBus stringBus = new();
+        Animator.SetBool(stringBus.AnimationWithWeapon, true);
+
+        EventBus.OnCharacterGetWeapon?.Invoke(_currentWeapon);
     }
 
     [PunRPC]
@@ -65,7 +78,6 @@ public class CharacterWeapon : MonoBehaviour, IWeaponable
             {
                 DestroyWeaponObject(_currentWeapon);
             }
-            _currentWeapon.SetOwnerLocal(-1);
             EquipPunches();
         }
         StringBus stringBus = new();
@@ -96,30 +108,20 @@ public class CharacterWeapon : MonoBehaviour, IWeaponable
 
     public PhotonView GetPhotonView() => _photonView;
 
-    public void EnableAttackAnimation(WeaponsHandler.WeaponType weapon)
+    public void EnableAttackAnimation(WeaponSpawner.WeaponType weapon)
     {
         StringBus stringBus = new();
         switch (weapon)
         {
-            case WeaponsHandler.WeaponType.Grenade:
-            case WeaponsHandler.WeaponType.RootsMine:
+            case WeaponSpawner.WeaponType.Grenade:
+            case WeaponSpawner.WeaponType.RootsMine:
 
                 Animator.SetTrigger(stringBus.AnimationAttackGrenade);
                 break;
 
-            case WeaponsHandler.WeaponType.Punch:
+            case WeaponSpawner.WeaponType.Punch:
                 Animator.SetTrigger(stringBus.AnimationPunch);
                 break;
         }
-    }
-
-    private void ResetWeaponHoneycombData(Weapon weapon)
-    {
-        if (weapon.CurrentHoneycombWhereImStay != null)
-        {
-            weapon.CurrentHoneycombWhereImStay.IsTiedWeapon = false;
-            weapon.CurrentHoneycombWhereImStay = null;
-        }
-        weapon.CurrentLayerWhereImStay = -1;
     }
 }

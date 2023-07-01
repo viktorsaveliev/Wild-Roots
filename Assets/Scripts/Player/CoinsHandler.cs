@@ -112,7 +112,7 @@ public class CoinsHandler : MonoBehaviour
         EventBus.OnPlayerUpdateCoinsValue?.Invoke(_coins, anim);
     }
 
-    public void Pay(int value)
+    public void Spend(int value)
     {
         EventBus.OnPlayerUpdateCoinsValue?.Invoke(_coins - value, true);
 
@@ -128,4 +128,33 @@ public class CoinsHandler : MonoBehaviour
     }
 
     public int GetValue() => _coins;
+
+    public IEnumerator Save()
+    {
+        StringBus stringBus = new();
+        bool isGuest = PlayerPrefs.GetInt(stringBus.IsGuest) == 1;
+        if (isGuest)
+        {
+            yield break;
+        }
+
+        WWWForm form = new();
+        form.AddField("coins", _coins);
+        form.AddField("ID", PlayerPrefs.GetInt(stringBus.UserID)); 
+
+        using UnityWebRequest www = UnityWebRequest.Post(stringBus.GameDomain + "save_coins.php", form);
+        yield return www.SendWebRequest();
+
+        if (www.result == UnityWebRequest.Result.Success)
+        {
+            if (www.downloadHandler.text == "false")
+            {
+                Notice.Dialog(www.downloadHandler.error);
+            }
+        }
+        else
+        {
+            Notice.Dialog(NoticeDialog.Message.ConnectionError);
+        }
+    }
 }

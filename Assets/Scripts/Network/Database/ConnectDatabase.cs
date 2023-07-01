@@ -46,17 +46,17 @@ public class ConnectDatabase : MonoBehaviour
             if (userInfo.device.type == "desktop" || userInfo.browser.name == "demo")
             {
                 deviceType = 1;
+                SaveData.Instance.Stats(SaveData.Statistics.Desktop);
             }
             else
             {
                 deviceType = 0;
+                SaveData.Instance.Stats(SaveData.Statistics.Mobile);
             }
 
             PlayerPrefs.SetInt(stringBus.PlayerDevice, deviceType);
             PlayerPrefs.SetInt(stringBus.IsGuest, 0);
             PlayerPrefs.Save();
-
-            print($"Device: {deviceType} / {userInfo.device.type}");
         });
     }
 }

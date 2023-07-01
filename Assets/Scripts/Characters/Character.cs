@@ -16,10 +16,9 @@ public class Character : MonoBehaviour
 
     [SerializeField] private bool _isABot;
     public bool IsABot => _isABot;
-
     public string Nickname;
-
     private bool _isReceivedPrize;
+    public int PlayerID { get; private set; }
 
     private void Awake()
     {
@@ -31,6 +30,8 @@ public class Character : MonoBehaviour
         PhotonView = GetComponent<PhotonView>();
         Rigidbody = GetComponent<Rigidbody>();
         Animator = GetComponent<Animator>();
+
+        PlayerID = -1;
     }
 
     private void Start()
@@ -39,39 +40,30 @@ public class Character : MonoBehaviour
         {
             if (PhotonView.IsMine == false) return;
             Nickname = PlayerData.GetNickname();
-            if (Nickname == string.Empty)
-            {
-                StringBus stringBus = new();
-                Nickname = stringBus.NicknameBus[Random.Range(0, stringBus.NicknameBus.Length)];
-            }
-
             Skin.Change(PlayerData.GetSkinID(), true);
         }
         else
         {
             Skin.IsABot = true;
-            StartCoroutine(Skin.ChangeToRandom());
         }
     }
 
     private void OnEnable()
     {
-        EventBus.OnMatchEnded += CheckWinner;
-        EventBus.OnCharacterLose += OnLose;
+        EventBus.OnRoundEnded += CheckWinner;
         EventBus.OnCharacterFall += AddPointsForKiller;
     }
 
     private void OnDisable()
     {
-        EventBus.OnMatchEnded -= CheckWinner;
-        EventBus.OnCharacterLose -= OnLose;
+        EventBus.OnRoundEnded -= CheckWinner;
         EventBus.OnCharacterFall -= AddPointsForKiller;
     }
 
     private void AddPointsForKiller(Character character, int health)
     {
         if (PhotonView.IsMine == false || IsABot || character == this) return;
-        if (character.Health.FromWhomDamage != null && character.Health.FromWhomDamage.CharacterOwner.GetPhotonView().ViewID == PhotonView.ViewID)
+        if (character.Health.FromWhomDamage == PhotonView.ViewID)
         {
             PlayerData.AddDroppedPlayersCount();
         }
@@ -79,37 +71,20 @@ public class Character : MonoBehaviour
 
     private void CheckWinner(int winnerID)
     {
-        if (gameObject.activeSelf == false || _isReceivedPrize || IsABot) return;
+        if (_isReceivedPrize || gameObject.activeSelf == false) return;
 
-        PhotonView winner = PhotonView.Find(winnerID);
-        if (winner == null || winner.GetComponent<Character>().IsABot || winner.IsMine == false) return;
+        Character character = PhotonView.Find(winnerID).GetComponent<Character>();
+        if (character == null || PlayerID == -1 || character.PlayerID != PlayerID) return;
 
-        PlayerData.GiveWinnerAward();
-        EventBus.OnPlayerWin?.Invoke();
+        Match.GiveWinnerCoup(PlayerID, character.IsABot);
+        print("Winner ID: " + PlayerID);
 
         _isReceivedPrize = true;
     }
 
-    private void OnLose(int viewID)
+    public void SetPlayerID(int playerid)
     {
-        if (_isReceivedPrize || IsABot) return;
-
-        PhotonView loser = PhotonView.Find(viewID);
-        if (loser.IsMine == false || loser.GetComponent<Character>().IsABot) return;
-
-        PlayerData.GiveExp(30);
-
-        if(PlayerData.GetDroppedPlayersCount > 0)
-        {
-            Coins.Give(CoinsHandler.GiveReason.ForKiller);
-        }
-        
-        _isReceivedPrize = true;
+        if (PlayerID != -1) return;
+        PlayerID = playerid;
     }
-
-    /*private void UpdateData()
-    {
-        if (IsABot) return;
-        LoadData.Instance.LoadUserData(this);
-    }*/
 }

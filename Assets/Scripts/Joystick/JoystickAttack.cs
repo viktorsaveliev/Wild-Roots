@@ -72,7 +72,7 @@ public class JoystickAttack : JoystickHandler
                 }
                 else
                 {
-                    weapon.PhotonViewObject.RPC(stringBus.Shoot, RpcTarget.All, inputVector, _character.transform.position, _character.transform.rotation, false);
+                    weapon.PhotonView.RPC(stringBus.Shoot, RpcTarget.All, inputVector, _character.transform.position, _character.transform.rotation, false);
                 }
             }
             else
